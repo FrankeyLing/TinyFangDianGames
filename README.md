@@ -2,6 +2,12 @@
 
 一个单文件、纯前端的**抽纸巾增量放置（Incremental / Idle）小游戏**。无需构建、无需服务器，双击 `纸巾.html` 即可开始游玩。
 
+## 👤 作者
+
+本项目全部代码与设计均由 **KaZhe** 完成，版权归 KaZhe 所有。
+
+> 仓库目前仅由 FrankeyLing 代为托管于 GitHub，FrankeyLing 未参与本项目的任何开发工作。
+
 ## ✨ 玩法特色
 
 | 模块 | 说明 |
@@ -56,4 +62,4 @@ python3 -m http.server 8000
 
 ## 📄 开源许可
 
-本项目基于 [MIT License](LICENSE) 开源，Copyright (c) 2026 FrankeyLing。
+本项目基于 [MIT License](LICENSE) 开源，Copyright (c) 2026 KaZhe。
