@@ -1,0 +1,465 @@
+<!DOCTYPE html><html lang="zh-CN"><head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>抽纸巾</title>
+<style>
+*{box-sizing:border-box;font-family:system-ui;margin:0;padding:0}
+body{background:#f6f6f6;padding:8px;font-size:14px}
+.c{background:#fff;border-radius:10px;padding:10px;margin-bottom:8px}
+h3{font-size:14px;color:#c66;margin-bottom:6px}
+button{background:#f7a5a5;border:0;border-radius:7px;padding:8px 10px;margin:2px;font-weight:600;font-size:13px;cursor:pointer}
+button:disabled{background:#ddd;color:#999}
+button.p{background:#c7a8ff;color:#2a1a5a}
+button.g{background:#ffd97a;color:#5a4a1a;font-size:12px;padding:6px 7px}
+button.mx{background:#a5d7f7;color:#1a3a5a}
+.s{display:flex;flex-wrap:wrap;gap:6px;font-size:12px}
+.s>div{background:#f5f5f5;padding:4px 8px;border-radius:6px}
+.s b{color:#c66}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:6px}
+.card{background:#fffaf0;border:1px solid #ffe6b3;border-radius:8px;padding:7px;font-size:12px}
+.card.pp{background:#f5efff;border-color:#dcc8ff}
+.card .n{font-weight:700;color:#8a6a20}
+.card.pp .n{color:#5a3a8a}
+.card .e{color:#4a7a3a;margin:3px 0}
+.card.pp .e{color:#7a4aa0}
+.card .co{color:#c07030;font-weight:600}
+.tip{font-size:11px;color:#888;line-height:1.5}
+.chip{display:inline-block;padding:2px 6px;border-radius:5px;background:#f7f7f7;margin:2px;font-size:11px;font-weight:600}
+#log{background:#222;color:#ddd;padding:6px 8px;border-radius:7px;max-height:100px;overflow-y:auto;font-size:11px;line-height:1.6}
+#fly{position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:99}
+.ft{position:absolute;font-weight:800;font-size:14px;animation:f 1s forwards;text-shadow:0 1px 2px #0003}
+@keyframes f{0%{opacity:1}100%{opacity:0;transform:translateY(-70px)}}
+</style></head><body>
+<div id="fly"></div>
+
+<div class="c"><h3>🧻 抽纸巾</h3>
+<div class="s" id="top"></div></div>
+
+<div class="c"><h3>操作</h3>
+<button id="bd">👉 抽纸</button>
+<button id="ba">自动抽取</button>
+<button id="bb">自动升级</button>
+<button id="bs">自动卖出</button>
+<button id="bo">离线收益</button>
+<button id="bse">全部卖出</button>
+<button id="bde">全部分解</button>
+</div>
+
+<div class="c"><h3>仓库</h3><div id="box" class="tip">空空如也</div></div>
+
+<div class="c"><h3>金币商店</h3><div class="grid" id="sg"></div></div>
+
+<div class="c"><h3>材料建筑</h3><div class="grid" id="sm"></div></div>
+
+<div class="c"><h3>转生</h3>
+<div class="s" id="pre"></div>
+<button id="bpre" class="p">执行转生</button>
+</div>
+
+<div class="c"><h3>🔮 升华商店</h3>
+<p class="tip" style="margin-bottom:6px">升华点购买永久加成，跨转生保留</p>
+<div class="grid" id="sp"></div>
+</div>
+
+<div class="c"><h3>成就</h3><div id="ach" class="tip"></div></div>
+<div class="c"><h3>图鉴</h3><div id="cx"></div></div>
+<div class="c"><h3>日志</h3><div id="log"></div></div>
+
+<div class="c">
+<button id="bsave">存档</button>
+<button id="bload">读档</button>
+<button id="breset">重置</button>
+</div>
+
+<script>
+/* ===== 数据 ===== */
+var PT=[
+["草纸巾",.18,10],["纸巾",.16,15],["塑料纸巾",.14,25],["石头纸巾",.12,40],
+["骨头纸巾",.11,70],["锡纸巾",.09,120],["铜纸巾",.07,200],["铁纸巾",.05,350],
+["金纸巾",.035,600],["钻石纸巾",.02,1000],["紫水晶纸巾",.012,1800],
+["黑曜石纸巾",.008,3000],["血纸巾",.005,5000],["魔法纸巾",.003,9000],
+["辐射纸巾",.002,15000],["量子纸巾",.0012,25000],["虚空纸巾",.0007,40000],
+["月球纸巾",.0004,65000],["黑洞纸巾",.0002,100000],["无尽纸巾",.0001,160000],
+["至高纸巾",.00005,250000]
+];
+var N=PT.length;
+for(var i=0;i<N;i++)PT[i][3]=Math.max(1,Math.floor(PT[i][2]/5));
+
+var UP={
+click:{n:"点击强化",b:10,g:1.15,c:"g"},
+auto:{n:"自动抽取",b:100,g:1.15,c:"g"},
+luck:{n:"幸运值",b:500,g:1.2,c:"g"},
+sell:{n:"售卖强化",b:300,g:1.18,c:"g"},
+factory:{n:"纸巾工厂",b:30,g:1.15,c:"m"},
+workshop:{n:"造纸工坊",b:100,g:1.18,c:"m"},
+storage:{n:"仓库扩容",b:80,g:1.15,c:"m"}
+};
+
+var PS={
+global:{n:"全局强化",i:"🌟",max:100,cost:function(l){return 1+Math.floor(l*.5)},d:function(l){return"全局×"+(1+l*.1).toFixed(2)}},
+startGold:{n:"起始金币",i:"💰",max:50,cost:function(l){return 1+Math.floor(l*.8)},d:function(l){return"转生后+"+fmt(l*100)+"金"}},
+startMat:{n:"起始材料",i:"🔧",max:50,cost:function(l){return 1+Math.floor(l*.8)},d:function(l){return"转生后+"+fmt(l*50)+"材"}},
+keepClick:{n:"点击传承",i:"👆",max:5,cost:function(l){return 3+l*2},d:function(l){return"保留"+l*10+"%点击"}},
+keepLuck:{n:"幸运传承",i:"🍀",max:5,cost:function(l){return 3+l*2},d:function(l){return"保留"+l*10+"%幸运"}},
+offline:{n:"离线精通",i:"📦",max:5,cost:function(l){return 2+l*2},d:function(l){return"离线"+(50+l*10)+"%"}},
+storage:{n:"仓库扩容",i:"🏗",max:20,cost:function(l){return 1+Math.floor(l*.8)},d:function(l){return"基础仓+"+fmt(l*500)}},
+crit:{n:"售卖暴击",i:"⚡",max:20,cost:function(l){return 2+l},d:function(l){return"暴击"+l*2+"%×2.5"}},
+autoSpeed:{n:"自动加速",i:"⏩",max:10,cost:function(l){return 2+l*2},d:function(l){return"自动升级×"+(1+l*.5).toFixed(1)}}
+};
+
+var ACH=[
+["draw100","累计抽100张",function(s){return s.tp>=100}],
+["draw1000","累计抽1000张",function(s){return s.tp>=1000}],
+["gold1k","累计1000金币",function(s){return s.tg>=1000}],
+["gold1m","累计100万金币",function(s){return s.tg>=1e6}],
+["mat500","累计500材料",function(s){return s.tm>=500}],
+["fac5","工厂5级",function(s){return s.lv.factory>=5}],
+["luck20","幸运20级",function(s){return s.lv.luck>=20}],
+["pre1","第一次转生",function(s){return s.pre>=1}],
+["pre5","五次转生",function(s){return s.pre>=5}],
+["cx10","解锁10种图鉴",function(s){return s.cx.filter(function(x){return x>0}).length>=10}],
+["cx21","解锁全部图鉴",function(s){return s.cx.filter(function(x){return x>0}).length>=N}]
+];
+
+/* ===== 状态 ===== */
+function nS(){return{
+gold:0,mat:0,paper:new Array(N).fill(0),
+lv:{click:0,auto:0,luck:0,sell:0,factory:0,workshop:0,storage:0},
+aOn:false,aBuy:false,aSell:false,
+tp:0,tg:0,tm:0,rg:0,
+pre:0,pts:0,
+plv:{global:0,startGold:0,startMat:0,keepClick:0,keepLuck:0,offline:0,storage:0,crit:0,autoSpeed:0},
+cx:new Array(N).fill(0),ach:{},ab:{luck:0,sell:0,speed:0,mat:0},
+ap:0,am:0,lt:Date.now()
+}}
+var S=nS();
+
+/* ===== 数值 ===== */
+function gMul(){return 1+(S.plv.global||0)*.1}
+function rawLuck(){return S.lv.luck*2+S.ab.luck}
+function luck(){return Math.min(100,rawLuck())}
+function sMul(){return (1+S.lv.sell*.2+S.ab.sell)*gMul()}
+function spMul(){return (1+S.ab.speed)*gMul()}
+function cp(){return (1+S.lv.click)*gMul()}
+function aps(){return S.lv.auto*.5*spMul()}
+function fps(){return S.lv.factory*.5*spMul()}
+function mps(){return S.lv.workshop*.3*spMul()*(1+S.ab.mat)*gMul()}
+function sMax(){return 2000+(S.plv.storage||0)*500+S.lv.storage*500}
+function pTot(){var t=0;for(var i=0;i<N;i++)t+=S.paper[i];return t}
+function uCost(k){var u=UP[k];return Math.floor(u.b*Math.pow(u.g,S.lv[k]))}
+function fmt(n){
+if(!isFinite(n)||n<0)return"0";
+if(n<1000)return Math.floor(n)+"";
+if(n<1e6)return(n/1e3).toFixed(1)+"k";
+if(n<1e9)return(n/1e6).toFixed(1)+"M";
+if(n<1e12)return(n/1e9).toFixed(1)+"B";
+if(n<1e15)return(n/1e12).toFixed(1)+"T";
+return(n/1e15).toFixed(1)+"Q"}
+
+/* ===== 抽取 ===== */
+var rc=null,rcl=-1;
+function rates(){
+var l=rawLuck();
+if(rc&&rcl===l)return rc;
+var lf=Math.min(1,l*.02);
+var adj=PT.map(function(p,i){
+var pos=i/(N-1);
+var m=Math.max(.05,1+lf*(pos*2-1));
+return p[1]*m});
+var tot=adj.reduce(function(a,b){return a+b},0);
+rc=adj.map(function(r){return r/tot});rcl=l;return rc}
+function roll(){var r=rates(),x=Math.random(),s=0;
+for(var i=0;i<r.length;i++){s+=r[i];if(x<s)return i}return r.length-1}
+function draw(c){
+c=Math.floor(c);if(c<=0)return 0;
+var sp=sMax()-pTot();if(sp<=0)return 0;
+var a=Math.min(c,sp);
+for(var i=0;i<a;i++){var k=roll();S.paper[k]++;S.cx[k]++;S.tp++}
+return a}
+
+/* ===== 卖 / 分解 ===== */
+function sellAll(){
+if(pTot()<=0)return{g:0,c:false};
+var m=sMul(),g=0;
+for(var i=0;i<N;i++)g+=S.paper[i]*PT[i][2]*m;
+g=Math.floor(g);
+var cc=(S.plv.crit||0)*.02,crit=false;
+if(cc>0&&Math.random()<cc){g=Math.floor(g*2.5);crit=true}
+S.gold+=g;S.tg+=g;S.rg+=g;
+S.paper=new Array(N).fill(0);
+return{g:g,c:crit}}
+
+function decAll(){
+if(pTot()<=0)return 0;
+var m=(1+S.ab.mat)*gMul(),g=0;
+for(var i=0;i<N;i++)g+=S.paper[i]*PT[i][3]*m;
+g=Math.floor(g);
+S.mat+=g;S.tm+=g;
+S.paper=new Array(N).fill(0);
+return g}
+
+/* ===== 购买 ===== */
+function buy(k){
+var u=UP[k],c=uCost(k),p=u.c==="g"?S.gold:S.mat;
+if(p<c)return false;
+if(u.c==="g")S.gold-=c;else S.mat-=c;
+S.lv[k]++;return true}
+
+/* 最大购买：循环直到买不起为止 */
+function buyMax(k){
+var cnt=0;
+while(cnt<10000&&buy(k))cnt++;
+return cnt}
+
+/* 升华最大购买 */
+function buyPSMax(k){
+var u=PS[k],cnt=0;
+while(cnt<1000&&buyPS(k))cnt++;
+return cnt}
+
+function buyPS(k){
+var u=PS[k],l=S.plv[k]||0;
+if(l>=u.max)return false;
+var c=u.cost(l);
+if(S.pts<c)return false;
+S.pts-=c;S.plv[k]=l+1;return true}
+
+/* ===== 自动 ===== */
+function autoBuy(){
+if(!S.aBuy)return;
+var o=["click","auto","factory","storage","workshop","luck","sell"];
+var n=Math.max(1,Math.round(1+(S.plv.autoSpeed||0)*.5));
+for(var j=0;j<n;j++){
+var b=false;
+for(var i=0;i<o.length;i++){if(buy(o[i])){b=true;break}}
+if(!b)break}}
+
+function autoSell(){
+if(!S.aSell)return;
+if(pTot()/sMax()>.85){
+var r=sellAll();
+if(r.g>0)log("自动卖+"+fmt(r.g)+(r.c?"暴击":""))}}
+
+/* ===== 转生 ===== */
+function preGain(){
+if(S.rg<10000)return 0;
+return Math.floor(Math.sqrt(S.rg/10000))}
+
+function doPre(){
+var g=preGain();
+if(g<=0){log("本轮金币不足1万");return}
+S.pts+=g;S.pre++;
+var kc=Math.floor(S.lv.click*(S.plv.keepClick||0)*.1);
+var kl=Math.floor(S.lv.luck*(S.plv.keepLuck||0)*.1);
+S.gold=(S.plv.startGold||0)*100;
+S.mat=(S.plv.startMat||0)*50;
+S.paper=new Array(N).fill(0);
+S.lv={click:kc,auto:0,luck:kl,sell:0,factory:0,workshop:0,storage:0};
+S.rg=0;S.aOn=false;S.ap=0;S.am=0;
+log("✨转生+ "+g+"升华点（共"+S.pts+"）");render()}
+
+/* ===== 离线 ===== */
+function offline(){
+var dt=(Date.now()-(S.lt||Date.now()))/1000;
+if(dt<10){log("离线太短（需≥10秒）");return}
+if(dt>43200)dt=43200;
+var om=.5+(S.plv.offline||0)*.1;
+var pg=Math.floor((aps()+fps())*dt*om);
+var mg=Math.floor(mps()*dt*om);
+var got=draw(pg);
+S.mat+=mg;S.tm+=mg;S.lt=Date.now();
+log("离线"+Math.floor(dt)+"s："+fmt(got)+"纸 "+fmt(mg)+"材");render()}
+
+/* ===== 成就 ===== */
+function chkAch(){
+for(var i=0;i<ACH.length;i++){
+var a=ACH[i];
+if(S.ach[a[0]])continue;
+if(a[2](S)){S.ach[a[0]]=true;log("🏆"+a[1])}}}
+
+/* ===== 渲染 ===== */
+function $(id){return document.getElementById(id)}
+
+function eTxt(k){
+if(k==="click")return"点击+"+(S.lv.click+1);
+if(k==="auto")return"+ "+(S.lv.auto*.5).toFixed(1)+"/s";
+if(k==="luck")return"幸运"+luck().toFixed(0)+"%";
+if(k==="sell")return"售价×"+(1+S.lv.sell*.2).toFixed(2);
+if(k==="factory")return"+ "+(S.lv.factory*.5).toFixed(1)+"/s";
+if(k==="workshop")return"+ "+(S.lv.workshop*.3).toFixed(1)+"材/s";
+if(k==="storage")return"仓+"+S.lv.storage*500;
+return""}
+
+function render(){
+chkAch();
+var cur=pTot(),mx=sMax();
+$("top").innerHTML=
+"<div>金 <b>"+fmt(S.gold)+"</b></div>"+
+"<div>材 <b>"+fmt(S.mat)+"</b></div>"+
+"<div>升华 <b>"+S.pts+"</b></div>"+
+"<div>幸运 <b>"+luck().toFixed(0)+"%</b></div>"+
+"<div>售金 <b>×"+sMul().toFixed(2)+"</b></div>"+
+"<div>速度 <b>×"+spMul().toFixed(2)+"</b></div>"+
+"<div>仓库 <b>"+fmt(cur)+"/"+fmt(mx)+"</b></div>"+
+"<div>点击 <b>+"+fmt(cp())+"</b></div>"+
+"<div>自动 <b>"+aps().toFixed(1)+"/s</b></div>"+
+"<div>工厂 <b>"+fps().toFixed(1)+"/s</b></div>"+
+"<div>工坊 <b>"+mps().toFixed(1)+"材/s</b></div>";
+
+$("ba").textContent="自动抽取:"+(S.aOn?"开":"关");
+$("bb").textContent="自动升级:"+(S.aBuy?"开":"关");
+$("bs").textContent="自动卖出:"+(S.aSell?"开":"关");
+
+var h="";
+for(var i=0;i<N;i++)if(S.paper[i]>0)h+='<span class="chip">'+PT[i][0]+"×"+fmt(S.paper[i])+"</span>";
+$("box").innerHTML=h||'<span class="tip">空空如也</span>';
+
+/* 金币商店：升级 + 最大 */
+var g="";
+["click","auto","luck","sell"].forEach(function(k){
+var u=UP[k],c=uCost(k),can=S.gold>=c;
+g+='<div class="card"><div class="n">'+u.n+' Lv.'+S.lv[k]+'</div><div class="e">'+eTxt(k)+
+'</div><div class="co">💰'+fmt(c)+'</div>'+
+'<button class="g" '+(can?"":"disabled")+' data-buy="'+k+'">升级</button>'+
+'<button class="mx" '+(can?"":"disabled")+' data-max="'+k+'">最大</button></div>'});
+$("sg").innerHTML=g;
+
+/* 材料商店：升级 + 最大 */
+var m="";
+["factory","workshop","storage"].forEach(function(k){
+var u=UP[k],c=uCost(k),can=S.mat>=c;
+m+='<div class="card"><div class="n">'+u.n+' Lv.'+S.lv[k]+'</div><div class="e">'+eTxt(k)+
+'</div><div class="co">🔧'+fmt(c)+'</div>'+
+'<button class="g" '+(can?"":"disabled")+' data-buy="'+k+'">升级</button>'+
+'<button class="mx" '+(can?"":"disabled")+' data-max="'+k+'">最大</button></div>'});
+$("sm").innerHTML=m;
+
+$("pre").innerHTML=
+"<div>本轮金 <b>"+fmt(S.rg)+"</b></div>"+
+"<div>可获 <b>"+preGain()+"</b></div>"+
+"<div>升华余额 <b>"+S.pts+"</b></div>"+
+"<div>转生次数 <b>"+S.pre+"</b></div>";
+
+/* 升华商店：升华 + 最大 */
+var sp="";
+for(var k in PS){
+var u=PS[k],l=S.plv[k]||0,mx2=l>=u.max,cost=mx2?null:u.cost(l),can=!mx2&&S.pts>=cost;
+sp+='<div class="card pp"><div class="n">'+u.i+u.n+' Lv.'+l+'/'+u.max+'</div>'+
+'<div class="e">'+u.d(l)+'</div>'+
+'<div class="co">'+(mx2?"满级":"✨"+cost+"点")+'</div>'+
+'<button class="g" '+(can?"":"disabled")+' data-ps="'+k+'">升华</button>'+
+'<button class="mx" '+(can?"":"disabled")+' data-psmax="'+k+'">最大</button></div>'}
+$("sp").innerHTML=sp;
+
+var a="";
+ACH.forEach(function(x){a+=(S.ach[x[0]]?"✅":"⬜")+x[1]+"<br>"});
+$("ach").innerHTML=a;
+
+var cx="";
+for(var i=0;i<N;i++)cx+='<span class="chip">'+(S.cx[i]>0?"✅":"❓")+PT[i][0]+"</span>";
+$("cx").innerHTML=cx}
+
+/* ===== 浮字 & 日志 ===== */
+function ft(x,y,t){
+var d=document.createElement("div");
+d.className="ft";d.style.left=x+"px";d.style.top=y+"px";d.textContent=t;
+$("fly").appendChild(d);setTimeout(function(){d.remove()},1000)}
+
+function log(t){
+var b=$("log"),l=document.createElement("div");
+l.textContent="["+new Date().toLocaleTimeString()+"] "+t;
+b.appendChild(l);b.scrollTop=b.scrollHeight;
+while(b.children.length>25)b.removeChild(b.firstChild)}
+
+/* ===== 事件 ===== */
+$("bd").onclick=function(e){
+var g=draw(cp());
+ft(e.clientX,e.clientY,g>0?"+"+g+"张":"仓库满");render()};
+$("ba").onclick=function(){S.aOn=!S.aOn;render()};
+$("bb").onclick=function(){S.aBuy=!S.aBuy;render()};
+$("bs").onclick=function(){S.aSell=!S.aSell;render()};
+$("bo").onclick=offline;
+$("bse").onclick=function(e){
+var r=sellAll();
+if(r.g>0)ft(e.clientX,e.clientY,(r.c?"暴击+":"+")+fmt(r.g));
+if(r.c)log("💥暴击+"+fmt(r.g));render()};
+$("bde").onclick=function(e){
+var m=decAll();
+if(m>0)ft(e.clientX,e.clientY,"+"+fmt(m)+"材");render()};
+$("bpre").onclick=doPre;
+
+document.addEventListener("click",function(e){
+var t=e.target;if(!t.dataset)return;
+if(t.dataset.buy){if(buy(t.dataset.buy))ft(e.clientX,e.clientY,"升级");render()}
+else if(t.dataset.max){
+var k=t.dataset.max,n=buyMax(k);
+if(n>0)ft(e.clientX,e.clientY,"+"+n+"级");
+else ft(e.clientX,e.clientY,"资源不足");
+render()}
+else if(t.dataset.ps){
+var k2=t.dataset.ps;
+if(buyPS(k2)){ft(e.clientX,e.clientY,"升华");log("🔮"+PS[k2].n+" Lv."+S.plv[k2])}
+render()}
+else if(t.dataset.psmax){
+var k3=t.dataset.psmax,n2=buyPSMax(k3);
+if(n2>0){ft(e.clientX,e.clientY,"+"+n2+"级");log("🔮"+PS[k3].n+"→Lv."+S.plv[k3])}
+else ft(e.clientX,e.clientY,"升华点不足");
+render()}});
+
+/* ===== 主循环 ===== */
+var lt=Date.now();
+setInterval(function(){
+var now=Date.now(),dt=(now-lt)/1000;lt=now;
+autoBuy();
+if(S.aOn){S.ap+=aps()*dt;var n=Math.floor(S.ap);if(n>0){S.ap-=n;draw(n)}}
+else S.ap=0;
+S.ap+=fps()*dt;
+var n2=Math.floor(S.ap);if(n2>0){S.ap-=n2;draw(n2)}
+S.am+=mps()*dt;
+var n3=Math.floor(S.am);if(n3>0){S.am-=n3;S.mat+=n3;S.tm+=n3}
+autoSell();render()},100);
+
+/* ===== 存档 ===== */
+var KEY="paperIdleV9";
+function merge(L){
+var b=nS(),m=Object.assign(b,L||{});
+var fa=function(a){var s=Array.isArray(a)?a:[];return new Array(N).fill(0).map(function(_,i){return+s[i]||0})};
+m.paper=fa(m.paper);m.cx=fa(m.cx);
+if(!m.lv||typeof m.lv!="object")m.lv=b.lv;
+else for(var k in b.lv)if(typeof m.lv[k]!="number")m.lv[k]=0;
+if(!m.plv||typeof m.plv!="object")m.plv=Object.assign({},b.plv);
+else for(var k2 in b.plv)if(typeof m.plv[k2]!="number")m.plv[k2]=0;
+if(!m.ab||typeof m.ab!="object")m.ab=b.ab;
+else for(var k3 in b.ab)if(typeof m.ab[k3]!="number")m.ab[k3]=0;
+if(!m.ach||typeof m.ach!="object")m.ach={};
+["gold","mat","tp","tg","tm","rg","pre","pts","ap","am","lt"].forEach(function(k){
+if(typeof m[k]!="number"||!isFinite(m[k]))m[k]=b[k]});
+return m}
+
+$("bsave").onclick=function(){
+S.lt=Date.now();
+try{localStorage.setItem(KEY,JSON.stringify(S));log("💾存档成功")}
+catch(e){log("存档失败")}};
+
+$("bload").onclick=function(){
+var s=localStorage.getItem(KEY);
+if(!s){log("无存档");return}
+try{S=merge(JSON.parse(s));log("📂读档完成");render()}
+catch(e){log("读档失败")}};
+
+$("breset").onclick=function(){
+if(!confirm("确定清空全部进度？"))return;
+localStorage.removeItem(KEY);S=nS();log("🗑已重置");render()};
+
+window.addEventListener("beforeunload",function(){
+S.lt=Date.now();
+try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){}});
+
+/* ===== 启动 ===== */
+(function(){
+var s=localStorage.getItem(KEY);
+if(s){try{S=merge(JSON.parse(s))}catch(e){}}
+render();
+log("👋欢迎！点击抽纸开始");
+log("💡每张升级卡片有【升级】和【最大】两个按钮")})();
+</script>
+</body></html>
