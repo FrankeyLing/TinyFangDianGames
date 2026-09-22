@@ -2,6 +2,12 @@
 
 一个单文件、纯前端的**抽纸巾增量放置（Incremental / Idle）小游戏**。无需构建、无需服务器，双击 `纸巾.html` 即可开始游玩。
 
+## ▶️ 在线试玩
+
+不想下载？点这里直接玩：**https://frankeyling.github.io/TinyFangDianGames/**
+
+试玩页同时收录了方块世界与两个纸巾版本。
+
 ## 👤 作者
 
 本项目全部代码与设计均由 **KaZhe** 完成，版权归 KaZhe 所有。
