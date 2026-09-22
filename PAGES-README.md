@@ -15,7 +15,7 @@
 | 文件 | 来源分支 / 提交 | 说明 |
 | --- | --- | --- |
 | `index.html` | 本分支新增 | 试玩导航首页 |
-| `chen.html` | `fix/chen-bugs` @ `39a64cc` | 方块世界扩展版（含两处 bug 修复） |
+| `chen.html` | `fix/chen-bugs` @ `9341bfd` | 方块世界 v2（含四处缺陷修复） |
 | `paper-ru.html` | `main` @ `f3e75c7` | 俄语完整版纸巾游戏 |
 | `paper-zh.html` | `031e260` | 简中 V9 版纸巾游戏 |
 

@@ -897,6 +897,146 @@ function render() {
 // =====================
 // 方块绘制
 // =====================
+// ===== 方块纹理缓存 =====
+const BLOCK_CACHE = {};
+const CACHE_SIZE = 26; // 匹配 BS
+
+function buildBlockCache() {
+  for (const t in INFO) {
+    const type = parseInt(t);
+    if (type === T.AIR) continue;
+    const cv2 = document.createElement('canvas');
+    cv2.width = CACHE_SIZE;
+    cv2.height = CACHE_SIZE;
+    const c2 = cv2.getContext('2d');
+    renderBlockTo(c2, 0, 0, type, CACHE_SIZE);
+    BLOCK_CACHE[type] = cv2;
+  }
+}
+
+// 把 drawBlock 的绘制逻辑抽出来，画到指定 ctx
+function renderBlockTo(c, px, py, t, SZ) {
+  const info = INFO[t];
+  if (!info) return;
+  c.fillStyle = info.c;
+  c.fillRect(px, py, SZ, SZ);
+
+  if (t === T.GRASS) {
+    c.fillStyle = info.d;
+    c.fillRect(px, py + SZ * 0.35, SZ, SZ * 0.65);
+    c.fillStyle = '#8ad06a';
+    for (let i = 0; i < 3; i++) {
+      const tx = px + h1(i * 10 + t) * (SZ - 3);
+      c.fillRect(tx, py, 2, 4);
+    }
+  } else if (t === T.SNOW) {
+    c.fillStyle = info.d;
+    c.fillRect(px, py + SZ * 0.5, SZ, SZ * 0.5);
+    c.fillStyle = '#fff';
+    for (let i = 0; i < 3; i++) {
+      c.fillRect(px + h1(i * 11 + t) * (SZ - 4), py + h2(i * 13 + t) * (SZ * 0.4), 2, 2);
+    }
+  } else if (t === T.STONE || t === T.SANDSTONE || t === T.BRICK) {
+    c.fillStyle = info.d;
+    for (let i = 0; i < 3; i++) {
+      c.fillRect(px + h1(i * 7 + t) * (SZ - 6), py + h2(i * 7 + t) * (SZ - 6), 4, 4);
+    }
+  } else if (t === T.DIRT || t === T.SAND || t === T.PAPER_SOIL) {
+    c.fillStyle = info.d;
+    for (let i = 0; i < 3; i++) {
+      c.fillRect(px + h1(i * 3 + t) * (SZ - 4), py + h2(i * 5 + t) * (SZ - 4), 3, 3);
+    }
+  } else if (t === T.WOOD) {
+    c.fillStyle = info.d;
+    c.fillRect(px + 3, py, 2, SZ);
+    c.fillRect(px + SZ - 6, py, 2, SZ);
+  } else if (t === T.LEAF) {
+    c.fillStyle = 'rgba(0,0,0,.15)';
+    for (let i = 0; i < 3; i++) {
+      c.fillRect(px + h1(i * 11 + t) * (SZ - 4), py + h2(i * 13 + t) * (SZ - 4), 4, 4);
+    }
+  } else if (t === T.CACTUS) {
+    c.fillStyle = info.d;
+    c.fillRect(px + 3, py, 2, SZ);
+    c.fillRect(px + SZ - 5, py, 2, SZ);
+  } else if (t === T.WATER) {
+    c.fillStyle = 'rgba(58,106,176,.7)';
+    c.fillRect(px, py, SZ, SZ);
+  } else if (t === T.COAL || t === T.IRON || t === T.GOLD || t === T.DIAMOND || t === T.REDSTONE || t === T.PAPER_ORE) {
+    c.fillStyle = '#7a7a7a';
+    c.fillRect(px, py, SZ, SZ);
+    c.fillStyle = '#5a5a5a';
+    c.fillRect(px + 2, py + 2, 3, 3);
+    c.fillStyle = info.c;
+    const cxp = px + SZ / 2, cyp = py + SZ / 2;
+    for (let i = 0; i < 5; i++) {
+      const a = i * 1.3;
+      const r = 3 + i * 1.2;
+      c.beginPath();
+      c.arc(cxp + Math.cos(a) * r, cyp + Math.sin(a) * r, 2.5, 0, Math.PI * 2);
+      c.fill();
+    }
+    if (t === T.DIAMOND || t === T.PAPER_ORE) {
+      c.fillStyle = '#fff';
+      c.beginPath();
+      c.arc(cxp, cyp, 3, 0, Math.PI * 2);
+      c.fill();
+    }
+  } else if (t === T.BEDROCK) {
+    c.fillStyle = '#1a1a1a';
+    c.fillRect(px, py, SZ, SZ);
+    c.fillStyle = '#000';
+    for (let i = 0; i < 6; i++) {
+      c.fillRect(px + h1(i + t) * (SZ - 4), py + h2(i + t) * (SZ - 4), 4, 4);
+    }
+  } else if (t === T.GLASS) {
+    c.fillStyle = 'rgba(200,232,248,.35)';
+    c.fillRect(px, py, SZ, SZ);
+    c.strokeStyle = 'rgba(160,200,230,.7)';
+    c.lineWidth = 1;
+    c.strokeRect(px + 0.5, py + 0.5, SZ - 1, SZ - 1);
+  } else if (t === T.FLOWER) {
+    c.fillStyle = '#3a803a';
+    c.fillRect(px + SZ / 2 - 1, py + SZ * 0.5, 2, SZ * 0.5);
+    c.fillStyle = info.c;
+    for (let i = 0; i < 5; i++) {
+      const a = i * 1.256;
+      c.beginPath();
+      c.arc(px + SZ / 2 + Math.cos(a) * 4, py + SZ * 0.4 + Math.sin(a) * 4, 3, 0, Math.PI * 2);
+      c.fill();
+    }
+    c.fillStyle = '#ffe080';
+    c.beginPath();
+    c.arc(px + SZ / 2, py + SZ * 0.4, 2, 0, Math.PI * 2);
+    c.fill();
+  } else if (t === T.TORCH) {
+    c.fillStyle = '#5a3a1a';
+    c.fillRect(px + SZ / 2 - 1, py + SZ * 0.3, 3, SZ * 0.7);
+    c.fillStyle = '#f0a030';
+    c.beginPath();
+    c.arc(px + SZ / 2, py + SZ * 0.25, 4, 0, Math.PI * 2);
+    c.fill();
+  } else if (t === T.CHEST) {
+    c.fillStyle = info.c;
+    c.fillRect(px + 2, py + SZ * 0.35, SZ - 4, SZ * 0.65);
+    c.fillStyle = info.d;
+    c.fillRect(px + 2, py + SZ * 0.35, SZ - 4, 3);
+    c.fillStyle = '#ffd700';
+    c.fillRect(px + SZ / 2 - 2, py + SZ * 0.6, 4, 4);
+  } else if (t === T.ANCIENT) {
+    c.fillStyle = info.c;
+    c.fillRect(px + 3, py + 2, SZ - 6, SZ - 4);
+    c.fillStyle = '#8888aa';
+    for (let i = 0; i < 4; i++) {
+      c.fillRect(px + 5 + i * 4, py + 6, 2, SZ - 12);
+    }
+  }
+
+  // 边框
+  c.strokeStyle = 'rgba(0,0,0,.12)';
+  c.lineWidth = 1;
+  c.strokeRect(px + 0.5, py + 0.5, SZ - 1, SZ - 1);
+}
 function drawBlock(x, y, t) {
   const px = x * BS - camera.x;
   const py = y * BS - camera.y;
@@ -1836,7 +1976,8 @@ function updateMonsters(dt) {
       const dxp = (m.x + m.w / 2) - (p.x + p.w / 2);
       const dyp2 = (m.y + m.h / 2) - (p.y + p.h / 2);
       if (Math.abs(dxp) < BS * 1.1 && Math.abs(dyp2) < BS * 1.3) {
-        damagePlayer(m.def.dmg);
+        const feedDmg = (S.feedUntil && S.feedUntil > Date.now()) ? 1.5 : 1;
+damagePlayer(Math.ceil(m.def.dmg * feedDmg));
         m.attackCd = 1;
         // 击退玩家
         p.vx = Math.sign(dxp) * 220;
@@ -1904,8 +2045,9 @@ function playerAttack() {
         S.totalQi += xp;
         S.kills++;
         S.totalKills++;
-        S.paper[0] = (S.paper[0] || 0) + paperDrop;
-        S.tp += paperDrop;
+        const feedMul = (S.feedUntil && S.feedUntil > Date.now()) ? 3 : 1;
+S.paper[0] = (S.paper[0] || 0) + paperDrop * feedMul;
+S.tp += paperDrop * feedMul;
         addDrop(Math.floor(m.x / BS), Math.floor(m.y / BS), T.COAL, 1 + Math.floor(Math.random() * 2));
         if (Math.random() < 0.15) addDrop(Math.floor(m.x / BS), Math.floor(m.y / BS), T.IRON, 1);
         S.monsters.splice(i, 1);
@@ -2115,7 +2257,7 @@ function doRebirth() {
   toast('✨ 转生 +' + gain + ' 本源');
   updateHUD();
   renderShop();
-  renderInvUI();
+  updateInvUI();
 }
 
 // =====================
@@ -2156,7 +2298,7 @@ function doDeathRebirth() {
   log('💀 死亡转生 +' + gain + ' 本源');
   updateHUD();
   renderShop();
-  renderInvUI();
+  updateInvUI();
 }
 
 // =====================
@@ -3335,12 +3477,14 @@ document.addEventListener('keydown', (e) => {
 function buildQuickPanel() {
   const panel = document.createElement('div');
   panel.id = 'quickPanel';
-  panel.style.cssText = 'position:absolute;top:44px;left:6px;display:flex;flex-direction:column;gap:4px;z-index:6';
+  panel.style.cssText = 'position:absolute;top:44px;left:6px;display:flex;flex-direction:column;gap:4px;z-index:6;max-height:70vh;overflow-y:auto';
   panel.innerHTML = `
     <button id="qShop" style="padding:8px 10px;font-size:12px;min-height:34px;background:linear-gradient(180deg,#6a4bc4,#4a2b84)">🏪商店</button>
     <button id="qSick" style="padding:8px 10px;font-size:12px;min-height:34px;background:linear-gradient(180deg,#7a3a8a,#4a1a5a)">🤢恶心</button>
     <button id="qReb" style="padding:8px 10px;font-size:12px;min-height:34px;background:linear-gradient(180deg,#8a4a1a,#5a2a0a)">🔄转生</button>
     <button id="qOC" style="padding:8px 10px;font-size:12px;min-height:34px;background:linear-gradient(180deg,#cc5500,#8a3000)">⚡超频</button>
+    <button id="qSell" style="padding:8px 10px;font-size:12px;min-height:34px;background:linear-gradient(180deg,#d4a017,#8a6010);color:#2a1a00">💰卖</button>
+    <button id="qSpecial" style="padding:8px 10px;font-size:12px;min-height:34px;background:linear-gradient(180deg,#a8384a,#6a1828)">🎁特殊</button>
   `;
   document.getElementById('game').appendChild(panel);
 
@@ -3348,9 +3492,206 @@ function buildQuickPanel() {
   document.getElementById('qSick').onclick = openSick;
   document.getElementById('qReb').onclick = openRebirth;
   document.getElementById('qOC').onclick = activateOC;
+  document.getElementById('qSell').onclick = openSellMenu;
+  document.getElementById('qSpecial').onclick = openSpecialMenu;
 }
 
+
 // 启动按钮
+// =====================
+// 卖东西菜单
+// =====================
+function calcPaperGold() {
+  let total = 0;
+  for (const k in S.paper) {
+    const n = S.paper[k];
+    if (n > 0) total += n * paperPrice(k);
+  }
+  return Math.floor(total * (1 + (S.soulLv.origin_gold || 0) * 0.25));
+}
+
+function calcPaperQi() {
+  let total = 0;
+  for (const k in S.paper) {
+    const n = S.paper[k];
+    if (n > 0) total += n * (1 + parseInt(k) * 0.5);
+  }
+  return Math.floor(total / 10);
+}
+
+function consumePaper(count) {
+  // 先确认总数足够，不足则不做任何扣除（避免扣了纸却拿不到效果）
+  let total = 0;
+  for (const k in S.paper) {
+    const n = S.paper[k];
+    if (n > 0) total += n;
+  }
+  if (total < count) return total;
+
+  let remaining = count;
+  const keys = Object.keys(S.paper).map(k => parseInt(k)).sort((a, b) => a - b);
+  for (const k of keys) {
+    if (remaining <= 0) break;
+    const have = S.paper[k] || 0;
+    if (have <= 0) continue;
+    const use = Math.min(have, remaining);
+    S.paper[k] -= use;
+    remaining -= use;
+    if (S.paper[k] <= 0) delete S.paper[k];
+  }
+  return count - remaining;
+}
+
+function openSellMenu() {
+  if (!S) return;
+  const box = document.getElementById('popBox');
+  const goldGain = calcPaperGold();
+  const qiGain = calcPaperQi();
+  const cornGold = Math.floor((S.corn || 0) * 50 * (1 + (S.soulLv.origin_gold || 0) * 0.25));
+  const cornSt = Math.floor((S.corn || 0) / 1000);
+
+  let html = '<h4>💰 卖东西</h4>';
+  html += '<div class="d">';
+  html += '纸卖金币：<b style="color:#ffd97a">+' + fmt(goldGain) + '</b><br>';
+  html += '纸换升华：<b style="color:#a888ff">+' + fmt(qiGain) + '</b>（10张纸=1升华）<br><br>';
+  html += '玉米卖金币：<b style="color:#ffd97a">+' + fmt(cornGold) + '</b><br>';
+  html += '玉米换星尘：<b style="color:#7fdcff">+' + fmt(cornSt) + '</b>（1000玉米=1星尘）';
+  html += '</div>';
+  html += '<button class="gold" id="sellPaperGold">💰 纸换金币（+' + fmt(goldGain) + '）</button>';
+  html += '<button id="sellPaperQi">✨ 纸换升华（+' + fmt(qiGain) + '）</button>';
+  html += '<button class="gold" id="sellCornGold">🌽 玉米换金币（+' + fmt(cornGold) + '）</button>';
+  html += '<button id="sellCornSt">⭐ 玉米换星尘（+' + fmt(cornSt) + '）</button>';
+  html += '<button id="sellClose" class="red">关闭</button>';
+  box.innerHTML = html;
+  document.getElementById('pop').classList.add('on');
+
+  document.getElementById('sellPaperGold').onclick = () => {
+    document.getElementById('pop').classList.remove('on');
+    sellAllPaper();
+    updateHUD();
+  };
+  document.getElementById('sellPaperQi').onclick = () => {
+    document.getElementById('pop').classList.remove('on');
+    const gain = calcPaperQi();
+    if (gain <= 0) { toast('没有纸'); return; }
+    S.paper = {};
+    S.pts += gain;
+    toast('✨ +' + fmt(gain) + ' 升华点');
+    log('纸换升华 +' + fmt(gain));
+    updateHUD();
+  };
+  document.getElementById('sellCornGold').onclick = () => {
+    document.getElementById('pop').classList.remove('on');
+    const c = Math.floor(S.corn || 0);
+    if (c <= 0) { toast('没有玉米'); return; }
+    const total = Math.floor(c * 50 * (1 + (S.soulLv.origin_gold || 0) * 0.25));
+    S.gold += total;
+    S.tg += total;
+    S.corn = 0;
+    toast('💰 +' + fmt(total) + ' 金币');
+    log('卖玉米 ' + c + ' 个 · +' + fmt(total) + ' 金币');
+    updateHUD();
+  };
+  document.getElementById('sellCornSt').onclick = () => {
+    document.getElementById('pop').classList.remove('on');
+    const c = Math.floor(S.corn || 0);
+    const st = Math.floor(c / 1000);
+    if (st <= 0) { toast('玉米不足 1000'); return; }
+    S.corn -= st * 1000;
+    S.st = (S.st || 0) + st;
+    toast('⭐ +' + st + ' 星尘');
+    log('玉米换星尘 +' + st);
+    updateHUD();
+  };
+  document.getElementById('sellClose').onclick = () => {
+    document.getElementById('pop').classList.remove('on');
+  };
+}
+
+// =====================
+// 特殊菜单：喂怪 + 造房
+// =====================
+function openSpecialMenu() {
+  if (!S) return;
+  const box = document.getElementById('popBox');
+  const feedCost = 100;
+  const houseCost = 500;
+  const feedActive = S.feedUntil && S.feedUntil > Date.now();
+
+  let html = '<h4>🎁 特殊操作</h4>';
+  html += '<div class="d">';
+  html += '<b style="color:#ff9999">🍖 喂怪物</b>（消耗 ' + feedCost + ' 张纸）<br>';
+  html += '全场怪物伤害 +50%，但掉落翻 3 倍，持续 30 秒<br><br>';
+  if (feedActive) {
+    html += '<span style="color:#90ee90">✔ 正在生效 · 剩 ' + Math.ceil((S.feedUntil - Date.now()) / 1000) + ' 秒</span><br><br>';
+  }
+  html += '<b style="color:#88ccff">🏠 造纸屋</b>（消耗 ' + houseCost + ' 张纸）<br>';
+  html += '在你周围自动生成一个 7x7 的木屋庇护所<br>';
+  html += '</div>';
+  html += '<button class="gold" id="feedBtn">🍖 喂怪物（-' + feedCost + '纸）</button>';
+  html += '<button id="houseBtn">🏠 造纸屋（-' + houseCost + '纸）</button>';
+  html += '<button id="specialClose" class="red">关闭</button>';
+  box.innerHTML = html;
+  document.getElementById('pop').classList.add('on');
+
+  document.getElementById('feedBtn').onclick = () => {
+    document.getElementById('pop').classList.remove('on');
+    const got = consumePaper(feedCost);
+    if (got < feedCost) {
+      toast('纸不足，需要 ' + feedCost + ' 张');
+      return;
+    }
+    S.feedUntil = Date.now() + 30000;
+    toast('🍖 怪物变强了，掉落 ×3');
+    log('喂怪物 · 30秒内掉落翻倍');
+    updateHUD();
+  };
+  document.getElementById('houseBtn').onclick = () => {
+    document.getElementById('pop').classList.remove('on');
+    const got = consumePaper(houseCost);
+    if (got < houseCost) {
+      toast('纸不足，需要 ' + houseCost + ' 张');
+      return;
+    }
+    buildPaperHouse();
+    toast('🏠 纸屋建成');
+    log('造纸屋完成');
+  };
+  document.getElementById('specialClose').onclick = () => {
+    document.getElementById('pop').classList.remove('on');
+  };
+}
+
+// 造一个 7x7 木屋
+function buildPaperHouse() {
+  const p = S.player;
+  const pcx = Math.floor((p.x + p.w / 2) / BS);
+  const pcy = Math.floor((p.y + p.h - 1) / BS);
+  const w = 3;  // 半宽
+  const h = 3;  // 高度
+  // 清空内部
+  for (let dy = -h; dy <= -1; dy++) {
+    for (let dx = -w; dx <= w; dx++) {
+      setBlock(pcx + dx, pcy + dy, T.AIR);
+    }
+  }
+  // 地板
+  for (let dx = -w; dx <= w; dx++) {
+    setBlock(pcx + dx, pcy, T.PLANK);
+  }
+  // 左右墙
+  for (let dy = -h; dy <= -1; dy++) {
+    setBlock(pcx - w, pcy + dy, T.PLANK);
+    setBlock(pcx + w, pcy + dy, T.PLANK);
+  }
+  // 顶
+  for (let dx = -w; dx <= w; dx++) {
+    setBlock(pcx + dx, pcy - h, T.PLANK);
+  }
+  // 门（正面中间）
+  setBlock(pcx, pcy - 1, T.DOOR);
+  setBlock(pcx, pcy - 2, T.DOOR);
+}
 document.getElementById('startBtn').onclick = () => startGame(false);
 document.getElementById('loadBtn').onclick = () => startGame(true);
 
