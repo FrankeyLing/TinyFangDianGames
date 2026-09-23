@@ -15,47 +15,229 @@ window.addEventListener('error', function(e) {
 html,body{width:100%;height:100%;overflow:hidden;background:#000;color:#fff;font-family:system-ui,-apple-system,"PingFang SC",sans-serif;touch-action:none}
 #game{position:fixed;inset:0}
 canvas{display:block;position:absolute;inset:0;image-rendering:pixelated}
-#hudTop{position:absolute;top:6px;left:6px;right:6px;display:flex;gap:4px;flex-wrap:wrap;font-size:11px;z-index:5;pointer-events:none}
-.hb{background:rgba(0,0,0,.55);padding:4px 8px;border-radius:6px;font-weight:700;text-shadow:1px 1px 1px #000}
+/* ===== 顶部 HUD ===== */
+#hudTop{
+  position:absolute;top:8px;left:8px;right:8px;
+  display:flex;flex-wrap:wrap;gap:5px;
+  font-size:11px;z-index:5;pointer-events:none;
+  justify-content:flex-start;align-items:flex-start;
+}
+.hb{
+  background:rgba(10,10,20,.72);
+  padding:5px 10px;border-radius:8px;
+  font-weight:700;letter-spacing:.5px;
+  text-shadow:0 1px 2px #000;
+  border:1px solid rgba(255,255,255,.1);
+  backdrop-filter:blur(4px);
+  display:flex;align-items:center;gap:3px;
+}
 .hb b{color:#7fdcff;font-weight:900}
 .hb.gold b{color:#ffd700}
 .hb.hp b{color:#ff6666}
 .hb.realm b{color:#a888ff}
-#mode{position:absolute;top:44px;right:6px;background:rgba(60,60,60,.7);border:2px solid #fff;border-radius:8px;padding:8px 12px;font-size:13px;font-weight:700;font-family:inherit;color:#fff;z-index:6;cursor:pointer}
-#mode.place{background:rgba(60,120,60,.7)}
-#mode.build{background:rgba(120,60,120,.7)}
-#mode.sow{background:rgba(180,140,20,.7)}
+
+/* ===== 模式按钮 ===== */
+#mode{
+  position:absolute;top:52px;right:8px;
+  background:linear-gradient(180deg,rgba(80,80,90,.9),rgba(50,50,60,.9));
+  border:1px solid rgba(255,255,255,.4);
+  border-radius:10px;padding:9px 14px;
+  font-size:12px;font-weight:700;font-family:inherit;
+  color:#fff;z-index:6;cursor:pointer;
+  box-shadow:0 4px 12px rgba(0,0,0,.5);
+  backdrop-filter:blur(6px);
+  letter-spacing:1px;
+  transition:all .15s;
+}
+#mode:active{transform:scale(.95)}
+#mode.place{background:linear-gradient(180deg,rgba(60,140,60,.9),rgba(30,80,30,.9))}
+#mode.build{background:linear-gradient(180deg,rgba(150,80,180,.9),rgba(80,30,100,.9))}
+#mode.sow{background:linear-gradient(180deg,rgba(200,150,40,.9),rgba(120,80,10,.9))}
+
+/* ===== 控制按钮 ===== */
 #pad{position:absolute;inset:0;pointer-events:none;z-index:4}
-.btn{position:absolute;width:60px;height:60px;border-radius:50%;background:rgba(255,255,255,.2);border:2px solid rgba(255,255,255,.5);color:#fff;font-size:24px;font-weight:900;display:flex;align-items:center;justify-content:center;pointer-events:auto;cursor:pointer;text-shadow:0 0 4px #000;font-family:inherit}
-.btn:active{background:rgba(255,255,255,.45)}
-#btnL{left:12px;bottom:70px}
-#btnR{left:88px;bottom:70px}
-#btnJ{right:20px;bottom:80px;width:74px;height:74px;font-size:30px}
-#btnAtk{right:106px;bottom:80px;width:64px;height:64px;font-size:22px;background:rgba(255,60,60,.35);border-color:rgba(255,120,120,.7)}
-#inv{position:absolute;bottom:6px;left:50%;transform:translateX(-50%);display:flex;gap:4px;background:rgba(0,0,0,.6);padding:5px;border-radius:9px;z-index:5;max-width:96vw;overflow-x:auto;scrollbar-width:none}
+.btn{
+  position:absolute;
+  border-radius:50%;
+  background:radial-gradient(circle at 40% 30%,rgba(255,255,255,.3),rgba(255,255,255,.08));
+  border:2px solid rgba(255,255,255,.55);
+  color:#fff;font-size:28px;font-weight:900;
+  display:flex;align-items:center;justify-content:center;
+  pointer-events:auto;cursor:pointer;
+  text-shadow:0 1px 3px #000;
+  font-family:inherit;
+  box-shadow:
+    0 4px 16px rgba(0,0,0,.55),
+    inset 0 2px 4px rgba(255,255,255,.25),
+    inset 0 -3px 6px rgba(0,0,0,.3);
+  transition:transform .07s, box-shadow .1s;
+  -webkit-user-select:none;
+  user-select:none;
+}
+.btn:active{
+  transform:scale(.9);
+  box-shadow:
+    0 0 24px rgba(255,255,255,.7),
+    inset 0 2px 4px rgba(255,255,255,.4),
+    inset 0 -3px 6px rgba(0,0,0,.4);
+}
+
+/* 左侧：移动 */
+#btnL{left:14px;bottom:78px;width:76px;height:76px;font-size:32px}
+#btnR{left:104px;bottom:78px;width:76px;height:76px;font-size:32px}
+
+/* 右侧：跳 + 攻击 */
+#btnJ{right:20px;bottom:170px;width:76px;height:76px;font-size:30px;
+  background:radial-gradient(circle at 40% 30%,rgba(120,200,255,.5),rgba(40,100,180,.3));
+  border-color:rgba(180,230,255,.75);
+}
+#btnAtk{right:20px;bottom:78px;width:86px;height:86px;font-size:36px;
+  background:radial-gradient(circle at 40% 30%,rgba(255,120,120,.55),rgba(160,20,20,.35));
+  border-color:rgba(255,160,160,.8);
+}
+
+/* ===== 物品栏 ===== */
+#inv{
+  position:absolute;bottom:8px;left:50%;transform:translateX(-50%);
+  display:flex;gap:5px;
+  background:rgba(10,10,20,.75);
+  padding:6px;border-radius:12px;z-index:5;
+  max-width:92vw;overflow-x:auto;scrollbar-width:none;
+  border:1px solid rgba(255,255,255,.15);
+  box-shadow:0 6px 20px rgba(0,0,0,.5);
+  backdrop-filter:blur(6px);
+}
 #inv::-webkit-scrollbar{display:none}
-.slot{width:44px;height:44px;flex:0 0 44px;border:2px solid #444;border-radius:6px;display:flex;align-items:center;justify-content:center;color:#fff;position:relative;cursor:pointer;background:rgba(0,0,0,.3)}
-.slot.sel{border-color:#ffd700;box-shadow:0 0 10px #ffd700}
-.slot .cnt{position:absolute;bottom:1px;right:2px;font-size:10px;font-weight:900;text-shadow:1px 1px 1px #000}
-.slot .ico{width:24px;height:24px;border-radius:4px;border:1px solid rgba(0,0,0,.4)}
-#pop{position:absolute;inset:0;background:rgba(0,0,0,.85);display:none;align-items:center;justify-content:center;padding:16px;z-index:20}
+.slot{
+  width:48px;height:48px;flex:0 0 48px;
+  border:2px solid #444;border-radius:8px;
+  display:flex;align-items:center;justify-content:center;
+  color:#fff;position:relative;cursor:pointer;
+  background:rgba(0,0,0,.4);
+  transition:all .15s;
+}
+.slot.sel{
+  border-color:#ffd700;
+  box-shadow:0 0 12px #ffd700, inset 0 0 8px #ffd70055;
+  transform:scale(1.05);
+}
+.slot .cnt{
+  position:absolute;bottom:2px;right:3px;
+  font-size:11px;font-weight:900;
+  text-shadow:1px 1px 2px #000,0 0 4px #000;
+}
+.slot .ico{
+  width:26px;height:26px;border-radius:5px;
+  border:1px solid rgba(0,0,0,.5);
+  box-shadow:inset 0 2px 4px rgba(255,255,255,.2);
+}
+
+/* ===== 弹窗 ===== */
+#pop{
+  position:absolute;inset:0;
+  background:radial-gradient(circle,rgba(20,10,40,.92),rgba(0,0,0,.95));
+  display:none;align-items:center;justify-content:center;
+  padding:16px;z-index:20;
+  animation:fadeIn .2s;
+}
+@keyframes fadeIn{from{opacity:0}to{opacity:1}}
 #pop.on{display:flex}
-#popBox{background:linear-gradient(180deg,#1a1030,#0a0515);border:2px solid #ffd97a;border-radius:16px;max-width:420px;width:100%;padding:18px;box-shadow:0 0 60px #ffd97a44;text-align:center;max-height:88vh;overflow-y:auto}
-#popBox h4{color:#ffd97a;font-size:18px;margin-bottom:10px;letter-spacing:2px}
-#popBox .d{color:#c9a0ff;font-size:13px;line-height:1.8;margin-bottom:12px;text-align:left}
-#popBox button{width:100%;padding:12px;margin:4px 0;background:linear-gradient(180deg,#6a4bc4,#4a2b84);border:1px solid #8866cc;border-radius:8px;color:#fff;font-size:14px;font-weight:700;font-family:inherit;cursor:pointer;letter-spacing:2px}
-#popBox button.gold{background:linear-gradient(180deg,#d4a017,#8a6010);border-color:#ffd97a;color:#2a1a00}
-#popBox button.red{background:linear-gradient(180deg,#c53030,#7a1a1a);border-color:#ff6666}
-#toast{position:absolute;top:32%;left:50%;transform:translateX(-50%);color:#ffd700;font-size:19px;font-weight:900;text-shadow:0 0 12px #ffd700,2px 2px 0 #000;opacity:0;pointer-events:none;transition:opacity .3s;z-index:7;text-align:center;white-space:nowrap}
+#popBox{
+  background:linear-gradient(180deg,#1e1235,#0e0518);
+  border:1px solid #4a3570;
+  border-radius:18px;max-width:420px;width:100%;
+  padding:20px;
+  box-shadow:0 20px 60px rgba(0,0,0,.8), 0 0 60px rgba(255,217,122,.15);
+  text-align:center;max-height:88vh;overflow-y:auto;
+  animation:popIn .25s cubic-bezier(.2,.9,.3,1.3);
+}
+@keyframes popIn{
+  from{opacity:0;transform:scale(.9)}
+  to{opacity:1;transform:scale(1)}
+}
+#popBox h4{
+  color:#ffd97a;font-size:19px;
+  margin-bottom:12px;letter-spacing:3px;
+  text-shadow:0 0 16px rgba(255,217,122,.5);
+  font-weight:900;
+}
+#popBox .d{
+  color:#c9a0ff;font-size:13px;line-height:1.9;
+  margin-bottom:14px;text-align:left;
+}
+#popBox button{
+  width:100%;padding:13px;margin:5px 0;
+  background:linear-gradient(180deg,#6a4bc4,#3a1f70);
+  border:1px solid #8a6ee0;border-radius:10px;
+  color:#fff;font-size:14px;font-weight:700;
+  font-family:inherit;cursor:pointer;letter-spacing:2px;
+  box-shadow:0 4px 12px rgba(106,75,196,.3);
+  transition:all .15s;
+}
+#popBox button:active{transform:scale(.97)}
+#popBox button.gold{
+  background:linear-gradient(180deg,#e8b830,#8a6010);
+  border-color:#ffd97a;color:#2a1a00;
+  box-shadow:0 4px 12px rgba(255,217,122,.35);
+}
+#popBox button.red{
+  background:linear-gradient(180deg,#c53030,#5a1010);
+  border-color:#ff6666;
+}
+
+/* ===== toast ===== */
+#toast{
+  position:absolute;top:36%;left:50%;transform:translateX(-50%);
+  color:#ffd700;font-size:20px;font-weight:900;
+  text-shadow:0 0 16px #ffd700, 0 2px 4px #000;
+  opacity:0;pointer-events:none;
+  transition:opacity .3s;
+  z-index:7;text-align:center;white-space:nowrap;
+  letter-spacing:2px;
+}
 #toast.show{opacity:1}
-#start{position:absolute;inset:0;background:#000d;display:flex;flex-direction:column;align-items:center;justify-content:center;z-index:30;text-align:center;padding:20px}
-#start h1{font-size:30px;color:#ffd700;margin-bottom:6px;letter-spacing:14px;text-shadow:0 0 30px #ffd70088}
-#start .sub{font-size:10px;color:#887;letter-spacing:6px;margin-bottom:20px}
-#start p{font-size:13px;color:#aaa;line-height:2;max-width:320px;margin-bottom:18px}
-#start button{padding:14px 40px;background:linear-gradient(180deg,#4a8a3a,#2a5a20);color:#fff;border:0;border-radius:10px;font-size:15px;font-weight:700;font-family:inherit;cursor:pointer;letter-spacing:6px;margin:4px}
-#start button.alt{background:linear-gradient(180deg,#3a5a8a,#1a3a5a)}
-#start button:active{transform:scale(.96)}
-#log{position:absolute;bottom:66px;left:8px;right:8px;max-height:60px;overflow:hidden;font-size:11px;color:#a89bc9;pointer-events:none;z-index:3;line-height:1.5;text-shadow:1px 1px 1px #000;text-align:center}
+
+/* ===== 日志 ===== */
+#log{
+  position:absolute;bottom:70px;left:12px;right:12px;
+  max-height:60px;overflow:hidden;
+  font-size:11px;color:#a89bc9;
+  pointer-events:none;z-index:3;line-height:1.6;
+  text-align:center;
+  text-shadow:0 1px 2px #000, 0 0 6px #000;
+}
+/* ===== 开始界面 ===== */
+#start{
+  position:absolute;inset:0;z-index:30;
+  display:flex;flex-direction:column;
+  align-items:center;justify-content:center;
+  gap:12px;text-align:center;
+  background:radial-gradient(circle,rgba(30,15,60,.95),rgba(0,0,0,.98));
+}
+#start h1{
+  font-size:40px;letter-spacing:12px;color:#ffd97a;
+  text-shadow:0 0 30px rgba(255,217,122,.55);
+}
+#start .sub{
+  font-size:11px;color:#8a7ab0;
+  letter-spacing:4px;margin-bottom:16px;
+}
+#start p{
+  font-size:12px;color:#b0a0d0;
+  line-height:1.9;margin-bottom:18px;
+}
+#start button{
+  width:220px;padding:14px;border-radius:12px;
+  font-size:15px;font-weight:700;
+  font-family:inherit;color:#fff;
+  cursor:pointer;letter-spacing:4px;
+  background:linear-gradient(180deg,#6a4bc4,#3a1f70);
+  border:1px solid #8a6ee0;
+}
+#start button.alt{
+  background:linear-gradient(180deg,#3a3a4a,#1a1a24);
+  border-color:#666;
+}
 </style>
 </head>
 <body>
@@ -855,7 +1037,7 @@ function render() {
     ctx.lineWidth = 2;
     ctx.strokeRect(px + 1, py + 1, BS - 2, BS - 2);
     ctx.fillStyle = 'rgba(255,255,255,.85)';
-    const barH = 3;
+    const barH = 6;
     ctx.fillRect(px + 1, py + BS - barH - 1, (BS - 2) * Math.min(1, mineProgress), barH);
   }
 
@@ -872,6 +1054,14 @@ function render() {
       ctx.strokeStyle = color;
       ctx.lineWidth = 2;
       ctx.strokeRect(px + 1, py + 1, BS - 2, BS - 2);
+     // 呼吸式填充
+const alpha = 0.12 + Math.sin(performance.now() / 180) * 0.08;
+let fillC = 'rgba(255,80,80,' + alpha + ')';
+if (S.mode === 'place') fillC = 'rgba(80,255,80,' + alpha + ')';
+else if (S.mode === 'build') fillC = 'rgba(255,150,255,' + alpha + ')';
+else if (S.mode === 'sow') fillC = 'rgba(255,220,80,' + alpha + ')';
+ctx.fillStyle = fillC;
+ctx.fillRect(px + 1, py + 1, BS - 2, BS - 2); 
     }
   }
 
@@ -1462,7 +1652,7 @@ function inReach(bx, by) {
   const p = S.player;
   const pcx = (p.x + p.w / 2) / BS;
   const pcy = (p.y + p.h / 2) / BS;
-  return Math.hypot(bx - pcx, by - pcy) <= 6;
+  return Math.hypot(bx - pcx, by - pcy) <= 8;
 }
 
 function setupPointerEvents() {
@@ -2950,32 +3140,49 @@ function updateHUD() {
   const dayName = light > 0.65 ? '☀️' : light > 0.35 ? '🌅' : '🌙';
 
   let html = '';
-  html += `<div class="hb hp">❤️ <b>${Math.ceil(p.hp)}</b>/${p.maxHp}</div>`;
-  html += `<div class="hb gold">💰 <b>${fmt(S.gold)}</b></div>`;
-  html += `<div class="hb">🧻 <b>${fmt(S.tp)}</b></div>`;
-  html += `<div class="hb realm">🧘 <b>${realmName(S.realm)}</b></div>`;
-  html += `<div class="hb">☯️ <b>${fmt(S.qi)}</b></div>`;
+  html += `<div class="hb hp">❤️<b>${Math.ceil(p.hp)}</b>/${p.maxHp}</div>`;
+  html += `<div class="hb gold">💰<b>${fmt(S.gold)}</b></div>`;
+  html += `<div class="hb realm">🧘<b>${realmName(S.realm)}</b></div>`;
+  html += `<div class="hb">☯️<b>${fmt(S.qi)}</b></div>`;
   html += `<div class="hb">${dayName}</div>`;
-  if ((S.snot || 0) > 0) html += `<div class="hb">🤢 <b>${fmt(S.snot)}</b></div>`;
-  if ((S.gPaper || 0) > 0) html += `<div class="hb">👻 <b>${fmt(S.gPaper)}</b></div>`;
-  if ((S.reinc || 0) > 0) html += `<div class="hb">💠 <b>${fmt(S.reinc)}</b></div>`;
-  if ((S.soul || 0) > 0) html += `<div class="hb">✨ <b>${fmt(S.soul)}</b></div>`;
-  if ((S.st || 0) > 0) html += `<div class="hb">⭐ <b>${fmt(S.st)}</b></div>`;
-  if ((S.corn || 0) > 0) html += `<div class="hb">🌽 <b>${fmt(S.corn)}</b></div>`;
-  if (S.corruption > 0) html += `<div class="hb" style="background:rgba(120,40,160,.6)">🖤 <b>${S.corruption}</b></div>`;
-
-  // 突破按钮提示
+  html += `<div class="hb" style="pointer-events:auto;cursor:pointer" onclick="window._showStats()">📊</div>`;
   if (realmFull()) {
-    html += `<div class="hb" style="background:rgba(200,150,0,.7);animation:pulse 1.2s infinite;cursor:pointer" onclick="window._break()">⚡ 突破</div>`;
+    html += `<div class="hb" style="background:linear-gradient(180deg,#ffb830,#cc7700);animation:pulse 1.2s infinite;cursor:pointer;pointer-events:auto;color:#2a1a00;font-weight:900" onclick="window._break()">⚡突破</div>`;
   }
-  // Boss 计时
   if (S.boss) {
-    html += `<div class="hb" style="background:rgba(200,30,30,.7)">👹 ${S.boss.def.n} <b>${Math.ceil(S.boss.hp)}</b></div>`;
+    html += `<div class="hb" style="background:rgba(200,30,30,.85)">👹<b>${Math.ceil(S.boss.hp)}</b></div>`;
   }
 
   el.innerHTML = html;
-  updateHpHearts();
 }
+window._showStats = function() {
+  if (!S) return;
+  const box = document.getElementById('popBox');
+  const light = dayLight();
+  const dayName = light > 0.65 ? '白天' : light > 0.35 ? '黄昏' : '夜晚';
+  let html = '<h4>📊 详情</h4>';
+  html += '<div class="d">';
+  html += '时间：' + dayName + '<br>';
+  html += '纸巾累计：' + fmt(S.tp) + '<br>';
+  html += '鼻涕：' + fmt(S.snot) + ' · 疾病：' + SICK_NAMES[S.sick] + '<br>';
+  html += '诡纸：' + fmt(S.gPaper || 0) + '<br>';
+  html += '轮回点：' + fmt(S.reinc || 0) + '<br>';
+  html += '本源：' + fmt(S.soul || 0) + '<br>';
+  html += '星尘：' + fmt(S.st || 0) + '<br>';
+  html += '玉米：' + fmt(S.corn || 0) + '<br>';
+  html += '升华点：' + fmt(S.pts || 0) + '<br>';
+  html += '腐化：' + S.corruption + ' / 100<br>';
+  html += '击杀：' + S.totalKills + '<br>';
+  html += '转生：' + S.rebirths + ' 次<br>';
+  html += '</div>';
+  html += '<button id="statsClose">关闭</button>';
+  box.innerHTML = html;
+  document.getElementById('pop').classList.add('on');
+  document.getElementById('statsClose').onclick = () => {
+    document.getElementById('pop').classList.remove('on');
+  };
+};
+  
 
 function updateHpHearts() {
   // 已合并进 HUD，不再单独画心
@@ -3229,7 +3436,7 @@ function openSick() {
   box.querySelector('#actWuchang').onclick = () => { makeGhost('wuchang'); openSick(); };
   box.querySelector('#actGui').onclick = () => { makeGhost('gui'); openSick(); };
   box.querySelector('#actLuohou').onclick = () => { makeGhost('luohou'); openSick(); };
-  box.querySelector('#sickClose').onclick = () => {
+  box.querySelector('SickClose').onclick = () => {
     document.getElementById('pop').classList.remove('on');
   };
 }
@@ -3477,23 +3684,103 @@ document.addEventListener('keydown', (e) => {
 function buildQuickPanel() {
   const panel = document.createElement('div');
   panel.id = 'quickPanel';
-  panel.style.cssText = 'position:absolute;top:44px;left:6px;display:flex;flex-direction:column;gap:4px;z-index:6;max-height:70vh;overflow-y:auto';
-  panel.innerHTML = `
-    <button id="qShop" style="padding:8px 10px;font-size:12px;min-height:34px;background:linear-gradient(180deg,#6a4bc4,#4a2b84)">🏪商店</button>
-    <button id="qSick" style="padding:8px 10px;font-size:12px;min-height:34px;background:linear-gradient(180deg,#7a3a8a,#4a1a5a)">🤢恶心</button>
-    <button id="qReb" style="padding:8px 10px;font-size:12px;min-height:34px;background:linear-gradient(180deg,#8a4a1a,#5a2a0a)">🔄转生</button>
-    <button id="qOC" style="padding:8px 10px;font-size:12px;min-height:34px;background:linear-gradient(180deg,#cc5500,#8a3000)">⚡超频</button>
-    <button id="qSell" style="padding:8px 10px;font-size:12px;min-height:34px;background:linear-gradient(180deg,#d4a017,#8a6010);color:#2a1a00">💰卖</button>
-    <button id="qSpecial" style="padding:8px 10px;font-size:12px;min-height:34px;background:linear-gradient(180deg,#a8384a,#6a1828)">🎁特殊</button>
-  `;
+  panel.style.cssText = 'position:absolute;top:52px;left:8px;z-index:6';
+  panel.innerHTML = '<button id="qMenu" style="width:58px;height:58px;border-radius:50%;font-size:24px;background:radial-gradient(circle at 40% 30%,rgba(130,100,210,.95),rgba(60,30,120,.9));border:2px solid rgba(180,150,255,.8);color:#fff;box-shadow:0 4px 16px rgba(0,0,0,.6),inset 0 2px 4px rgba(255,255,255,.25);cursor:pointer;font-family:inherit">📋</button>';
   document.getElementById('game').appendChild(panel);
+  document.getElementById('qMenu').onclick = openMainMenu;
+}
 
-  document.getElementById('qShop').onclick = openShop;
-  document.getElementById('qSick').onclick = openSick;
-  document.getElementById('qReb').onclick = openRebirth;
-  document.getElementById('qOC').onclick = activateOC;
-  document.getElementById('qSell').onclick = openSellMenu;
-  document.getElementById('qSpecial').onclick = openSpecialMenu;
+function openMainMenu() {
+  if (!S) { toast('先开始游戏'); return; }
+  const box = document.getElementById('popBox');
+  let html = '<h4>📋 菜单</h4>';
+  html += '<div style="display:flex;gap:4px;margin-bottom:12px">';
+  html += '<button data-mtab="upgrade" style="flex:1;padding:10px 4px;font-size:12px">升级</button>';
+  html += '<button data-mtab="rebirth" style="flex:1;padding:10px 4px;font-size:12px">转生</button>';
+  html += '<button data-mtab="craft" style="flex:1;padding:10px 4px;font-size:12px">合成</button>';
+  html += '<button data-mtab="special" style="flex:1;padding:10px 4px;font-size:12px">特殊</button>';
+  html += '</div>';
+  html += '<div id="menuContent" style="max-height:60vh;overflow-y:auto"></div>';
+  html += '<button class="red" id="menuClose" style="margin-top:10px">关 闭</button>';
+  box.innerHTML = html;
+  document.getElementById('pop').classList.add('on');
+
+  renderMenuTab('upgrade');
+
+  box.querySelectorAll('button[data-mtab]').forEach(b => {
+    b.onclick = () => renderMenuTab(b.dataset.mtab);
+  });
+  document.getElementById('menuClose').onclick = () => {
+    document.getElementById('pop').classList.remove('on');
+  };
+}
+
+function renderMenuTab(tab) {
+  const content = document.getElementById('menuContent');
+  if (!content) return;
+  let html = '';
+
+  if (tab === 'upgrade') {
+    html += '<div style="font-size:11px;color:#9988bb;margin-bottom:8px;text-align:center">选择商店</div>';
+    html += '<button class="gold" data-open="ps" style="width:100%;padding:12px;margin:5px 0">🌟 升华商店（升华 ' + fmt(S.pts) + '）</button>';
+    html += '<button data-open="soul" style="width:100%;padding:12px;margin:5px 0">✨ 本源商店（本源 ' + fmt(S.soul) + '）</button>';
+    html += '<button data-open="st" style="width:100%;padding:12px;margin:5px 0">⭐ 星尘商店（星尘 ' + fmt(S.st || 0) + '）</button>';
+    html += '<button data-open="corn" style="width:100%;padding:12px;margin:5px 0">🌽 玉米商店（玉米 ' + fmt(S.corn) + '）</button>';
+    html += '<button data-open="rs" style="width:100%;padding:12px;margin:5px 0">💠 轮回商店（轮回 ' + fmt(S.reinc || 0) + '）</button>';
+  } else if (tab === 'rebirth') {
+    html += '<div class="d">当前境界：<b style="color:#ffd97a">' + realmName(S.realm) + '</b><br>转生可得本源：<b style="color:#ffd97a">' + rebirthGain() + '</b></div>';
+    html += '<button class="gold" id="menuReb" style="width:100%;padding:12px;margin:5px 0">🔄 打开转生界面</button>';
+    html += '<button id="menuOC" style="width:100%;padding:12px;margin:5px 0">⚡ 超频爆发（×10）</button>';
+  } else if (tab === 'craft') {
+    html += '<button class="gold" id="menuSick" style="width:100%;padding:12px;margin:5px 0">🤢 恶心系统（鼻涕/疾病）</button>';
+    html += '<button id="menuGhost" style="width:100%;padding:12px;margin:5px 0">👻 诡异系统（诡纸/鬼魂）</button>';
+  } else if (tab === 'special') {
+    html += '<button class="gold" id="menuSell" style="width:100%;padding:12px;margin:5px 0">💰 卖东西（纸/玉米）</button>';
+    html += '<button id="menuSpe" style="width:100%;padding:12px;margin:5px 0">🎁 特殊操作（喂怪/造房）</button>';
+  }
+
+  content.innerHTML = html;
+
+  content.querySelectorAll('button[data-open]').forEach(b => {
+    b.onclick = () => openShopDirect(b.dataset.open);
+  });
+  const m1 = content.querySelector('#menuReb');
+  if (m1) m1.onclick = () => { document.getElementById('pop').classList.remove('on'); openRebirth(); };
+  const m2 = content.querySelector('#menuOC');
+  if (m2) m2.onclick = () => { document.getElementById('pop').classList.remove('on'); activateOC(); };
+  const m3 = content.querySelector('#menuSick');
+  if (m3) m3.onclick = openSick;
+  const m4 = content.querySelector('#menuGhost');
+  if (m4) m4.onclick = openSick;
+  const m5 = content.querySelector('#menuSell');
+  if (m5) m5.onclick = openSellMenu;
+  const m6 = content.querySelector('#menuSpe');
+  if (m6) m6.onclick = openSpecialMenu;
+}
+
+function openShopDirect(tab) {
+  const box = document.getElementById('popBox');
+  let html = '<h4>🏪 商店</h4>';
+  html += '<div style="display:flex;gap:4px;margin-bottom:10px;flex-wrap:wrap">';
+  html += '<button data-tab="ps" style="flex:1;min-width:56px;font-size:11px;padding:8px">升华</button>';
+  html += '<button data-tab="soul" style="flex:1;min-width:56px;font-size:11px;padding:8px">本源</button>';
+  html += '<button data-tab="st" style="flex:1;min-width:56px;font-size:11px;padding:8px">星尘</button>';
+  html += '<button data-tab="corn" style="flex:1;min-width:56px;font-size:11px;padding:8px">玉米</button>';
+  html += '<button data-tab="rs" style="flex:1;min-width:56px;font-size:11px;padding:8px">轮回</button>';
+  html += '</div>';
+  html += '<div id="shopContent" style="max-height:60vh;overflow-y:auto"></div>';
+  html += '<button class="red" id="shopClose" style="margin-top:8px">返 回</button>';
+  box.innerHTML = html;
+  document.getElementById('pop').classList.add('on');
+
+  renderShopTab(tab);
+
+  box.querySelectorAll('button[data-tab]').forEach(b => {
+    b.onclick = () => renderShopTab(b.dataset.tab);
+  });
+  document.getElementById('shopClose').onclick = () => {
+    openMainMenu();
+  };
 }
 
 
