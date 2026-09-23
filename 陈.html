@@ -485,7 +485,7 @@ const EVENTS_POOL = [
   { ic:'💀', t:'神秘商人', d:'斗篷商人',     a:['支付一半', s=>{ const g=Math.floor(s.gold*0.5); s.gold-=g; s.pts+=100; return '换100升华'}], b:['拒绝', s=>'消失'] },
   { ic:'🎲', t:'赌局',     d:'幽灵骰子',     a:['赌一半', s=>{ const g=Math.floor(s.gold*0.5); if(Math.random()<0.5){ s.gold+=g; return '翻倍'} else { s.gold-=g; return '输了'} }], b:['不赌', s=>'离开'] },
   { ic:'🌽', t:'玉米精灵', d:'玉米精灵出现', a:['接受', s=>{ s.corn=(s.corn||0)+50; return '+50 玉米'}], b:['拒绝', s=>'消失'] },
-  { ic:'⛲', t:'生命泉',   d:'清澈的泉水',   a:['喝', s=>{ s.hp=s.maxHp; s.pts+=200; return '回满+200升华'}], b:['不喝', s=>'离开'] }
+  { ic:'⛲', t:'生命泉',   d:'清澈的泉水',   a:['喝', s=>{ s.player.hp=s.player.maxHp; s.pts+=200; return '回满+200升华'}], b:['不喝', s=>'离开'] }
 ];
 
 const ENCHANTS = {
@@ -1338,7 +1338,7 @@ function render() {
   } else if (S.weather === 'sand') {
     ctx.fillStyle = 'rgba(180,140,60,.35)';
     ctx.fillRect(0, 0, cv.width, cv.height);
-  } else if (light < 0.4 && !S.buffs.bloodmoonUntil) {
+  } else if (light < 0.4 && S.buffs.bloodmoonUntil < Date.now()) {
     const alpha = (0.4 - light) * 0.6;
     ctx.fillStyle = `rgba(0,0,20,${alpha})`;
     ctx.fillRect(0, 0, cv.width, cv.height);
@@ -6182,6 +6182,14 @@ function calcPaperQi() {
   return Math.floor(total / 10);
 }
 function consumePaper(count) {
+  // 先确认总数足够，不足则不做任何扣除（避免扣了纸却拿不到效果）
+  let total = 0;
+  for (const k in S.paper) {
+    const n = S.paper[k];
+    if (n > 0) total += n;
+  }
+  if (total < count) return total;
+
   let remaining = count;
   const keys = Object.keys(S.paper).map(k => parseInt(k)).sort((a, b) => a - b);
   for (const k of keys) {
