@@ -17,7 +17,7 @@ body{
 h1{font-size:26px;letter-spacing:3px;color:#ffd97a;text-align:center;text-shadow:0 0 24px #ffd97a55}
 .sub{color:#8b7fa8;font-size:13px;margin:10px 0 34px;text-align:center;line-height:1.7}
 .sub b{color:#c9a0ff}
-.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(255px,1fr));gap:16px;width:100%;max-width:860px}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(255px,1fr));gap:16px;width:100%;max-width:880px}
 .card{
   background:linear-gradient(180deg,rgba(255,255,255,.07),rgba(255,255,255,.02));
   border:1px solid rgba(255,217,122,.22);
@@ -32,6 +32,7 @@ h1{font-size:26px;letter-spacing:3px;color:#ffd97a;text-align:center;text-shadow
 .tags{display:flex;flex-wrap:wrap;gap:5px;margin-bottom:14px}
 .tag{font-size:10.5px;padding:2px 8px;border-radius:20px;background:rgba(201,160,255,.14);color:#c9a0ff;border:1px solid rgba(201,160,255,.3)}
 .tag.hot{background:rgba(255,120,120,.14);color:#ff9c9c;border-color:rgba(255,120,120,.3)}
+.tag.new{background:rgba(120,255,160,.14);color:#8ce8a8;border-color:rgba(120,255,160,.3)}
 a.play{
   display:block;text-align:center;text-decoration:none;
   padding:12px;border-radius:10px;font-weight:800;font-size:14px;letter-spacing:2px;
@@ -54,10 +55,10 @@ footer a{color:#9b8fc0;text-decoration:none;border-bottom:1px dotted #9b8fc0}
   <div class="card">
     <div class="emoji">🌍</div>
     <div class="name">世界</div>
-    <div class="meta">方块世界 · 沙盒 + 修仙 + 纸巾经济</div>
-    <div class="desc">挖矿、种纸田、打怪、渡劫。39 级境界从凡人到大罗，6 个 Boss、31 种方块、4 种群系，含昼夜与血月。</div>
+    <div class="meta">方块世界 · 沙盒 + 修仙 + 自动化</div>
+    <div class="desc">挖矿、种纸田、打怪、渡劫、造电网。136 种方块、6 个 Boss、39 级境界，含合成、附魔、宠物、地牢、传送门与电力管道系统。</div>
     <div class="tags">
-      <span class="tag hot">沙盒</span><span class="tag">修仙</span><span class="tag">战斗</span><span class="tag">已修复</span>
+      <span class="tag hot">沙盒</span><span class="tag">修仙</span><span class="tag">自动化</span><span class="tag new">最新 v9</span>
     </div>
     <a class="play gold" href="chen.html">▶ 开 始 游 玩</a>
   </div>
@@ -65,23 +66,34 @@ footer a{color:#9b8fc0;text-decoration:none;border-bottom:1px dotted #9b8fc0}
   <div class="card">
     <div class="emoji">🧻</div>
     <div class="name">抽纸巾 · 完整版</div>
-    <div class="meta">Туалетная бумага · 俄语界面</div>
-    <div class="desc">功能最全的一版。20 档稀有度，含天赋树、遗物、任务、轮回、星尘商店、超频、病毒/症状、专精、玉米系统与多层转生。</div>
+    <div class="meta">简体中文 · 俄版汉化</div>
+    <div class="desc">功能最全的一版，中文界面。20 档稀有度，含天赋树、遗物、任务、轮回、星尘商店、超频、病毒/症状、专精、玉米系统与多层转生。</div>
     <div class="tags">
-      <span class="tag hot">功能最全</span><span class="tag">放置</span><span class="tag">俄语界面</span>
+      <span class="tag hot">功能最全</span><span class="tag">放置</span><span class="tag">中文界面</span><span class="tag new">新增</span>
     </div>
-    <a class="play" href="paper-ru.html">▶ 开 始 游 玩</a>
+    <a class="play" href="paper-zh-full.html">▶ 开 始 游 玩</a>
   </div>
 
   <div class="card">
     <div class="emoji">📄</div>
     <div class="name">抽纸巾 · 简中版</div>
     <div class="meta">中文界面 · V9</div>
-    <div class="desc">中文界面的放置版。21 档纸巾图鉴，金币/材料/升华三类商店，自动抽取与自动升级，离线收益与转生。</div>
+    <div class="desc">中文界面的轻量放置版。21 档纸巾图鉴，金币/材料/升华三类商店，自动抽取与自动升级，离线收益与转生。</div>
     <div class="tags">
       <span class="tag">放置</span><span class="tag">中文界面</span><span class="tag">轻量</span>
     </div>
     <a class="play" href="paper-zh.html">▶ 开 始 游 玩</a>
+  </div>
+
+  <div class="card">
+    <div class="emoji">🧻</div>
+    <div class="name">抽纸巾 · 俄语原版</div>
+    <div class="meta">Туалетная бумага · 俄语界面</div>
+    <div class="desc">完整版的俄语原文。内容与「完整版」一致，保留原始俄语界面，供对照或原版体验。</div>
+    <div class="tags">
+      <span class="tag">放置</span><span class="tag">俄语界面</span><span class="tag">原文</span>
+    </div>
+    <a class="play" href="paper-ru.html">▶ 开 始 游 玩</a>
   </div>
 
 </div>

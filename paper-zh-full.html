@@ -1,0 +1,547 @@
+<!DOCTYPE html><html lang="zh-CN"><head><meta charset=UTF-8><meta name=viewport content="width=device-width,initial-scale=1,user-scalable=no"><title>抽纸巾 · 完整版</title><style>
+*{box-sizing:border-box;font-family:system-ui,-apple-system,sans-serif;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+body{background:#0a0a15;color:#e8e0d0;padding:8px;font-size:15px;min-height:100vh;background-image:radial-gradient(ellipse at 50% -20%,#2a1a4a 0%,#0a0a15 60%);background-attachment:fixed}
+.c{background:linear-gradient(180deg,rgba(40,30,70,.85),rgba(25,18,45,.85));border:1px solid #443366;border-radius:12px;padding:11px;margin-bottom:9px;box-shadow:0 4px 12px #0005}
+.c.gold{border-color:#ffd700;box-shadow:0 4px 20px #ffd70033}
+.c.rare{border-color:#ff88ff;background:linear-gradient(180deg,rgba(70,30,80,.9),rgba(40,15,50,.9))}
+h3{font-size:15px;color:#ffd97a;margin-bottom:7px;font-weight:700;letter-spacing:1px;text-shadow:0 0 8px #ffd97a44}
+button{background:linear-gradient(180deg,#6a4bc4,#4a2b84);border:1px solid #8866cc;border-radius:8px;padding:9px 11px;margin:3px;font-weight:600;font-size:14px;color:#fff;min-height:42px;cursor:pointer;font-family:inherit;transition:all .15s}
+button:active{transform:scale(.96)}
+button:disabled{background:#222;color:#555;border-color:#333}
+.gold{background:linear-gradient(180deg,#d4a017,#8a6010);border-color:#ffd97a;color:#2a1a00}
+.purple{background:linear-gradient(180deg,#a855f7,#6a2b9a);border-color:#c9a0ff}
+.green{background:linear-gradient(180deg,#38a169,#1a5a35);border-color:#68d391}
+.red{background:linear-gradient(180deg,#c53030,#7a1a1a);border-color:#ff6666}
+.tiny{font-size:12px;padding:6px 8px;min-height:34px}
+.s{display:flex;flex-wrap:wrap;gap:5px;font-size:13px}
+.s>div{background:rgba(50,40,80,.6);padding:5px 9px;border-radius:6px;border:1px solid #553388}
+.s b{color:#ffd97a;margin-left:2px}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:6px}
+.g3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:5px}
+.card{background:rgba(40,30,70,.7);border:1px solid #553388;border-radius:8px;padding:8px;font-size:13px}
+.card.star{border-color:#ffd700;background:rgba(70,55,20,.5)}
+.card.legend{border-color:#ff88ff;background:linear-gradient(180deg,rgba(60,30,80,.8),rgba(40,20,60,.8))}
+.card .n{font-weight:700;color:#c9a0ff;font-size:13px;margin-bottom:2px}
+.card.star .n{color:#ffd700}
+.card.legend .n{color:#ff88ff}
+.card .e{color:#90ee90;margin:2px 0;font-size:12px}
+.card .co{color:#ffd97a;font-weight:600;margin:3px 0;font-size:12px}
+.tip{font-size:11px;color:#9988bb;line-height:1.4}
+.chip{display:inline-block;padding:3px 8px;border-radius:5px;background:rgba(50,40,80,.6);margin:2px;font-size:12px;font-weight:600;border:1px solid #553388}
+.chip.r{border-color:#ffd700;background:rgba(70,55,20,.5)}
+#log{background:#0a0a15;color:#a89bc9;padding:7px;border-radius:6px;max-height:110px;overflow-y:auto;font-size:12px;line-height:1.5;border:1px solid #332255;font-family:ui-monospace,monospace}
+#fly{position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:99}
+.ft{position:absolute;font-weight:800;font-size:17px;text-shadow:0 0 10px currentColor;animation:fl 1.4s forwards;white-space:nowrap}
+@keyframes fl{to{opacity:0;transform:translateY(-80px)}}
+#pop{position:fixed;top:0;left:0;width:100%;height:100%;background:#000a;z-index:200;display:none;align-items:center;justify-content:center;padding:14px}
+#pop.on{display:flex}
+#popBox{background:linear-gradient(180deg,#2a1a4a,#1a1030);border:2px solid #ffd97a;border-radius:16px;max-width:420px;width:100%;padding:18px;box-shadow:0 0 60px #ffd97a55;text-align:center;animation:popIn .3s}
+@keyframes popIn{0%{transform:scale(.9);opacity:0}100%{transform:scale(1);opacity:1}}
+#popBox h4{color:#ffd97a;font-size:19px;margin-bottom:8px}
+#popBox .d{color:#c9a0ff;font-size:13px;line-height:1.7;margin-bottom:12px;text-align:left}
+#popBox button{width:100%;padding:11px;margin:4px 0;font-size:14px}
+.bar{height:6px;background:#111;border-radius:3px;overflow:hidden;margin-top:4px;border:1px solid #332255}
+.bar>div{height:100%;background:linear-gradient(90deg,#6a4bc4,#c9a0ff,#ffd97a);transition:width .3s}
+#stars{position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:0;overflow:hidden}
+#stars .st{position:absolute;width:2px;height:2px;background:#fff;border-radius:50%;animation:tw 4s infinite}
+@keyframes tw{0%,100%{opacity:.15}50%{opacity:.7}}
+.wrap{position:relative;z-index:1}
+.combo{background:linear-gradient(90deg,#ff9a3c,#ff5555);color:#fff;padding:3px 10px;border-radius:10px;font-weight:700;font-size:13px}
+.tb{display:inline-block;padding:2px 8px;border-radius:8px;background:linear-gradient(90deg,#ffd700,#ff9a3c);color:#3a2000;font-weight:800;font-size:12px;margin:1px}
+</style></head><body>
+<div id=stars></div>
+<div id=fly></div>
+<div id=pop><div id=popBox></div></div>
+<div class=wrap>
+
+<div class=c><div class=s id=top></div><div class=bar><div id=wbar style="width:0%"></div></div></div>
+
+<div class=c><h3>⚡ 操作</h3>
+<button id=bd class=gold style="font-size:16px;padding:12px 20px">👉 抽纸</button>
+<button id=ba>自动</button><button id=bb>自动升级</button><button id=bo>离线</button>
+<button id=bse>全部卖出</button><button id=bde>全部分解</button>
+<button id=boc style="background:linear-gradient(180deg,#ff9a3c,#cc5500);color:#2a1a00">⚡ 超频</button>
+<div class=tip style="margin-top:5px">事件：<span id=et>--</span> · 连击 <span class=combo id=cb>×1</span></div></div>
+
+<div class=c><h3>📦 仓库</h3><div id=box class=tip>空空如也</div></div>
+
+<div class=c><h3>💰 金币商店</h3><div class=grid id=sg></div></div>
+<div class=c><h3>🔧 材料建筑</h3><div class=grid id=sm></div></div>
+<div class=c><h3>🔮 升华商店</h3><div class=grid id=sp></div></div>
+<div class=c><h3>⭐ 星尘商店</h3><div class=grid id=st></div></div>
+
+<div class=c><h3>🌳 天赋树</h3><div class=s id=talInfo></div><div class=grid id=talShop></div></div>
+
+<div class=c><h3>💎 遗物</h3><div class=s id=relicInfo></div><div class=g3 id=relicList></div></div>
+
+<div class=c><h3>🎲 赌博</h3>
+<div class=grid>
+<button class=purple id=bet1>下注 10% · x3</button>
+<button class=purple id=bet2>下注 50% · x5</button>
+</div>
+<div class=tip style="margin-top:5px">概率：50% / 30%</div></div>
+
+<div class=c><h3>📋 任务</h3><div class=grid id=questList></div></div>
+
+<div class=c><h3>🔄 轮回</h3><div class=s id=pr></div>
+<div class=g3><button class=gold id=rtT>⚙️科技</button><button class=gold id=rtW>🔮女巫</button><button class=gold id=rtM>💰贸易</button></div>
+<button id=bp class=purple>执行轮回</button></div>
+
+<div class=c><h3>🤢 恶心系统</h3><div class=s id=si></div>
+<div class=grid><button id=bS class=tiny>鼻涕</button><button id=bSa class=tiny>🔥全部鼻涕</button>
+<button id=bK class=tiny>疾病+</button><button id=bE class=tiny>埃博拉</button>
+<button id=bC class=tiny>新冠</button><button id=bZ class=tiny>Z病毒</button></div></div>
+<div class=c><h3>🩺 症状</h3><div class=grid id=sh></div></div>
+
+<div class=c><h3>👻 诡异系统</h3><div class=s id=gi></div>
+<div class=grid><button id=bG class=tiny>诡纸</button><button id=bGa class=tiny>🔥全部诡纸</button>
+<button id=bY class=tiny>幺幺</button><button id=bP class=tiny>纸人</button>
+<button id=bW class=tiny>无常</button><button id=bU class=tiny>鬼帝</button>
+<button id=bL class=tiny>罗睺</button><button id=bGh class=tiny>👻全部灵体</button></div></div>
+<div class=c><h3>💀 专精</h3><div class=grid id=sh2></div></div>
+
+<div class=c><h3>💠 轮回商店</h3><div class=grid id=rh></div><button id=upRC class=purple>轮回强化</button></div>
+
+<div class=c><h3>🌽 玉米</h3><div class=s id=ci></div>
+<div class=g3><button class=tiny id=bh>剥皮</button><button class=tiny id=bha>全部剥皮</button><button class=tiny id=bca>自动:关</button></div>
+<div id=cs style="margin-top:5px"></div></div>
+<div class=c><h3>🌽 玉米升级</h3><div class=grid id=ch></div></div>
+
+<div class=c><h3>🏆 成就 <span id=titleBadge></span></h3><div id=ac class=tip></div></div>
+<div class=c><h3>📖 图鉴</h3><div id=cx></div></div>
+<div class=c><h3>📜 日志</h3><div id=log></div></div>
+<div class=c><button id=bs>💾 存档</button><button id=bl>📂 读档</button><button id=br>🗑 重置</button></div>
+</div>
+<script>
+var P=[["沙纸",.15,10],["草纸",.13,25],["纸",.12,50],["木纸",.11,100],["石纸",.10,250],["铜纸",.09,600],["铁纸",.08,1500],["银纸",.06,4000],["金纸",.05,10000],["宝石纸",.04,25000],["水晶纸",.03,70000],["秘银纸",.025,200000],["星尘纸",.02,600000],["龙鳞纸",.015,2000000],["时空纸",.012,6000000],["幻影纸",.01,20000000],["神木纸",.008,70000000],["天雷纸",.005,250000000],["混沌纸",.003,1000000000],["永恒纸",.0005,30000000000]];
+var N=P.length;
+for(var i=0;i<N;i++)P[i][3]=Math.max(1,Math.floor(P[i][2]/5));
+var CAP=1e30;
+
+var U={click:["👆 点击",10,1.15],auto:["🤖 自动",100,1.15],luck:["🍀 幸运",500,1.2],sell:["💰 售价",300,1.18]};
+var M={factory:["🏭 工厂",30,1.15],workshop:["⚙️ 工坊",100,1.18],storage:["📦 仓库",80,1.15]};
+var PS={global:["🌟 全局",500,l=>1+(l*.3|0),l=>"+"+l*10+"%"],startGold:["💰 起始金币",50,l=>1+(l*.8|0),l=>"+"+f(l*100)],startMat:["🔧 起始材料",50,l=>1+(l*.8|0),l=>"+"+f(l*50)],keepClick:["👆 点击传承",5,l=>3+l*2,l=>"保留 "+l*10+"%"],keepLuck:["🍀 幸运传承",5,l=>3+l*2,l=>"保留 "+l*10+"%"],offline:["📦 离线",5,l=>2+l*2,l=>"离线 "+(50+l*10)+"%"],storage:["🏗 仓库",20,l=>1+(l*.8|0),l=>"+"+f(l*1000000)],crit:["⚡ 暴击",20,l=>2+l,l=>"暴击 "+l*2+"%"],autoSpeed:["⏩ 自动速度",10,l=>2+l*2,l=>"×"+(1+l*.5).toFixed(1)],ocDur:["⏱ 超频时长",15,l=>3+l*2,l=>"+"+l*2+"秒"],ocCd:["❄ 冷却",9,l=>4+l*3,l=>"-"+l*10+"秒"],ocMul:["🔥 超频倍率",10,l=>5+l*5,l=>"+"+l*5+"x"]};
+
+var SS={permGlobal:["🌟 永恒全局",100,l=>1+l,l=>"全局+"+l*20+"%"],permStar:["✨ 星尘倍率",20,l=>5+l*5,l=>"星尘+"+l*20+"%"],permOffline:["📦 离线上限",10,l=>3+l*3,l=>"离线+"+l*30+"分"],permLuck:["🍀 永恒幸运",20,l=>4+l*4,l=>"幸运+"+l*5+"%"],permCrit:["⚡ 永恒暴击",20,l=>6+l*6,l=>"暴击+"+l*2+"%"]};
+
+var CU={field:["🌱 田地",20,2,1.35,l=>"+"+(.2+l*.1).toFixed(1)+"/秒·全局+"+l*10+"%"],store:["📦 粮仓",20,1,1.35,l=>"容量 "+(100000+l*10000)],luck:["🍀 幸运",20,3,1.35,l=>"幸运+"+l*5+"%"],auto:["🤖 自动",10,5,1.5,l=>"自动 "+l+"/秒"]};
+
+var RS={soulGem:["💎 灵魂",20,l=>5+l*4,l=>"全部+"+l*15+"%"],timeWheel:["⏳ 时间",20,l=>5+l*4,l=>"离线+"+l*15+"%"],fateDice:["🎲 命运",20,l=>8+l*5,l=>"事件+"+l*15+"%"],eternalFire:["🔥 永恒之火",20,l=>10+l*6,l=>"超频+"+l*3+"秒"],voidEye:["👁 虚空之眼",20,l=>8+l*5,l=>"暴击+"+l*3+"%"],soulContract:["📜 契约",20,l=>10+l*8,l=>"升华+"+l*15+"%"]};
+
+var TAL={click:{n:"👆 点击+",max:10,cost:l=>1+l,eff:l=>"点击+"+(l*20)+"%"},crit:{n:"💥 暴击+",max:10,cost:l=>2+l,eff:l=>"暴击+"+(l*3)+"%"},combo:{n:"⚡ 连击+",max:5,cost:l=>3+l*2,eff:l=>"连击+"+(l*20)+"%"},auto:{n:"🤖 自动+",max:10,cost:l=>1+l,eff:l=>"自动+"+(l*20)+"%"},factory:{n:"🏭 工厂+",max:10,cost:l=>1+l,eff:l=>"工厂+"+(l*20)+"%"},offline:{n:"📦 离线+",max:5,cost:l=>2+l*2,eff:l=>"离线+"+(l*20)+"%"},global:{n:"🌟 全局+",max:20,cost:l=>2+l,eff:l=>"全局+"+(l*15)+"%"},luck:{n:"🍀 幸运+",max:10,cost:l=>2+l,eff:l=>"幸运+"+(l*5)+"%"},drop:{n:"💎 掉落+",max:10,cost:l=>3+l*2,eff:l=>"掉落+"+(l*0.5).toFixed(1)+"%"}};
+
+var RELICS=[{k:"qi",n:"☯️ 太极",e:v=>"点击+"+(v*30)+"%"},{k:"gold",n:"💰 聚宝盆",e:v=>"金币+"+(v*30)+"%"},{k:"mat",n:"🔧 坩埚",e:v=>"材料+"+(v*30)+"%"},{k:"crit",n:"⚡ 剑",e:v=>"暴击+"+(v*5)+"%"},{k:"luck",n:"🍀 四叶草",e:v=>"幸运+"+(v*10)+"%"},{k:"drop",n:"💎 陨石",e:v=>"掉落+"+(v*2)+"%"},{k:"global",n:"🌟 珍珠",e:v=>"全局+"+(v*20)+"%"},{k:"auto",n:"🤖 机械手",e:v=>"自动+"+(v*20)+"%"},{k:"combo",n:"⚡ 连击印记",e:v=>"连击+"+(v*30)+"%"},{k:"off",n:"📦 时间之袋",e:v=>"离线+"+(v*15)+"分"}];
+
+var QUESTS=[
+{n:"初次点击",t:100,type:"tp",rw:{pts:1}},
+{n:"积蓄",t:1e4,type:"tg",rw:{pts:2}},
+{n:"首个百万",t:1e6,type:"tg",rw:{pts:5,st:2}},
+{n:"材料",t:1e4,type:"tm",rw:{pts:3}},
+{n:"轮回",t:1,type:"pre",rw:{st:5}},
+{n:"老练之魂",t:5,type:"pre",rw:{st:20,pts:20}},
+{n:"超频大师",t:20,type:"ocU",rw:{pts:10,st:10}},
+{n:"探索者",t:50,type:"ec",rw:{st:20}},
+{n:"命运之子",t:10,type:"rareDrops",rw:{st:50,pts:50}},
+{n:"收藏家",t:20,type:"codex",rw:{pts:100,st:200}}
+];
+
+var SN=["健康","着凉","感冒","流感","鼻塞","发烧","肺结核","肺炎","肺癌"];
+var SC=[0,5,10,20,50,100,200,500,1000];
+var VD={ebola:["埃博拉",100],covid:["新冠",500],t:["T病毒",2000],z:["Z病毒",10000]};
+var TITLES=["凡人","新手","学徒","大师","专家","名家","传奇","不朽","圣者","天人"];
+var SYM=[["s0","🤧 着凉",1,l=>"幸运+"+l*2+"%",l=>8+l*4,l=>({lk:l*2})],["s1","🤒 感冒",2,l=>"售价+"+l*4+"%",l=>16+l*8,l=>({sl:l*.04})],["s2","🤮 流感",3,l=>"全局+"+l*8+"%",l=>40+l*16,l=>({g:l*.08})],["s3","👃 鼻塞",4,l=>"暴击+"+l*2+"%",l=>80+l*32,l=>({ct:l*.02})],["s4","🔥 发烧",5,l=>"自动+"+l*8+"%",l=>160+l*64,l=>({au:l*.08})],["s5","🫁 肺结核",6,l=>"工厂+"+l*8+"%",l=>400+l*160,l=>({fa:l*.08})],["s6","💀 肺炎",7,l=>"材料+"+l*15+"%",l=>800+l*320,l=>({mt:l*.15})],["s7","🦠 肺癌",8,l=>"稀有+"+l*5+"%",l=>1600+l*640,l=>({rr:l*.05})]];
+var SOUL=[["yao","幺幺",l=>15+l*10,l=>"全局+"+l*10+"%",l=>({g:l*.1})],["paper","纸人",l=>30+l*20,l=>"轮回+"+l*20+"%",l=>({rc:l*.2})],["wuchang","无常",l=>60+l*40,l=>"事件+"+l*20+"%",l=>({ev:l*.2})],["gui","鬼帝",l=>120+l*80,l=>"超频+"+l*20+"%",l=>({oc:l*.2})],["luohou","罗睺",l=>300+l*200,l=>"升华+"+l*30+"%",l=>({pt:l*.3})]];
+
+var AC=[["d1","100 张纸",s=>s.tp>=100],["d2","1万 张纸",s=>s.tp>=10000],["g1","1000 金币",s=>s.tg>=1000],["g2","100万 金币",s=>s.tg>=1e6],["m1","500 材料",s=>s.tm>=500],["f5","工厂 5 级",s=>s.lv.factory>=5],["l20","幸运 20 级",s=>s.lv.luck>=20],["p1","1 次轮回",s=>s.pre>=1],["p5","5 次轮回",s=>s.pre>=5],["c10","10 项图鉴",s=>s.cx.filter(x=>x>0).length>=10],["c20","集齐图鉴",s=>s.cx.filter(x=>x>0).length>=N],["k8","疾病满级",s=>s.sick>=8],["gp","诡纸",s=>s.gPaper>0],["y1","幺幺",s=>s.gh.yao>0],["u1","鬼帝",s=>s.gh.gui>0],["o10","10 次超频",s=>s.ocU>=10],["e10","10 次事件",s=>s.ec>=10],["e50","50 次事件",s=>s.ec>=50],["s5","5 种症状",s=>Object.keys(s.sm).filter(k=>s.sm[k]>0).length>=5],["s20","专精 20 级",s=>Object.keys(s.so).some(k=>s.so[k]>=20)],["r5","5 次轮回",s=>Object.keys(s.rs).filter(k=>s.rs[k]>0).length>=5],["rl","10 件遗物",s=>Object.keys(s.relics).length>=10]];
+var AB_={d1:"点击+10%",d2:"自动+10%",g1:"售价+10%",g2:"金币+15%",m1:"材料+10%",f5:"工厂+10%",l20:"幸运+5%",p1:"+1 天赋",p5:"+2 天赋",c10:"稀有+5%",c20:"稀有+10%",k8:"疾病+20%",gp:"诡异+20%",y1:"轮回+10%",u1:"轮回+20%",o10:"超频+5秒",e10:"事件+10%",e50:"事件+20%",s5:"症状+10%",s20:"专精+30%",r5:"轮回+20%",rl:"全局+5%"};
+
+var EV=[["📦 箱子","仓库角落的诡异箱子",["打开",s=>{var n=50+(Math.random()*450|0),k=Math.random()*N|0;s.paper[k]+=n;s.cx[k]=Math.max(s.cx[k],1);s.tp+=n;L("🎁+"+n+" "+P[k][0])}],["跳过",s=>L("消失了")]],["🌑 血月","天空变红了",["全局×3 持续30秒",s=>{setB(3,0,1,30);L("🌑×3")}],["保持平静",s=>L("平静")]],["⏱ 时间扭曲","时间在震颤",["速度×5 持续30秒",s=>{setB(1,0,5,30);L("⏱×5")}],["无视",s=>L("已恢复")]],["☣️ 瘟疫","病态雾气",["-10% 仓库 +15 鼻涕",s=>{var c=pt()*.1|0;if(c>0)for(var i=0;i<N&&c>0;i++){var d=Math.min(S.paper[i],c);S.paper[i]-=d;c-=d}S.snot+=15;L("☣️+15 鼻涕")}],["躲开",s=>L("已消散")]],["🚪 灵界之门","通往冥界的门",["100 鼻涕→30 诡纸",s=>{if(S.snot>=100){S.snot-=100;S.gPaper+=30;L("🚪+30 诡纸")}else L("鼻涕不足")}],["关闭",s=>L("已关闭")]],["💀 商人","披风商人",["50% 金币→100 升华点",s=>{var c=S.gold*.5|0;if(c>0){S.gold-=c;S.pts+=100;L("💀+100 升华点")}else L("没有金币")}],["拒绝",s=>L("已消失")]],["🎲 骰子","幽灵骰子",["下注 50% · x2",s=>{var c=S.gold*.5|0;if(c<=0){L("没有金币");return}S.gold-=c;if(Math.random()<.5){S.gold+=c*2;S.rg+=c;L("🎲+"+f(c*2))}else L("🎲-"+f(c))}],["不赌",s=>L("已消失")]],["🍀 幸运","温暖的光",["幸运+100 持续30秒",s=>{setB(1,100,1,30);L("🍀+100")}],["不要",s=>L("已消散")]],["🎰 老虎机","发光的机器",["下注 50% 金币",s=>{var c=S.gold*.5|0;if(c<=0){L("没有金币");return}S.gold-=c;var r=Math.random();if(r<.1){S.pts+=50;L("🎰+50 升华点")}else if(r<.3){S.snot+=100;L("🎰+100 鼻涕")}else if(r<.5){S.gPaper+=50;L("🎰+50 诡纸")}else if(r<.7){S.reinc+=100;L("🎰+100 轮回点")}else L("🎰 未中奖")}],["躲开",s=>L("熄灭")]],["⛲ 生命泉","清澈的泉水",["疾病重置 +200 升华点",s=>{S.sick=0;S.pts+=200;L("⛲+200")}],["不喝",s=>L("离开")]]];
+
+function f(n){if(n===null||n===undefined||isNaN(n))return"0";if(!isFinite(n))return"∞";if(n<0)return"0";if(n<1000)return Math.floor(n);var u=["","k","M","B","T","Qa","Qi","Sx","Sp","Oc","No","Dc","Ud","Dd","Td","Qad","Qid","Sxd","Spd","Ocd","Nod","Vg"];var i=0,t=n;while(t>=1000&&i<u.length-1){t/=1000;i++}if(t>=1000)return n.toExponential(2);return t.toFixed(1)+u[i]}
+function NS(){return{
+gold:0,mat:0,paper:new Array(N).fill(0),lv:{click:0,auto:0,luck:0,sell:0,factory:0,workshop:0,storage:0},aOn:0,aBuy:0,tp:0,tg:0,tm:0,rg:0,pre:0,pts:0,plv:{},cx:new Array(N).fill(0),ach:{},achCnt:0,ap:0,am:0,lt:Date.now(),
+snot:0,sick:0,virus:{ebola:0,covid:0,t:0,z:0},gPaper:0,gh:{yao:0,paper:0,wuchang:0,gui:0,luohou:0},reinc:0,rl:0,boost:{m:1,lk:0,sp:1,u:0},ocU:0,ocCd:0,ocU2:0,ec:0,nE:Date.now()+60000,cur:null,
+sm:{},so:{},rs:{},cn:{lv:{},c:0,fc:0,aa:0,sd:new Array(N).fill(0),fr:new Array(N).fill(0),t:0},
+st:0,rt:null,stLv:{},tal:{},talPts:0,relics:{},combo:0,comboT:0,drops:0,rareDrops:0,
+questsDone:{},milestones:{},betCount:0}}
+var S=NS();
+function initD(){for(var k in PS)S.plv[k]=0;for(var k in RS)S.rs[k]=0;for(var i=0;i<8;i++)S.sm["s"+i]=0;for(var i=0;i<5;i++)S.so[SOUL[i][0]]=0;for(var k in CU)S.cn.lv[k]=0;for(var k in SS)S.stLv[k]=0;for(var k in TAL)S.tal[k]=0}
+initD();
+
+var _C={sb:null,gm:null,pt:-1,rate:null,rateKey:''};
+function invC(){_C.sb=null;_C.gm=null;_C.pt=-1}
+
+function AB(){return S.boost.u>Date.now()?S.boost:{m:1,lk:0,sp:1,u:0}}
+function setB(m,lk,sp,sec){S.boost={m:m,lk:lk,sp:sp,u:Date.now()+sec*1000}}
+function ocD(){return 15+(S.plv.ocDur||0)*2+(S.rs.eternalFire||0)*3}
+function ocC(){return Math.max(30,120-(S.plv.ocCd||0)*10)}
+function ocM(){return 10+(S.plv.ocMul||0)*5+(S.rs.eternalFire||0)}
+function comboMul(){return 1+S.combo*0.1*(1+(S.tal.combo||0)*0.2)}
+
+function relicBonus(){var o={qi:0,gold:0,mat:0,crit:0,luck:0,drop:0,global:0,auto:0,combo:0,off:0};
+for(var k in S.relics){var lv=S.relics[k]||0;if(lv>0)o[k]=(o[k]||0)+lv}
+return o}
+
+function SB(){if(_C.sb)return _C.sb;
+var o={lk:0,sl:0,g:0,ct:0,au:0,fa:0,mt:0,rr:0,rc:0,ev:0,pt:0,of:0,all:0,ds:0};
+SYM.forEach(function(x){var l=S.sm[x[0]]||0;if(l){var a=x[5](l);for(var k in a)o[k]=(o[k]||0)+a[k]}});
+SOUL.forEach(function(x){var l=S.so[x[0]]||0;if(l){var a=x[4](l);for(var k in a)o[k]=(o[k]||0)+a[k]}});
+for(var k in RS){var l=S.rs[k]||0;if(l){
+if(k==="soulGem")o.all+=l*.15;else if(k==="timeWheel")o.of+=l*.15;
+else if(k==="fateDice")o.ev+=l*.15;else if(k==="eternalFire")o.ocd=(o.ocd||0)+l*3;
+else if(k==="voidEye")o.ct+=l*.03;else if(k==="soulContract")o.pt+=l*.15}}
+if(S.ach.d1)o.click=0.1;if(S.ach.d2)o.au=0.1;if(S.ach.g1)o.sl=0.1;
+if(S.ach.k8)o.ds=0.2;if(S.ach.e50)o.ev=0.2;else if(S.ach.e10)o.ev=0.1;
+var rb=relicBonus();
+o.crit+=rb.crit*.05;o.lk+=rb.luck*.10;o.ev+=rb.drop*.02;
+_C.sb=o;return o}
+
+function stBonus(){var o={g:0,st:0,off:0,lk:0,ct:0};for(var k in SS){var l=S.stLv[k]||0;if(l){
+if(k==="permGlobal")o.g+=l*.2;else if(k==="permStar")o.st+=l*.2;
+else if(k==="permOffline")o.off+=l*30;else if(k==="permLuck")o.lk+=l*5;
+else if(k==="permCrit")o.ct+=l*.02}}return o}
+
+function talBonus(){var t={};for(var k in TAL){var l=S.tal[k]||0;if(l)t[k]=l}return t}
+function rtB(){if(S.rt==="tech")return{auto:2,sc:.8};if(S.rt==="witch")return{gp:1.5,ev:1.5};if(S.rt==="trade")return{gold:1.5,sell:1.3,mat:1.3};return{}}
+
+function GM(){if(_C.gm)return _C.gm;
+var b=SB(),up=S.plv.global||0;
+var ds=1+S.sick*.08;
+var ya=1+(S.gh.yao/50|0)*.01;
+var rc=1+S.rl*3;
+var ac=1+S.achCnt*.05;
+var bs=AB(),oc=S.ocU2>Date.now()?ocM():1;
+var cn=1+(S.cn.lv.field||0)*.1;
+var sb=stBonus();
+var tb=talBonus();
+var tG=1+(tb.global||0)*0.15;
+var cxc=0;for(var ci=0;ci<N;ci++)if(S.cx[ci]>0)cxc++;
+var cxB=1+cxc*.03;
+var rb=relicBonus();
+var rB=1+rb.global*.20;
+var r=(1+up*.1)*ds*ya*rc*ac*bs.m*oc*cn*(1+sb.g)*cxB*comboMul()*tG*rB;
+_C.gm=isFinite(r)?Math.min(r,CAP):CAP;
+return _C.gm}
+
+function VB(){return{v:1+S.virus.ebola*.1,r:1+S.virus.covid*.1,y:S.virus.t*.01,rc:1+S.virus.z*.3}}
+function RR(){var b=SB();var base=S.gh.yao*.2+S.gh.paper*2+S.gh.wuchang*20+S.gh.gui*200+S.gh.luohou*2000;return base*VB().rc*(1+(b.rc||0))*(1+S.pre*.2)}
+function lk(){var b=SB(),sb=stBonus(),tb=talBonus();return Math.min(200,S.lv.luck*2+AB().lk+(b.lk||0)+sb.lk+(tb.luck||0)*5)}
+function sMu(){var b=SB(),rb=rtB();return(1+S.lv.sell*.2+(b.sl||0))*(rb.sell||1)*GM()}
+function cp(){var tb=talBonus(),rb=relicBonus();return(1+S.lv.click)*(1+(tb.click||0)*0.2)*GM()}
+function aps(){var b=SB(),tb=talBonus(),rb=relicBonus();return S.lv.auto*.5*GM()*AB().sp*(1+(b.au||0))*(1+(tb.auto||0)*0.2)*(1+rb.auto*.2)}
+function fps(){var b=SB(),tb=talBonus();return S.lv.factory*.5*GM()*AB().sp*(1+(b.fa||0))*(1+(tb.factory||0)*0.2)}
+function mps(){var b=SB(),rb=relicBonus();return S.lv.workshop*.3*GM()*AB().sp*(1+(b.mt||0))*(1+rb.mat*.3)}
+function cR(){return .2+(S.cn.lv.field||0)*.1}
+function cm(){return 100000+(S.cn.lv.store||0)*10000}
+function pt(){if(_C.pt>=0)return _C.pt;var t=0;for(var i=0;i<N;i++)t+=S.paper[i]||0;if(!isFinite(t))t=CAP;_C.pt=t;return t}
+function SM(){var v=10000000+(S.plv.storage||0)*1000000+(S.lv.storage||0)*1000000;var c=pt();if(c>v)v=c*2;if(S.ocU2>Date.now())v*=5;return v>0&&isFinite(v)?Math.min(v,CAP):1e7}
+function uC(k){var u=U[k],c=Math.floor(u[1]*Math.pow(u[2],S.lv[k]));var rb=rtB();if(rb.sc)c=Math.floor(c*rb.sc);return c}
+function mC(k){var u=M[k],c=Math.floor(u[1]*Math.pow(u[2],S.lv[k]));var rb=rtB();if(rb.sc)c=Math.floor(c*rb.sc);return c}
+function cc(k){return Math.floor(CU[k][2]*Math.pow(CU[k][3],S.cn.lv[k]||0))}
+function stCost(k){return SS[k][2](S.stLv[k]||0)}
+function talCost(k){return TAL[k].cost(S.tal[k]||0)}
+function critChance(){var b=SB(),tb=talBonus(),rb=relicBonus();return Math.min(0.8,(S.lv.luck*0.02||0)+(b.ct||0)+(tb.crit||0)*0.03+rb.crit*.05)}
+function dropChance(){var tb=talBonus(),rb=relicBonus();return 0.005+(tb.drop||0)*0.005+rb.drop*.02}
+var _R=null,_Rk='';
+function rates(){var b=SB(),l=S.lv.luck*2+AB().lk+(b.lk||0);
+var key=l+"_"+S.ach.c20+"_"+S.ach.c10;
+if(_Rk===key)return _R;
+var lf=Math.min(1,l*.02);
+var rm=1+(S.ach.c20?0.10:(S.ach.c10?0.05:0));
+var adj=P.map(function(p,i){var pos=i/(N-1);var base=p[1]*Math.max(.05,1+lf*(pos*2-1));if(pos>=.5)base*=rm;return base});
+var tot=adj.reduce(function(a,b){return a+b},0);
+_R=adj.map(function(r){return r/tot});_Rk=key;
+return _R}
+
+function dr(c){c=Math.floor(c);if(c<=0)return 0;
+var cur=pt(),cap=SM(),space=cap-cur;if(space<=0)return 0;
+var a=Math.min(c,space);if(a<=0)return 0;
+var rt=rates(),mu=S.rl>0?Math.pow(10,S.rl):1,vb=VB();
+var counts=new Array(N).fill(0),tot=0;
+for(var i=0;i<N;i++){var p=rt[i],mean=a*p,sd=Math.sqrt(mean+1);
+var n=Math.floor(mean+sd*(Math.random()+Math.random()+Math.random()-1.5));
+if(n<0)n=0;counts[i]=n;tot+=n}
+if(tot>a){var r=a/tot;tot=0;for(var i=0;i<N;i++){counts[i]=Math.floor(counts[i]*r);tot+=counts[i]}}
+var add=0;
+for(var i=0;i<N;i++){var n=counts[i];if(n<=0)continue;
+if(i>=4)n*=mu;
+var sc=S.cn.sd[i]||0;
+if(sc>0){S.cn.fr[i]=(S.cn.fr[i]||0)+n*sc*.02;var bo=Math.floor(S.cn.fr[i]);if(bo>0){S.cn.fr[i]-=bo;n+=bo}}
+if(add+n>a)n=a-add;if(n<=0)break;
+S.paper[i]=Math.min(S.paper[i]+n,CAP);S.cx[i]=Math.min(S.cx[i]+n,CAP);S.tp+=n;add+=n}
+_C.pt=-1;
+if(Math.random()<0.002){var r=RELICS[Math.floor(Math.random()*RELICS.length)];S.relics[r.k]=(S.relics[r.k]||0)+1;S.drops++;invC();L("💎 遗物："+r.n+" 级"+S.relics[r.k])}
+if(Math.random()<dropChance()){var k=Math.min(N-1,10+Math.floor(Math.random()*8));var bonus=Math.floor(100*Math.pow(1.5,k));S.paper[k]=Math.min(S.paper[k]+bonus,CAP);S.cx[k]=Math.max(S.cx[k],1);S.tp+=bonus;S.rareDrops++;L("🌟 命运！"+P[k][0]+" ×"+f(bonus))}
+var ev=Math.floor(a*.05*(vb.v-1));if(ev>0){S.paper[16]+=ev;S.cx[16]+=ev;S.tp+=ev}
+var ec=Math.floor(a*.05*(vb.r-1));if(ec>0){S.paper[14]+=ec;S.cx[14]+=ec;S.tp+=ec}
+return add}
+
+function sell(){if(pt()<=0)return 0;var m=sMu(),g=0;var rb=rtB();
+for(var i=0;i<N;i++)g+=S.paper[i]*P[i][2]*m;
+if(!isFinite(g))g=CAP;g=Math.floor(g*(rb.gold||1));
+if(S.ach.g2)g=Math.floor(g*1.15);
+var rl=relicBonus();g=Math.floor(g*(1+rl.gold*.3));
+S.gold=Math.min(S.gold+g,CAP);S.tg+=g;S.rg=Math.min(S.rg+g,CAP);
+S.paper=new Array(N).fill(0);_C.pt=-1;
+return g}
+
+function dec(){if(pt()<=0)return 0;var m=GM(),g=0;
+for(var i=0;i<N;i++)g+=S.paper[i]*P[i][3]*m;
+if(!isFinite(g))g=CAP;g=Math.floor(g*(S.ach.m1?1.1:1));
+S.mat=Math.min(S.mat+g,CAP);S.tm+=g;
+S.paper=new Array(N).fill(0);_C.pt=-1;
+return g}
+
+function aOC(){var now=Date.now();if(now<S.ocCd){L("⏳ 冷却中");return}S.ocU2=now+ocD()*1000;S.ocCd=now+ocC()*1000;S.ocU++;invC();L("⚡ 超频 "+ocD()+"秒 ×"+ocM());R()}
+function bu(k){var c=uC(k);if(S.gold<c)return 0;S.gold-=c;S.lv[k]++;return 1}
+function bm(k){var c=mC(k);if(S.mat<c)return 0;S.mat-=c;S.lv[k]++;return 1}
+function bPS(k){var u=PS[k],l=S.plv[k]||0;if(l>=u[1])return 0;var c=u[2](l);if(S.pts<c)return 0;S.pts-=c;S.plv[k]=l+1;return 1}
+function bCN(k){var u=CU[k],l=S.cn.lv[k]||0;if(l>=u[1])return 0;var c=cc(k);if(S.pts<c)return 0;S.pts-=c;S.cn.lv[k]=l+1;return 1}
+function bSY(id){var s=SYM.find(x=>x[0]===id);if(!s||S.sick<s[2])return 0;var l=S.sm[id]||0;if(l>=10)return 0;var c=s[3](l);if(S.snot<c)return 0;S.snot-=c;S.sm[id]=l+1;return 1}
+function bSO(id){var s=SOUL.find(x=>x[0]===id);if(!s)return 0;var l=S.so[id]||0;if(l>=20)return 0;var c=s[2](l);if(S.gPaper<c)return 0;S.gPaper-=c;S.so[id]=l+1;return 1}
+function bRS(k){var u=RS[k],l=S.rs[k]||0;if(l>=u[1])return 0;var c=u[2](l);if(S.reinc<c)return 0;S.reinc-=c;S.rs[k]=l+1;return 1}
+function bSt(k){var u=SS[k],l=S.stLv[k]||0;if(l>=u[1])return 0;var c=stCost(k);if(S.st<c)return 0;S.st-=c;S.stLv[k]=l+1;return 1}
+function bTal(k){var u=TAL[k],l=S.tal[k]||0;if(l>=u.max)return 0;var c=talCost(k);if(S.talPts<c)return 0;S.talPts-=c;S.tal[k]=l+1;return 1}
+function upRC(){var c=20*Math.pow(1.5,S.rl);if(S.reinc>=c){S.reinc-=c;S.rl++;invC();L("轮回 级"+S.rl)}else L("需要 "+f(c));R()}
+function aB2(){if(!S.aBuy)return;var o=["click","auto","factory","storage","workshop","luck","sell"];
+for(var i=0;i<o.length;i++){var k=o[i];
+if(k==="factory"||k==="workshop"||k==="storage"){if(bm(k))return}
+else{if(bu(k))return}}}
+function pG(){var b=SB();var g=S.rg<10000?0:Math.floor(Math.sqrt(S.rg/10000)*(1+(b.pt||0)));if(S.ach.gp)g=Math.floor(g*1.2);return g}
+function doP(){var g=pG();if(g<=0){L("需要 ≥10000 金币");return}
+S.st=Math.min(S.st+g,CAP);S.pts=Math.min(S.pts+g,CAP);S.pre++;S.talPts+=1;
+var kc=Math.floor(S.lv.click*(S.plv.keepClick||0)*.1),kl=Math.floor(S.lv.luck*(S.plv.keepLuck||0)*.1);
+S.gold=(S.plv.startGold||0)*100;S.mat=(S.plv.startMat||0)*50;
+S.paper=new Array(N).fill(0);
+S.lv={click:kc,auto:0,luck:kl,sell:0,factory:0,workshop:0,storage:0};
+S.rg=0;S.aOn=0;S.ap=0;S.am=0;S.ocU2=0;S.ocCd=0;S.rt=null;S.combo=0;S.comboT=0;
+invC();L("✨轮回 +"+g+" 升华点 +"+g+" 星尘 +1 天赋");R()}
+function of(){var dt=(Date.now()-(S.lt||Date.now()))/1e3;if(dt<10){L("离线时间太短");return}
+var cap=43200+(stBonus().off||0)*60;if(dt>cap)dt=cap;
+var b=SB(),om=.5+(S.plv.offline||0)*.1+(b.of||0);
+var tb=talBonus();om*=1+(tb.offline||0)*0.2;
+var pg=Math.floor((aps()+fps())*dt*om),mg=Math.floor(mps()*dt*om);
+var got=dr(pg);
+S.mat=Math.min(S.mat+mg,CAP);S.tm+=mg;
+S.reinc=Math.min(S.reinc+RR()*dt*om,CAP);
+var ac=Math.floor(cR()*dt*om);S.cn.c=Math.min(cm(),S.cn.c+ac);
+S.lt=Date.now();invC();L("离线 "+Math.floor(dt)+"秒：+"+f(got)+" 张纸 +"+f(mg)+" 材料");R()}
+function bet(mult,reward,chance){if(S.gold<=0){L("没有金币");return}
+var c=Math.floor(S.gold*mult);if(c<=0)return;
+S.gold-=c;
+if(Math.random()<chance){var w=Math.floor(c*reward);S.gold=Math.min(S.gold+w,CAP);S.rg=Math.min(S.rg+w,CAP);L("🎲 赢了 +"+f(w));FT("🎲+"+f(w),"#90ee90")}
+else{L("🎲 输了 -"+f(c));FT("💥-"+f(c),"#ff6666")}
+S.betCount++;R()}
+function ck(){AC.forEach(function(a){if(!S.ach[a[0]]&&a[2](S)){S.ach[a[0]]=1;S.achCnt++;invC();
+if(a[0]==="p1")S.pts+=1;if(a[0]==="p5")S.pts+=2;
+L("🏆"+a[1]+" "+AB_[a[0]])}});
+QUESTS.forEach(function(q,i){if(S.questsDone[i])return;
+var cur=0;
+if(q.type==="tp")cur=S.tp;else if(q.type==="tg")cur=S.tg;else if(q.type==="tm")cur=S.tm;
+else if(q.type==="pre")cur=S.pre;else if(q.type==="ocU")cur=S.ocU;else if(q.type==="ec")cur=S.ec;
+else if(q.type==="rareDrops")cur=S.rareDrops;else if(q.type==="codex")cur=S.cx.filter(x=>x>0).length;
+if(cur>=q.t){S.questsDone[i]=1;
+if(q.rw.pts)S.pts=Math.min(S.pts+q.rw.pts,CAP);
+if(q.rw.st)S.st=Math.min(S.st+q.rw.st,CAP);
+L("📋 任务："+q.n);FT("📋 "+q.n,"#90ee90")}})}
+
+function pE(){return EV[Math.floor(Math.random()*EV.length|0)]}
+function shE(e){S.cur=e;var b=$id("popBox");
+b.innerHTML='<h4>'+e[0]+'</h4><div class="d">'+e[1]+'</div>'+e.slice(2).map(function(o,i){return '<button class="gold" data-evt="'+i+'">'+o[0]+'</button>'}).join("");
+$id("pop").classList.add("on")}
+function clE(){$id("pop").classList.remove("on");S.cur=null;S.ec++;var b=SB();var b2=1+(b.ev||0);S.nE=Date.now()+(60000+Math.random()*120000)/b2;invC();R()}
+
+function mkSN(){if(S.paper[4]>=1000&&S.paper[12]>=100&&S.paper[14]>=10){S.paper[4]-=1000;S.paper[12]-=100;S.paper[14]-=10;S.snot++;L("+1 鼻涕")}else L("需要 1000 骨头+100 血+10 辐射");_C.pt=-1;R()}
+function mkSNa(){var c=0;while(S.paper[4]>=1000&&S.paper[12]>=100&&S.paper[14]>=10){S.paper[4]-=1000;S.paper[12]-=100;S.paper[14]-=10;S.snot++;c++;if(c>=100000)break}_C.pt=-1;if(c>0)L("🔥+"+f(c)+" 鼻涕");else L("资源不足");R()}
+function upK(){if(S.sick>=8){L("满级");return}var c=SC[S.sick+1];if(S.snot>=c){S.snot-=c;S.sick++;invC();L("疾病："+SN[S.sick])}else L("需要 "+c);R()}
+function upV(k){var v=VD[k];if(S.snot>=v[1]){S.snot-=v[1];S.virus[k]++;invC();L(v[0]+" 级"+S.virus[k])}else L("需要 "+v[1]);R()}
+function mkGP(){if(S.paper[4]>=1000&&S.paper[11]>=100&&S.paper[12]>=10&&S.paper[13]>=5&&S.paper[16]>=1&&S.paper[17]>=1){S.paper[4]-=1000;S.paper[11]-=100;S.paper[12]-=10;S.paper[13]-=5;S.paper[16]-=1;S.paper[17]-=1;var g=S.ach.gp?2:1;S.gPaper+=g;L("+"+g+" 诡纸")}else L("资源不足");_C.pt=-1;R()}
+function mkGPa(){var c=0;var g=S.ach.gp?2:1;while(S.paper[4]>=1000&&S.paper[11]>=100&&S.paper[12]>=10&&S.paper[13]>=5&&S.paper[16]>=1&&S.paper[17]>=1){S.paper[4]-=1000;S.paper[11]-=100;S.paper[12]-=10;S.paper[13]-=5;S.paper[16]-=1;S.paper[17]-=1;S.gPaper+=g;c++;if(c>=100000)break}_C.pt=-1;if(c>0)L("🔥+"+f(c*g)+" 诡纸");else L("资源不足");R()}
+function mkY(){if(S.gPaper>=50){S.gPaper-=50;S.gh.yao++;L("+1 幺幺")}else L("诡纸不足");R()}
+function mkP(){if(S.gh.yao>=500){S.gh.yao-=500;S.gh.paper++;L("+1 纸人")}else L("幺幺不足");R()}
+function mkW(){if(S.gh.paper>=5000){S.gh.paper-=5000;S.gh.wuchang++;L("+1 无常")}else L("纸人不足");R()}
+function mkG(){if(S.gh.wuchang>=5e4){S.gh.wuchang-=5e4;S.gh.gui++;L("+1 鬼帝")}else L("无常不足");R()}
+function mkL(){if(S.gh.gui>=5e5){S.gh.gui-=5e5;S.gh.luohou++;L("+1 罗睺")}else L("鬼帝不足");R()}
+function mkGhostAll(){var a=0,b=0,c=0,d=0,f2=0;
+while(S.gPaper>=50){S.gPaper-=50;S.gh.yao++;a++}
+while(S.gh.yao>=500){S.gh.yao-=500;S.gh.paper++;b++}
+while(S.gh.paper>=5000){S.gh.paper-=5000;S.gh.wuchang++;c++}
+while(S.gh.wuchang>=5e4){S.gh.wuchang-=5e4;S.gh.gui++;d++}
+while(S.gh.gui>=5e5){S.gh.gui-=5e5;S.gh.luohou++;f2++}
+if(a+b+c+d+f2>0){L("👻 幺+"+a+" 纸+"+b+" 无+"+c+" 鬼+"+d+" 罗+"+f2);invC()}else L("资源不足");R()}
+function h1(){if(S.cn.c<=0)return-1;S.cn.c--;var i=cRo();S.cn.sd[i]++;S.cn.t++;return i}
+function ha(){if(S.cn.c<=0)return{n:0};var n=S.cn.c;for(var k=0;k<n;k++){S.cn.sd[cRo()]++;S.cn.t++}S.cn.c=0;return{n:n}}
+var crC=null,crL=-1;
+function cRa(){var lv=S.cn.lv.luck||0;if(crC&&crL===lv)return crC;
+var lf=Math.min(1,lv*5/100);
+var adj=P.map(function(p,i){var ps=i/(N-1);return p[1]*Math.max(.05,1+lf*(ps*2-1))});
+var t=adj.reduce(function(a,b){return a+b},0);
+crC=adj.map(function(r){return r/t});crL=lv;return crC}
+function cRo(){var r=cRa(),x=Math.random(),s=0;for(var i=0;i<r.length;i++){s+=r[i];if(x<s)return i}return r.length-1}
+
+var $id=function(i){return document.getElementById(i)};
+function L(t){var b=$id("log"),l=document.createElement("div");l.textContent="["+new Date().toLocaleTimeString()+"]"+t;b.appendChild(l);b.scrollTop=b.scrollHeight;while(b.children.length>15)b.removeChild(b.firstChild)}
+function FT(x,y,t,c){var d=document.createElement("div");d.className="ft";if(c)d.style.color=c;d.style.left=x+"px";d.style.top=y+"px";d.textContent=t;$id("fly").appendChild(d);setTimeout(function(){d.remove()},1400)}
+function eT(k){var t={click:"点击+"+(S.lv.click+1),auto:"+"+(S.lv.auto*.5).toFixed(1)+"/秒",luck:"幸运"+lk().toFixed(0)+"%",sell:"×"+(1+S.lv.sell*.2).toFixed(2),factory:"+"+(S.lv.factory*.5).toFixed(1)+"/秒",workshop:"+"+(S.lv.workshop*.3).toFixed(1)+"/秒",storage:"+"+f(S.lv.storage*1000000)};return t[k]||""}
+function mT(k){var t={factory:"+"+(S.lv.factory*.5).toFixed(1)+"/秒",workshop:"+"+(S.lv.workshop*.3).toFixed(1)+"/秒",storage:"+"+f(S.lv.storage*1000000)};return t[k]||""}
+
+function renderTop(){
+var t=pt(),m=SM(),r=m>0?t/m:0,b=AB();
+var pct=r*100,pctStr=pct>9999?">9999%":pct.toFixed(0)+"%";
+var bt=b.u>Date.now()?'<div>⚡<b>'+Math.ceil((b.u-Date.now())/1000)+'秒</b></div>':'';
+var ot=S.ocU2>Date.now()?'<div>🔥<b>'+Math.ceil((S.ocU2-Date.now())/1000)+'秒</b></div>':(S.ocCd>Date.now()?'<div>⏳<b>'+Math.ceil((S.ocCd-Date.now())/1000)+'秒</b></div>':'');
+$id("top").innerHTML="<div>💰<b>"+f(S.gold)+"</b></div><div>🔧<b>"+f(S.mat)+"</b></div><div>✨<b>"+f(S.pts)+"</b></div><div>⭐<b>"+f(S.st)+"</b></div><div>🍀<b>"+lk().toFixed(0)+"%</b></div><div>💰<b>×"+f(sMu())+"</b></div><div>🌟<b>×"+f(GM())+"</b></div><div>📦<b>"+f(t)+"/"+f(m)+"</b>("+pctStr+")</div><div>👆<b>+"+f(cp())+"</b></div><div>🤖<b>"+f(aps())+"</b></div><div>🏭<b>"+f(fps())+"</b></div><div>🤢<b>"+f(S.snot)+"</b></div><div>👻<b>"+f(S.gPaper)+"</b></div><div>💠<b>"+f(S.reinc)+"</b></div><div>🌽<b>"+f(S.cn.c)+"</b></div>"+bt+ot;
+$id("wbar").style.width=Math.min(100,pct)+"%";
+$id("ba").textContent="自动："+(S.aOn?"开":"关");$id("ba").className=S.aOn?"green":"";
+$id("bb").textContent="自动升级："+(S.aBuy?"开":"关");$id("bb").className=S.aBuy?"green":"";
+var ob=$id("boc");
+if(S.ocU2>Date.now()){ob.textContent="🔥("+Math.ceil((S.ocU2-Date.now())/1000)+"秒)";ob.disabled=true}
+else if(S.ocCd>Date.now()){ob.textContent="⏳("+Math.ceil((S.ocCd-Date.now())/1000)+"秒)";ob.disabled=true}
+else{ob.textContent="⚡ 超频 ×"+ocM();ob.disabled=false}
+$id("et").textContent=S.cur?"进行中":Math.max(0,Math.floor((S.nE-Date.now())/1000))+"秒";
+$id("cb").textContent="×"+comboMul().toFixed(1)}
+
+function renderBox(){var h="";for(var i=0;i<N;i++)if(S.paper[i]>0)h+='<span class="chip'+(i>=10?" r":"")+'">'+P[i][0]+'×'+f(S.paper[i])+'</span>';$id("box").innerHTML=h||'<span class=tip>空空如也</span>'}
+
+function shopHTML(items,da){return items.map(function(it){return '<div class="card '+it.cls+'"><div class=n>'+it.n+' 级'+it.lv+(it.max?"/"+it.max:"")+'</div><div class=e>'+it.eff+'</div><div class=co>'+(it.max&&it.lv>=it.max?"满级":it.coin+f(it.cost))+'</div><button class=gold style="font-size:12px;padding:6px 8px;min-height:34px" '+(it.can?"":"disabled")+' data-'+da+'="'+it.id+'">'+(it.max&&it.lv>=it.max?"满级":"升级")+'</button></div>'}).join("")}
+
+function renderShops(){
+$id("sg").innerHTML=shopHTML(["click","auto","luck","sell"].map(k=>({id:k,n:U[k][0],lv:S.lv[k],eff:eT(k),cost:uC(k),coin:"💰",cls:"",can:S.gold>=uC(k)})),"buy");
+$id("sm").innerHTML=shopHTML(["factory","workshop","storage"].map(k=>({id:k,n:M[k][0],lv:S.lv[k],eff:mT(k),cost:mC(k),coin:"🔧",cls:"",can:S.mat>=mC(k)})),"mat");
+$id("sp").innerHTML=shopHTML(Object.keys(PS).map(k=>({id:k,n:PS[k][0],lv:S.plv[k]||0,max:PS[k][1],eff:PS[k][3](S.plv[k]||0),cost:PS[k][2](S.plv[k]||0),coin:"✨",cls:"",can:(S.plv[k]||0)<PS[k][1]&&S.pts>=PS[k][2](S.plv[k]||0)})),"ps");
+$id("st").innerHTML=shopHTML(Object.keys(SS).map(k=>({id:k,n:SS[k][0],lv:S.stLv[k]||0,max:SS[k][1],eff:SS[k][3](S.stLv[k]||0),cost:stCost(k),coin:"⭐",cls:"star",can:(S.stLv[k]||0)<SS[k][1]&&S.st>=stCost(k)})),"st");
+$id("ch").innerHTML=shopHTML(Object.keys(CU).map(k=>({id:k,n:CU[k][0],lv:S.cn.lv[k]||0,max:CU[k][1],eff:CU[k][4](S.cn.lv[k]||0),cost:cc(k),coin:"🌽",cls:"",can:(S.cn.lv[k]||0)<CU[k][1]&&S.pts>=cc(k)})),"corn")}
+
+function renderTal(){$id("talInfo").innerHTML="<div>天赋点:<b>"+S.talPts+"</b></div>";
+$id("talShop").innerHTML=shopHTML(Object.keys(TAL).map(k=>({id:k,n:TAL[k].n,lv:S.tal[k]||0,max:TAL[k].max,eff:TAL[k].eff(S.tal[k]||0),cost:talCost(k),coin:"🌳",cls:"star",can:(S.tal[k]||0)<TAL[k].max&&S.talPts>=talCost(k)})),"tal")}
+
+function renderRelics(){var cnt=Object.keys(S.relics).length;
+$id("relicInfo").innerHTML="<div>拥有:<b>"+cnt+"/"+RELICS.length+"</b></div><div>概率:<b>"+(dropChance()*100).toFixed(2)+"%</b></div>";
+var h="";
+RELICS.forEach(function(r){var lv=S.relics[r.k]||0;h+='<div class="card '+(lv>0?"legend":"")+'"><div class=n>'+r.n+'</div><div class=e>'+(lv>0?r.e(lv):"未发现")+'</div><div class=co>'+(lv>0?"级"+lv:"???")+'</div></div>'});
+$id("relicList").innerHTML=h}
+
+function renderQuest(){var h="";
+QUESTS.forEach(function(q,i){var done=S.questsDone[i];var cur=0;
+if(q.type==="tp")cur=S.tp;else if(q.type==="tg")cur=S.tg;else if(q.type==="tm")cur=S.tm;
+else if(q.type==="pre")cur=S.pre;else if(q.type==="ocU")cur=S.ocU;else if(q.type==="ec")cur=S.ec;
+else if(q.type==="rareDrops")cur=S.rareDrops;else if(q.type==="codex")cur=S.cx.filter(x=>x>0).length;
+var pct=Math.min(100,cur/q.t*100);
+var rw=[];if(q.rw.pts)rw.push("✨"+q.rw.pts);if(q.rw.st)rw.push("⭐"+q.rw.st);
+h+='<div class="card '+(done?"star":"")+'"><div class=n>'+(done?"✅ ":"")+q.n+'</div><div class=e>进度 '+f(Math.min(cur,q.t))+"/"+f(q.t)+'</div><div class=bar style="margin:3px 0"><div style="width:'+pct+'%"></div></div><div class=co>奖励 '+rw.join(" ")+'</div></div>'});
+$id("questList").innerHTML=h}
+
+function renderSymSoul(){
+$id("sh").innerHTML=SYM.map(function(s){var l=S.sm[s[0]]||0,mx=l>=10,lk2=S.sick<s[2],c=s[3](l),can=!lk2&&!mx&&S.snot>=c;return'<div class="card"><div class=n>'+s[1]+' 级'+l+'/10</div><div class=e>'+(lk2?"🔒疾病 "+s[2]:s[4](l))+'</div><div class=co>'+(mx?"满级":lk2?"🔒":"🤢"+f(c))+'</div><button class=tiny '+(can?"":"disabled")+' data-sy="'+s[0]+'">强化</button></div>'}).join("");
+$id("sh2").innerHTML=SOUL.map(function(s){var l=S.so[s[0]]||0,mx=l>=20,c=s[2](l),can=!mx&&S.gPaper>=c;return'<div class="card"><div class=n>'+s[1]+' 级'+l+'/20</div><div class=e>'+s[3](l)+'</div><div class=co>'+(mx?"满级":"📜"+f(c))+'</div><button class=tiny '+(can?"":"disabled")+' data-so="'+s[0]+'">专精</button></div>'}).join("");
+$id("rh").innerHTML=Object.keys(RS).map(function(k){var u=RS[k],l=S.rs[k]||0,mx=l>=u[1],c=u[2](l),can=!mx&&S.reinc>=c;return'<div class="card"><div class=n>'+u[0]+' 级'+l+'/'+u[1]+'</div><div class=e>'+u[3](l)+'</div><div class=co>'+(mx?"满级":"💠"+f(c))+'</div><button class=tiny '+(can?"":"disabled")+' data-rs="'+k+'">强化</button></div>'}).join("")}
+
+function renderInfo(){
+$id("pr").innerHTML="<div>本轮<b>"+f(S.rg)+"</b></div><div>可得<b>"+f(pG())+"</b></div><div>升华<b>"+f(S.pts)+"</b></div><div>次数<b>"+S.pre+"</b></div>";
+["rtT","rtW","rtM"].forEach(function(id){$id(id).className="gold tiny"});
+if(S.rt==="tech")$id("rtT").className="gold";
+if(S.rt==="witch")$id("rtW").className="gold";
+if(S.rt==="trade")$id("rtM").className="gold";
+var vb=VB();
+$id("si").innerHTML="<div>鼻涕<b>"+f(S.snot)+"</b></div><div>疾病<b>"+SN[S.sick]+"</b></div><div>埃博拉<b>"+S.virus.ebola+"</b></div><div>新冠<b>"+S.virus.covid+"</b></div><div>Void+"+((vb.v-1)*100).toFixed(0)+"%</div><div>Rad+"+((vb.r-1)*100).toFixed(0)+"%</div>";
+$id("gi").innerHTML="<div>诡纸<b>"+f(S.gPaper)+"</b></div><div>幺<b>"+f(S.gh.yao)+"</b></div><div>纸<b>"+f(S.gh.paper)+"</b></div><div>无<b>"+f(S.gh.wuchang)+"</b></div><div>鬼<b>"+f(S.gh.gui)+"</b></div><div>罗<b>"+f(S.gh.luohou)+"</b></div><div>轮回<b>"+f(S.reinc)+"</b></div>";
+$id("upRC").textContent="轮回 级"+S.rl+" · "+f(20*Math.pow(1.5,S.rl));
+var ctot=S.cn.sd.reduce(function(a,b){return a+b},0);
+$id("ci").innerHTML="<div>🌽<b>"+f(S.cn.c)+"/"+f(cm())+"</b></div><div>产出<b>"+cR().toFixed(2)+"/秒</b></div><div>玉米粒<b>"+f(ctot)+"</b></div><div>已剥皮<b>"+f(S.cn.t)+"</b></div>";
+var sh="";for(var i=0;i<N;i++)if(S.cn.sd[i]>0)sh+='<span class=chip style="background:#fff8c0">'+P[i][0]+'×'+f(S.cn.sd[i])+'</span>';
+$id("cs").innerHTML=sh||'<span class=tip>空空如也</span>';
+$id("bh").disabled=S.cn.c<=0;$id("bha").disabled=S.cn.c<=0;
+$id("bca").textContent="自动："+(S.cn.lv.auto>0?"开":"关");
+$id("bca").className=S.cn.lv.auto>0?"green tiny":"tiny";
+var cxc=0;for(var ci=0;ci<N;ci++)if(S.cx[ci]>0)cxc++;
+$id("cx").innerHTML=P.map(function(p,i){return '<span class="chip'+(i>=10?" r":"")+'">'+(S.cx[i]>0?"✅":"❓")+p[0]+'</span>'}).join("")+'<div class=tip style="margin-top:4px">'+cxc+'/'+N+' · 全局+'+(cxc*3)+'%</div>';
+$id("ac").innerHTML=AC.map(function(x){return (S.ach[x[0]]?"✅":"⬜")+x[1]+" <span class=tip>"+AB_[x[0]]+"</span><br>"}).join("");
+var ti=Math.min(TITLES.length-1,Math.floor(cxc/2));
+$id("titleBadge").innerHTML='<span class=tb>'+TITLES[ti]+'</span>'}
+
+function R(){ck();
+["gold","mat","pts","st","snot","gPaper","reinc","tp","tg","tm","rg"].forEach(function(k){if(!isFinite(S[k])||S[k]>CAP)S[k]=CAP});
+for(var i=0;i<N;i++){if(!isFinite(S.paper[i])||S.paper[i]>CAP)S.paper[i]=CAP}
+renderTop();renderBox();renderShops();renderTal();renderRelics();renderQuest();renderSymSoul();renderInfo()}
+$id("bd").onclick=function(e){var g=dr(cp());FT(e.clientX,e.clientY,g>0?"+"+f(g):"仓库已满");
+var now=Date.now();if(now-S.comboT<2000)S.combo=Math.min(20,S.combo+1);else S.combo=0;S.comboT=now;invC();R()};
+$id("ba").onclick=function(){S.aOn=!S.aOn;R()};
+$id("bb").onclick=function(){S.aBuy=!S.aBuy;R()};
+$id("bo").onclick=of;
+$id("bse").onclick=function(e){var g=sell();if(g>0)FT(e.clientX,e.clientY,"+"+f(g));invC();R()};
+$id("bde").onclick=function(e){var m=dec();if(m>0)FT(e.clientX,e.clientY,"+"+f(m));invC();R()};
+$id("boc").onclick=aOC;
+$id("bp").onclick=function(){if(S.rg<10000){L("需要 ≥10000");return}if(!confirm("确认轮回？本轮进度将清空！"))return;doP()};
+$id("rtT").onclick=function(){S.rt="tech";L("⚙️科技");invC();R()};
+$id("rtW").onclick=function(){S.rt="witch";L("🔮女巫");invC();R()};
+$id("rtM").onclick=function(){S.rt="trade";L("💰贸易");invC();R()};
+$id("bS").onclick=mkSN;$id("bSa").onclick=mkSNa;$id("bK").onclick=upK;
+$id("bE").onclick=function(){upV("ebola")};$id("bC").onclick=function(){upV("covid")};$id("bZ").onclick=function(){upV("z")};
+$id("bG").onclick=mkGP;$id("bGa").onclick=mkGPa;
+$id("bY").onclick=mkY;$id("bP").onclick=mkP;$id("bW").onclick=mkW;$id("bU").onclick=mkG;$id("bL").onclick=mkL;$id("bGh").onclick=mkGhostAll;
+$id("upRC").onclick=upRC;
+$id("bh").onclick=function(e){var i=h1();if(i>=0){FT(e.clientX,e.clientY,"+"+P[i][0]);L("🌽"+P[i][0])}R()};
+$id("bha").onclick=function(e){var r=ha();if(r.n>0){FT(e.clientX,e.clientY,"已剥皮 "+f(r.n));L("🌽"+f(r.n))}R()};
+$id("bca").onclick=function(){if(S.cn.lv.auto<=0)L("请先升级");else L("自动开启");R()};
+$id("bet1").onclick=function(){bet(0.1,3,0.5)};
+$id("bet2").onclick=function(){bet(0.5,5,0.3)};
+
+document.addEventListener("click",function(e){
+var t=e.target;if(!t.dataset)return;var d=t.dataset;
+if(d.buy){if(bu(d.buy))R()}
+else if(d.mat){if(bm(d.mat))R()}
+else if(d.ps){if(bPS(d.ps))R()}
+else if(d.corn){if(bCN(d.corn))R()}
+else if(d.sy){if(bSY(d.sy))R()}
+else if(d.so){if(bSO(d.so))R()}
+else if(d.rs){if(bRS(d.rs))R()}
+else if(d.st){if(bSt(d.st))R()}
+else if(d.tal){if(bTal(d.tal))R()}
+else if(d.evt!==undefined){var i=+d.evt;if(S.cur&&S.cur[2+i]){try{S.cur[2+i][1](S)}catch(er){L("错误")}}clE()}});
+
+var lt=Date.now(),_tc=0;
+setInterval(function(){
+var now=Date.now(),dt=(now-lt)/1e3;lt=now;_tc++;
+if(_tc%5===0)aB2();
+invC();
+if(now-S.comboT>3000)S.combo=0;
+if(S.aOn){S.ap+=aps()*dt;var n=Math.floor(S.ap);if(n>0){S.ap-=n;dr(n)}}else S.ap=0;
+S.ap+=fps()*dt;var n2=Math.floor(S.ap);if(n2>0){S.ap-=n2;dr(n2)}
+S.am+=mps()*dt;var n3=Math.floor(S.am);if(n3>0){S.am-=n3;S.mat=Math.min(S.mat+n3,CAP);S.tm+=n3}
+S.gh.yao+=VB().y*dt;S.reinc=Math.min(S.reinc+RR()*dt,CAP);
+var sp=cm()-S.cn.c;if(sp>0){S.cn.fc+=cR()*dt;var nc=Math.floor(S.cn.fc);if(nc>0){var ac=Math.min(nc,sp);S.cn.fc-=ac;S.cn.c+=ac}}
+if(S.cn.lv.auto>0&&S.cn.c>0){S.cn.aa+=S.cn.lv.auto*dt;var na=Math.floor(S.cn.aa);if(na>0){S.cn.aa-=na;na=Math.min(na,S.cn.c);for(var ai=0;ai<na;ai++){S.cn.c--;S.cn.sd[cRo()]++;S.cn.t++}}}
+if(pt()>SM()*.9){sell();L("⚡自动卖出")}
+if(!S.cur&&now>S.nE){var bb=SB();shE(pE());var ev2=1+(bb.ev||0);S.nE=now+(60000+Math.random()*120000)/ev2}
+if(!window._rT||now-window._rT>800){R();window._rT=now}
+},100);
+
+var KEY="paperZHCN1";
+function cN(v,fb){return typeof v!=="number"||!isFinite(v)?fb:v}
+function mg(L2){var b=NS(),m=Object.assign(b,L2||{});
+var fa=function(a){var s=Array.isArray(a)?a:[];return new Array(N).fill(0).map(function(_,i){return cN(+s[i],0)})};
+m.paper=fa(m.paper);m.cx=fa(m.cx);
+["lv","plv","virus","gh","sm","so","rs","stLv","tal","relics","questsDone","milestones"].forEach(function(k){if(!m[k]||typeof m[k]!="object")m[k]=Object.assign({},b[k]);else for(var kk in b[k])m[k][kk]=cN(m[k][kk],0)});
+if(!m.boost||typeof m.boost!="object")m.boost=Object.assign({},b.boost);
+if(!m.cn||typeof m.cn!="object")m.cn=Object.assign({},b.cn);else{if(!m.cn.lv||typeof m.cn.lv!="object")m.cn.lv=Object.assign({},b.cn.lv);m.cn.c=cN(m.cn.c,0);m.cn.fc=cN(m.cn.fc,0);m.cn.aa=cN(m.cn.aa,0);m.cn.t=cN(m.cn.t,0);m.cn.sd=fa(m.cn.sd);m.cn.fr=fa(m.cn.fr)}
+if(!m.ach||typeof m.ach!="object")m.ach={};m.achCnt=Object.keys(m.ach).filter(k=>m.ach[k]).length;
+["aOn","aBuy"].forEach(function(k){m[k]=!!m[k]});
+["gold","mat","tp","tg","tm","rg","pre","pts","ap","am","lt","snot","sick","gPaper","reinc","rl","ocU","ocCd","ocU2","ec","nE","st","talPts","combo","comboT","drops","rareDrops","betCount"].forEach(function(k){m[k]=cN(m[k],b[k])});
+m.cur=null;
+setTimeout(function(){var mx=$id("pop");if(mx)mx.classList.remove("on")},0);
+return m}
+
+$id("bs").onclick=function(){S.lt=Date.now();try{localStorage.setItem(KEY,JSON.stringify(S));L("💾 存档成功")}catch(e){L("错误")}};
+$id("bl").onclick=function(){var s=localStorage.getItem(KEY);if(!s){L("没有存档");return}try{S=mg(JSON.parse(s));initD();invC();L("📂 读档完成");R()}catch(e){L("读档失败")}};
+$id("br").onclick=function(){if(!confirm("确定重置？"))return;localStorage.removeItem(KEY);S=NS();initD();invC();L("🗑 已重置");R()};
+window.addEventListener("beforeunload",function(){S.lt=Date.now();try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){}});
+
+(function(){var s=$id("stars");for(var i=0;i<40;i++){var d=document.createElement("div");d.className="st";d.style.left=Math.random()*100+"%";d.style.top=Math.random()*100+"%";d.style.animationDelay=(Math.random()*4)+"s";s.appendChild(d)}})();
+
+(function(){
+var s=localStorage.getItem(KEY);
+if(s){try{S=mg(JSON.parse(s));initD()}catch(e){S=NS();initD()}}
+else{S=NS();initD()}
+invC();of();R();L("👋 欢迎游玩！");
+})();
+</script></body></html>
