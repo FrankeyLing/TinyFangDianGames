@@ -119,9 +119,13 @@ const T = {
   EQ_LEG_WOOD:220, EQ_LEG_IRON:221, EQ_LEG_DIAMOND:222, EQ_LEG_LEGEND:223,
   EQ_NECK_HP:230, EQ_NECK_ATK:231, EQ_NECK_LUCK:232,
   EQ_RING_ATK:240, EQ_RING_SPD:241, EQ_RING_CRIT:242,
-  EQ_AMULET_CRIT:250, EQ_AMULET_LUCK:251, EQ_AMULET_MAGIC:252
+  EQ_AMULET_CRIT:250, EQ_AMULET_LUCK:251, EQ_AMULET_MAGIC:252,
+  HEAT_GEN:253, GEO_GEN:254, WIND_GEN:255,
+  ELEC_MINER:256, ELEC_FURNACE:257,
+  ITEM_PIPE:258, POWER_PIPE:259, FLUID_PIPE:260,
+  WIRELESS_NODE:261, WIRELESS_HUB:262,
+  BUCKET_EMPTY:270, BUCKET_WATER:271, BUCKET_LAVA:272
 };
-
 const INFO = {
   1:  {n:'草方块', c:'#6ab04a', d:'#4a8030'},
   2:  {n:'泥土',   c:'#8a6a4a', d:'#6a4a2a'},
@@ -243,15 +247,29 @@ const INFO = {
   242: {n:'暴击戒指', c:'#ff6060', d:'#a02020', item:true, eq:'ring', q:1},
   250: {n:'暴击护符', c:'#ff6060', d:'#a02020', item:true, eq:'amulet', q:2, glow:'#ff8080'},
   251: {n:'幸运护符', c:'#80ff80', d:'#20a020', item:true, eq:'amulet', q:2, glow:'#80ff80'},
-  252: {n:'魔法护符', c:'#a060ff', d:'#5010a0', item:true, eq:'amulet', q:2, glow:'#a060ff'}
+  252: {n:'魔法护符', c:'#a060ff', d:'#5010a0', item:true, eq:'amulet', q:2, glow:'#a060ff'},
+  253: {n:'热力发电机', c:'#c04020', d:'#802010', glow:'#ff6030'},
+  254: {n:'地热发电机', c:'#ff8020', d:'#a04000', glow:'#ffa040'},
+  255: {n:'风力发电机', c:'#a0d0e0', d:'#5080a0', glow:'#c0e8f0'},
+  256: {n:'电力矿机',   c:'#4060a0', d:'#203060', glow:'#6080d0'},
+  257: {n:'电炉',       c:'#8040a0', d:'#401060', glow:'#b060e0'},
+  258: {n:'物品管道',   c:'#8a7050', d:'#5a4020'},
+  259: {n:'能量管道',   c:'#e0c030', d:'#a08010', glow:'#ffe060'},
+  260: {n:'流体管道',   c:'#3090d0', d:'#105080', glow:'#60b0ff'},
+  261: {n:'无线节点',   c:'#30d0a0', d:'#106050', glow:'#60ffc0'},
+  262: {n:'无线中枢',   c:'#ffd700', d:'#a08020', glow:'#ffe060'},
+  270: {n:'空桶',       c:'#909090', d:'#505050', item:true},
+  271: {n:'水桶',       c:'#4080c0', d:'#204080', item:true, glow:'#60a0ff'},
+  272: {n:'岩浆桶',     c:'#ff5020', d:'#a02000', item:true, glow:'#ff8040'}
 };
-
 const HARD = {
   1:0.5, 2:0.4, 3:1.0, 4:1.2, 5:0.15, 6:0.4, 7:1.5, 8:2.2,
   9:2.2, 10:3.5, 12:0.3, 13:1.0, 14:0.5, 15:2.0, 17:0.8, 18:0.6,
   19:1.2, 20:0.7, 21:1.8, 22:0.5, 24:0.1, 25:0.3, 27:1.5, 28:0.8,
   29:1.5, 30:3.0, 31:1.0, 32:1.5, 33:2.0, 34:3.0, 35:2.5, 36:5.0, 37:3.0,
-  38:2.5, 39:2.0, 40:2.0, 41:0.1, 42:0.3, 43:3.0, 44:8.0, 45:1.0, 46:3.5, 47:2.5, 48:0.1
+  38:2.5, 39:2.0, 40:2.0, 41:0.1, 42:0.3, 43:3.0, 44:8.0, 45:1.0, 46:3.5, 47:2.5, 48:0.1,
+  253:2.5, 254:3.0, 255:2.0, 256:2.5, 257:2.5,
+  258:0.5, 259:0.5, 260:0.5, 261:1.5, 262:5.0
 };
 
 const DROP = {
@@ -259,7 +277,9 @@ const DROP = {
   13:13, 14:14, 15:15, 17:17, 18:18, 19:19, 20:20, 21:21,
   22:22, 24:24, 27:27, 29:29,
   31:31, 32:32, 33:33, 34:34, 35:35, 36:36, 37:37,
-  38:38, 39:39, 40:40, 42:42, 43:43, 44:44, 45:45, 46:46, 47:47
+  38:38, 39:39, 40:40, 42:42, 43:43, 44:44, 45:45, 46:46, 47:47,
+  253:253, 254:254, 255:255, 256:256, 257:257,
+  258:258, 259:259, 260:260, 261:261, 262:262
 };
 
 const REALMS = [
@@ -325,9 +345,33 @@ const CORN = {
   luck:  { n:'🍀 幸运',   base:3, grow:1.35, max:20, e:l=>'幸运+'+(l*5)+'%' },
   auto:  { n:'🤖 自动',   base:5, grow:1.5,  max:10, e:l=>'自动 '+l+'/s' }
 };
-// =====================
-// 合成配方
-// =====================
+
+// ===== 电力系统常量 =====
+const POWER_BLOCKS = [T.HEAT_GEN, T.GEO_GEN, T.WIND_GEN, T.ELEC_MINER, T.ELEC_FURNACE, T.WIRELESS_NODE, T.WIRELESS_HUB];
+const POWER_ADJ = [[1,0],[-1,0],[0,1],[0,-1]];
+const PIPE_ADJ  = [[1,0],[-1,0],[0,1],[0,-1]];
+
+const MACHINE_KIND_MAP = {
+  [T.HEAT_GEN]:      'heat_gen',
+  [T.GEO_GEN]:       'geo_gen',
+  [T.WIND_GEN]:      'wind_gen',
+  [T.ELEC_MINER]:    'elec_miner',
+  [T.ELEC_FURNACE]:  'elec_furnace',
+  [T.WIRELESS_NODE]: 'node',
+  [T.WIRELESS_HUB]:  'hub',
+  [T.ITEM_PIPE]:     'item_pipe',
+  [T.POWER_PIPE]:    'power_pipe',
+  [T.FLUID_PIPE]:    'fluid_pipe'
+};
+
+const WORK_BLOCK_KIND_MAP = {
+  34:'miner', 35:'cultivator', 36:'controller',
+  253:'heat_gen', 254:'geo_gen', 255:'wind_gen',
+  256:'elec_miner', 257:'elec_furnace',
+  261:'node', 262:'hub',
+  258:'item_pipe', 259:'power_pipe', 260:'fluid_pipe'
+};
+
 const RECIPES = [
   { out:T.STICK,          cnt:4, need:{ [T.PLANK]:2 } },
   { out:T.PLANK,          cnt:4, need:{ [T.WOOD]:1 } },
@@ -380,7 +424,18 @@ const RECIPES = [
   { out:T.EQ_LEG_IRON,    cnt:1, need:{ [T.IRON_INGOT]:6 } },
   { out:T.EQ_HELM_DIAMOND,cnt:1, need:{ [T.DIAMOND]:5 } },
   { out:T.EQ_CHEST_DIAMOND,cnt:1,need:{ [T.DIAMOND]:8 } },
-  { out:T.EQ_LEG_DIAMOND, cnt:1, need:{ [T.DIAMOND]:6 } }
+  { out:T.EQ_LEG_DIAMOND, cnt:1, need:{ [T.DIAMOND]:6 } },
+  { out:T.HEAT_GEN,       cnt:1, need:{ [T.IRON_INGOT]:10, [T.FURNACE]:2, [T.COAL]:20 } },
+  { out:T.GEO_GEN,        cnt:1, need:{ [T.IRON_INGOT]:20, [T.OBSIDIAN]:5, [T.GOLD_INGOT]:5 } },
+  { out:T.WIND_GEN,       cnt:1, need:{ [T.IRON_INGOT]:10, [T.PLANK]:5, [T.REDSTONE]:5 } },
+  { out:T.ELEC_MINER,     cnt:1, need:{ [T.IRON_INGOT]:15, [T.REDSTONE]:10, [T.DIAMOND]:3 } },
+  { out:T.ELEC_FURNACE,   cnt:1, need:{ [T.IRON_INGOT]:15, [T.REDSTONE]:15, [T.GOLD_INGOT]:3 } },
+  { out:T.ITEM_PIPE,      cnt:4, need:{ [T.IRON_INGOT]:1, [T.GLASS]:1 } },
+  { out:T.POWER_PIPE,     cnt:8, need:{ [T.GOLD_INGOT]:1, [T.REDSTONE]:2 } },
+  { out:T.FLUID_PIPE,     cnt:4, need:{ [T.IRON_INGOT]:1, [T.GLASS]:2 } },
+  { out:T.WIRELESS_NODE,  cnt:1, need:{ [T.GOLD_INGOT]:5, [T.DIAMOND]:3, [T.REDSTONE]:10 } },
+  { out:T.WIRELESS_HUB,   cnt:1, need:{ [T.GOLD_INGOT]:20, [T.DIAMOND]:10, [T.REDSTONE]:30 } },
+  { out:T.BUCKET_EMPTY,   cnt:1, need:{ [T.IRON_INGOT]:3 } }
 ];
 
 const SMELT = [
@@ -432,6 +487,7 @@ const EVENTS_POOL = [
   { ic:'🌽', t:'玉米精灵', d:'玉米精灵出现', a:['接受', s=>{ s.corn=(s.corn||0)+50; return '+50 玉米'}], b:['拒绝', s=>'消失'] },
   { ic:'⛲', t:'生命泉',   d:'清澈的泉水',   a:['喝', s=>{ s.hp=s.maxHp; s.pts+=200; return '回满+200升华'}], b:['不喝', s=>'离开'] }
 ];
+
 const ENCHANTS = {
   sharp:   { n:'锋利',   max:5, desc:l=>'伤害+'+l*10+'%',     cost:l=>1+l },
   protect: { n:'保护',   max:4, desc:l=>'减伤+'+l*5+'%',      cost:l=>1+l },
@@ -460,7 +516,35 @@ const ACHV_LIST = [
   { id:'a12', n:'仙人',       d:'到达真仙',           rw:{pts:10}, chk:()=>S.realm>=33 },
   { id:'a13', n:'Boss 杀手',  d:'击杀任意 Boss',      rw:{pts:3},  chk:()=>S.stat.bossKills>=1 },
   { id:'a14', n:'钓鱼大师',   d:'钓到 10 条鱼',       rw:{pts:3},  chk:()=>S.stat.fishCaught>=10 },
-  { id:'a15', n:'炼金术士',   d:'炼出九转金丹',       rw:{pts:5},  chk:()=>S.stat.goldPill>=1 }
+  { id:'a15', n:'炼金术士',   d:'炼出九转金丹',       rw:{pts:5},  chk:()=>S.stat.goldPill>=1 },
+  { id:'a16', n:'初次发电',   d:'建成第一个电网',     rw:{pts:3},  chk:()=>{
+    if (!S.power || !S.power.grids) return false;
+    for (const id in S.power.grids) {
+      if ((S.power.grids[id].capacity || 0) > 0) return true;
+    }
+    return false;
+  } },
+  { id:'a17', n:'工业革命',   d:'建成 10 台电力设备', rw:{pts:5},  chk:()=>{
+    if (!S.machines) return false;
+    const cnt = S.machines.filter(m =>
+      m.kind === 'heat_gen' || m.kind === 'geo_gen' || m.kind === 'wind_gen' ||
+      m.kind === 'elec_miner' || m.kind === 'elec_furnace'
+    ).length;
+    return cnt >= 10;
+  } },
+  { id:'a18', n:'无线未来',   d:'建成无线中枢',       rw:{pts:8},  chk:()=>{
+    if (!S.machines) return false;
+    return S.machines.some(m => m.kind === 'hub');
+  } },
+  { id:'a19', n:'全自动化',   d:'电力矿机通过管道输出', rw:{pts:10}, chk:()=>S.stat.pipeDelivered >= 100 },
+  { id:'a20', n:'大电力家',   d:'总发电量 ≥ 100 W',    rw:{pts:15}, chk:()=>{
+    if (!S.power || !S.power.grids) return false;
+    let total = 0;
+    for (const id in S.power.grids) {
+      total += S.power.grids[id].capacity || 0;
+    }
+    return total >= 100;
+  } }
 ];
 
 const PETS = {
@@ -514,9 +598,10 @@ function newState(seed) {
     ocU: 0, ocCd: 0, ocU2: 0, feedUntil: 0,
     era: 0,
     stat: { blocks:0, ironOre:0, diamond:0, craftTable:0, furnace:0,
-            stonePick:0, ironSword:0, diamondSword:0, ironIngot:0, bossKills:0,
-            rtable:0, vminer:0, cultivator:0, controller:0, alchemy:0, goldPill:0,
-            woodPick:0, walkDist:0, dragonKill:0, fishCaught:0, chainCount:0 },
+        stonePick:0, ironSword:0, diamondSword:0, ironIngot:0, bossKills:0,
+        rtable:0, vminer:0, cultivator:0, controller:0, alchemy:0, goldPill:0,
+        woodPick:0, walkDist:0, dragonKill:0, fishCaught:0, chainCount:0,
+        pipeDelivered:0 },
     questDone: {},
     machines: [],
     spawnX: 0, spawnY: 0,
@@ -537,10 +622,17 @@ function newState(seed) {
     dungeonSeed: 0,
     fishing: { state:'idle', timer:0, wait:0 },
     vehicle: null,
-    exp: 0
+    exp: 0,
+    power: {
+      grids: {},
+      nextId: 1
+    },
+    pipes: {
+      itemBuffers: {},
+      fluidBuffers: {}
+    }
   };
 }
-
 const SAVE_KEY = 'worldV4';
 
 function saveGame() {
@@ -592,6 +684,8 @@ function loadGame() {
     if (!data.achv) data.achv = {};
     if (!data.petsOwned) data.petsOwned = {};
     if (!data.fishing) data.fishing = { state:'idle', timer:0, wait:0 };
+    if (!data.power) data.power = { grids: {}, nextId: 1 };
+    if (!data.pipes) data.pipes = { itemBuffers: {}, fluidBuffers: {} };
     return data;
   } catch (e) { return null; }
 }
@@ -643,19 +737,16 @@ function dmgMul() {
   if (S.buffPillAtkUntil && S.buffPillAtkUntil > Date.now()) d *= 2;
   if (S.buffs.str > Date.now()) d *= 1.8;
   if (S.pet === 'dragon') d *= 1.1;
-  // 装备攻击加成
   if (S.equip) {
     for (const k in S.equip) {
       const it = S.equip[k];
       if (!it) continue;
       const info = INFO[it];
       if (!info || !info.eq) continue;
-      const q = info.q || 0;
       if (info.eq === 'neck' && it === T.EQ_NECK_ATK) d *= 1.15;
       if (info.eq === 'ring' && it === T.EQ_RING_ATK) d *= 1.15;
     }
   }
-  // 附魔锋利
   const wep = S.equip && S.equip.weapon;
   if (wep && S.enchant[wep] && S.enchant[wep].sharp) {
     d *= 1 + S.enchant[wep].sharp * 0.1;
@@ -724,7 +815,9 @@ function biomeAt(x) {
 }
 
 const WORK_BLOCK_TYPES = [T.CRAFT_TABLE, T.FURNACE, T.ALCHEMY, T.CONTROLLER,
-                          T.VOID_MINER, T.CULTIVATOR, T.ENCHANT_TABLE];
+                          T.VOID_MINER, T.CULTIVATOR, T.ENCHANT_TABLE,
+                          T.HEAT_GEN, T.GEO_GEN, T.WIND_GEN, T.ELEC_MINER,
+                          T.ELEC_FURNACE, T.WIRELESS_NODE, T.WIRELESS_HUB];
 
 function carveCaves(surface, count) {
   for (let i = 0; i < count; i++) {
@@ -952,9 +1045,6 @@ function isSolid(x, y) {
       && t !== T.PORTAL;
 }
 
-// =====================
-// 天气
-// =====================
 const WEATHER_TYPES = ['clear', 'rain', 'storm', 'sand'];
 
 function weatherName(w) {
@@ -979,7 +1069,6 @@ function updateWeather(dt) {
       log('天气：' + wname);
     }
   }
-  // 雷暴闪电
   if (S.weather === 'storm' && Math.random() < 0.005) {
     const px = Math.floor(S.player.x / BS);
     const py = Math.floor(S.player.y / BS);
@@ -1135,7 +1224,6 @@ function render() {
     drawBoss(px, py, b.w, b.h, b);
   }
 
-  // NPC
   for (const n of S.npcs) {
     const px = n.x * BS - camera.x;
     const py = n.y * BS - camera.y;
@@ -1172,7 +1260,6 @@ function render() {
 
   drawPlayer();
 
-  // 宠物跟随
   if (S.pet) {
     const px = S.player.x - camera.x - 30;
     const py = S.player.y - camera.y - 10;
@@ -1181,7 +1268,6 @@ function render() {
     ctx.fillText(icons[S.pet] || '?', px, py);
   }
 
-  // 钓鱼浮标
   if (S.fishing && S.fishing.state === 'waiting') {
     const px = S.player.x - camera.x + 60 * S.player.facing;
     const py = S.player.y - camera.y + 30;
@@ -1236,7 +1322,6 @@ function render() {
     ctx.fillRect(0, 0, cv.width, cv.height);
   }
 
-  // 天气叠加
   if (S.weather === 'rain' || S.weather === 'storm') {
     ctx.strokeStyle = 'rgba(180,200,255,.4)';
     ctx.lineWidth = 1;
@@ -1259,7 +1344,6 @@ function render() {
     ctx.fillRect(0, 0, cv.width, cv.height);
   }
 }
-
 const BLOCK_CACHE = {};
 const CACHE_SIZE = 26;
 
@@ -1298,72 +1382,65 @@ function renderBlockTo(c, px, py, t, SZ) {
       c.fillRect(px + h1(i * 11 + t) * (SZ - 4), py + h2(i * 13 + t) * (SZ * 0.4), 2, 2);
     }
   } else if (t === T.STONE || t === T.DUNGEON_BRICK) {
-  // 石头：灰底 + 大块深灰斑 + 裂纹
-  c.fillStyle = '#5a5a5a';
-  for (let i = 0; i < 4; i++) {
-    const bx = px + h1(i * 7 + t) * (SZ - 8);
-    const by = py + h2(i * 7 + t) * (SZ - 8);
-    c.fillRect(bx, by, 6, 5);
-  }
-  c.strokeStyle = 'rgba(0,0,0,.4)';
-  c.lineWidth = 1;
-  c.beginPath();
-  c.moveTo(px + 4, py + 6);
-  c.lineTo(px + 10, py + 14);
-  c.lineTo(px + 8, py + 20);
-  c.stroke();
-} else if (t === T.SANDSTONE) {
-  // 砂岩：横条纹
-  c.fillStyle = '#c0b080';
-  c.fillRect(px, py + 6, SZ, 1);
-  c.fillRect(px, py + 13, SZ, 1);
-  c.fillRect(px, py + 20, SZ, 1);
-} else if (t === T.BRICK) {
-  // 砖：交错格子
-  c.fillStyle = '#704030';
-  c.fillRect(px, py + 8, SZ, 1);
-  c.fillRect(px, py + 17, SZ, 1);
-  c.fillRect(px + 8, py, 1, 8);
-  c.fillRect(px + 16, py + 8, 1, 9);
-  c.fillRect(px + 8, py + 17, 1, 9);
-} else if (t === T.DIRT) {
-  // 泥土：不规则深棕色斑块
-  c.fillStyle = '#4a2a0a';
-  for (let i = 0; i < 5; i++) {
-    const bx = px + h1(i * 3 + t) * (SZ - 5);
-    const by = py + h2(i * 5 + t) * (SZ - 5);
-    c.fillRect(bx, by, 4, 3);
-  }
-  c.fillStyle = '#a08060';
-  for (let i = 0; i < 3; i++) {
-    const bx = px + h1(i * 11 + t) * (SZ - 3);
-    const by = py + h2(i * 13 + t) * (SZ - 3);
-    c.fillRect(bx, by, 2, 2);
-  }
-} else if (t === T.SAND) {
-  // 沙子：细密点状
-  c.fillStyle = '#b8a870';
-  for (let i = 0; i < 8; i++) {
-    const bx = px + h1(i * 3 + t) * (SZ - 2);
-    const by = py + h2(i * 5 + t) * (SZ - 2);
-    c.fillRect(bx, by, 1, 1);
-  }
-  c.fillStyle = '#f0e0a8';
-  for (let i = 0; i < 4; i++) {
-    const bx = px + h1(i * 17 + t) * (SZ - 2);
-    const by = py + h2(i * 19 + t) * (SZ - 2);
-    c.fillRect(bx, by, 1, 1);
-  }
-} else if (t === T.PAPER_SOIL) {
-  // 纸田土壤：深棕 + 纸屑
-  c.fillStyle = '#3a2a10';
-  for (let i = 0; i < 4; i++) {
-    c.fillRect(px + h1(i + t) * (SZ - 4), py + h2(i + t) * (SZ - 4), 3, 2);
-  }
-  c.fillStyle = '#f8f0d0';
-  c.fillRect(px + 6, py + 8, 3, 2);
-  c.fillRect(px + 16, py + 16, 2, 2);
-
+    c.fillStyle = '#5a5a5a';
+    for (let i = 0; i < 4; i++) {
+      const bx = px + h1(i * 7 + t) * (SZ - 8);
+      const by = py + h2(i * 7 + t) * (SZ - 8);
+      c.fillRect(bx, by, 6, 5);
+    }
+    c.strokeStyle = 'rgba(0,0,0,.4)';
+    c.lineWidth = 1;
+    c.beginPath();
+    c.moveTo(px + 4, py + 6);
+    c.lineTo(px + 10, py + 14);
+    c.lineTo(px + 8, py + 20);
+    c.stroke();
+  } else if (t === T.SANDSTONE) {
+    c.fillStyle = '#c0b080';
+    c.fillRect(px, py + 6, SZ, 1);
+    c.fillRect(px, py + 13, SZ, 1);
+    c.fillRect(px, py + 20, SZ, 1);
+  } else if (t === T.BRICK) {
+    c.fillStyle = '#704030';
+    c.fillRect(px, py + 8, SZ, 1);
+    c.fillRect(px, py + 17, SZ, 1);
+    c.fillRect(px + 8, py, 1, 8);
+    c.fillRect(px + 16, py + 8, 1, 9);
+    c.fillRect(px + 8, py + 17, 1, 9);
+  } else if (t === T.DIRT) {
+    c.fillStyle = '#4a2a0a';
+    for (let i = 0; i < 5; i++) {
+      const bx = px + h1(i * 3 + t) * (SZ - 5);
+      const by = py + h2(i * 5 + t) * (SZ - 5);
+      c.fillRect(bx, by, 4, 3);
+    }
+    c.fillStyle = '#a08060';
+    for (let i = 0; i < 3; i++) {
+      const bx = px + h1(i * 11 + t) * (SZ - 3);
+      const by = py + h2(i * 13 + t) * (SZ - 3);
+      c.fillRect(bx, by, 2, 2);
+    }
+  } else if (t === T.SAND) {
+    c.fillStyle = '#b8a870';
+    for (let i = 0; i < 8; i++) {
+      const bx = px + h1(i * 3 + t) * (SZ - 2);
+      const by = py + h2(i * 5 + t) * (SZ - 2);
+      c.fillRect(bx, by, 1, 1);
+    }
+    c.fillStyle = '#f0e0a8';
+    for (let i = 0; i < 4; i++) {
+      const bx = px + h1(i * 17 + t) * (SZ - 2);
+      const by = py + h2(i * 19 + t) * (SZ - 2);
+      c.fillRect(bx, by, 1, 1);
+    }
+  } else if (t === T.PAPER_SOIL) {
+    c.fillStyle = '#3a2a10';
+    for (let i = 0; i < 4; i++) {
+      c.fillRect(px + h1(i + t) * (SZ - 4), py + h2(i + t) * (SZ - 4), 3, 2);
+    }
+    c.fillStyle = '#f8f0d0';
+    c.fillRect(px + 6, py + 8, 3, 2);
+    c.fillRect(px + 16, py + 16, 2, 2);
   } else if (t === T.WOOD || t === T.HOUSE_BLOCK) {
     c.fillStyle = info.d;
     c.fillRect(px + 3, py, 2, SZ);
@@ -1526,6 +1603,100 @@ function renderBlockTo(c, px, py, t, SZ) {
     c.fill();
     c.fillStyle = '#5a1a4a';
     c.fillRect(px + SZ / 2 - 2, py + SZ * 0.2, 4, SZ * 0.4);
+  } else if (t === T.HEAT_GEN) {
+    c.fillStyle = '#802010';
+    c.fillRect(px + 3, py + 3, SZ - 6, SZ - 6);
+    c.fillStyle = '#ff6030';
+    c.beginPath();
+    c.arc(px + SZ / 2, py + SZ * 0.6, 5, 0, Math.PI * 2);
+    c.fill();
+    c.fillStyle = '#ffcc30';
+    c.beginPath();
+    c.arc(px + SZ / 2, py + SZ * 0.6, 2, 0, Math.PI * 2);
+    c.fill();
+  } else if (t === T.GEO_GEN) {
+    c.fillStyle = '#a04000';
+    c.fillRect(px + 2, py + 6, SZ - 4, SZ - 8);
+    c.fillStyle = '#ffa040';
+    for (let i = 0; i < 3; i++) {
+      const fx = px + 5 + i * 6;
+      c.beginPath();
+      c.arc(fx, py + SZ * 0.3, 3, 0, Math.PI * 2);
+      c.fill();
+    }
+  } else if (t === T.WIND_GEN) {
+    c.fillStyle = '#808080';
+    c.fillRect(px + SZ / 2 - 1, py + SZ * 0.3, 2, SZ * 0.7);
+    c.fillStyle = '#c0e8f0';
+    const rot = (performance.now() / 500) % (Math.PI * 2);
+    for (let i = 0; i < 3; i++) {
+      const a = rot + i * (Math.PI * 2 / 3);
+      c.save();
+      c.translate(px + SZ / 2, py + SZ * 0.3);
+      c.rotate(a);
+      c.fillRect(-2, -1, 8, 2);
+      c.restore();
+    }
+  } else if (t === T.ELEC_MINER) {
+    c.fillStyle = '#203060';
+    c.fillRect(px + 3, py + 3, SZ - 6, SZ - 6);
+    c.fillStyle = '#6080d0';
+    c.beginPath();
+    c.moveTo(px + SZ / 2, py + SZ * 0.7);
+    c.lineTo(px + SZ / 2 - 5, py + SZ * 0.4);
+    c.lineTo(px + SZ / 2 + 5, py + SZ * 0.4);
+    c.closePath();
+    c.fill();
+  } else if (t === T.ELEC_FURNACE) {
+    c.fillStyle = '#401060';
+    c.fillRect(px + 3, py + 3, SZ - 6, SZ - 6);
+    c.fillStyle = '#b060e0';
+    c.fillRect(px + 6, py + SZ * 0.5, SZ - 12, 3);
+    c.fillStyle = '#fff';
+    c.fillRect(px + 7, py + SZ * 0.55, 2, 2);
+    c.fillRect(px + SZ - 9, py + SZ * 0.55, 2, 2);
+  } else if (t === T.ITEM_PIPE) {
+    c.fillStyle = '#5a4020';
+    c.fillRect(px + SZ * 0.3, py, SZ * 0.4, SZ);
+    c.fillRect(px, py + SZ * 0.3, SZ, SZ * 0.4);
+    c.fillStyle = '#8a7050';
+    c.fillRect(px + SZ * 0.35, py, SZ * 0.3, SZ);
+    c.fillRect(px, py + SZ * 0.35, SZ, SZ * 0.3);
+  } else if (t === T.POWER_PIPE) {
+    c.fillStyle = '#a08010';
+    c.fillRect(px + SZ * 0.35, py, SZ * 0.3, SZ);
+    c.fillRect(px, py + SZ * 0.35, SZ, SZ * 0.3);
+    c.fillStyle = '#ffe060';
+    c.fillRect(px + SZ * 0.42, py + SZ * 0.42, SZ * 0.16, SZ * 0.16);
+  } else if (t === T.FLUID_PIPE) {
+    c.fillStyle = 'rgba(60,140,200,.8)';
+    c.fillRect(px + SZ * 0.3, py, SZ * 0.4, SZ);
+    c.fillRect(px, py + SZ * 0.3, SZ, SZ * 0.4);
+    c.fillStyle = '#60b0ff';
+    c.fillRect(px + SZ * 0.42, py + SZ * 0.42, SZ * 0.16, SZ * 0.16);
+  } else if (t === T.WIRELESS_NODE) {
+    c.fillStyle = '#106050';
+    c.beginPath();
+    c.arc(px + SZ / 2, py + SZ / 2, SZ * 0.35, 0, Math.PI * 2);
+    c.fill();
+    c.strokeStyle = '#60ffc0';
+    c.lineWidth = 1;
+    c.beginPath();
+    c.arc(px + SZ / 2, py + SZ / 2, SZ * 0.42, 0, Math.PI * 2);
+    c.stroke();
+  } else if (t === T.WIRELESS_HUB) {
+    c.fillStyle = '#a08020';
+    c.beginPath();
+    c.arc(px + SZ / 2, py + SZ / 2, SZ * 0.4, 0, Math.PI * 2);
+    c.fill();
+    c.fillStyle = '#ffe060';
+    c.beginPath();
+    c.arc(px + SZ / 2, py + SZ / 2, SZ * 0.25, 0, Math.PI * 2);
+    c.fill();
+    c.fillStyle = '#fff';
+    c.beginPath();
+    c.arc(px + SZ / 2, py + SZ / 2, SZ * 0.1, 0, Math.PI * 2);
+    c.fill();
   }
 
   c.strokeStyle = 'rgba(0,0,0,.12)';
@@ -1644,7 +1815,6 @@ function drawPlayer() {
   const ex = p.facing > 0 ? p.w * 0.6 : p.w * 0.1;
   ctx.fillRect(px + ex, eyeY, 2.5, 2.5);
 
-  // 装备可视化
   if (S.equip) {
     if (S.equip.helm) {
       ctx.fillStyle = INFO[S.equip.helm] ? INFO[S.equip.helm].c : '#a07040';
@@ -1722,7 +1892,6 @@ function updatePlayer(dt) {
   if (S.buffs.speed > Date.now()) spdBuff *= 1.5;
   if (S.pet === 'dog') spdBuff *= 1.05;
   if (S.weather === 'sand') spdBuff *= 0.7;
-  // 附魔迅捷
   for (const slot in S.equip) {
     const it = S.equip[slot];
     if (it && S.enchant[it] && S.enchant[it].swift) {
@@ -1747,7 +1916,6 @@ function updatePlayer(dt) {
     p.x = test;
   }
 
-  // 飞行（飞天扫帚 / 火箭靴预留）
   let canFly = false;
   if (S.vehicle === 'broom' && keys.jump) canFly = true;
 
@@ -1799,7 +1967,6 @@ function updatePlayer(dt) {
     p.healT = 0;
   }
 
-  // 药水持续回血
   if (S.buffs.regen > Date.now()) {
     p.regenT = (p.regenT || 0) + dt;
     if (p.regenT > 2) {
@@ -1840,7 +2007,6 @@ function collidesBox(px, py, w, h) {
 function damagePlayer(n) {
   const p = S.player;
   if (p.invuln > 0) return;
-  // 减伤（装备 + 附魔 + 药水）
   let reduce = 0;
   if (S.buffs.iron > Date.now()) reduce += 0.5;
   if (S.equip) {
@@ -1861,11 +2027,6 @@ function damagePlayer(n) {
   p.hp -= finalDmg;
   p.invuln = 0.8;
   p.hurtFlash = 0.3;
-
-  // 荆棘反伤
-  if (S.equip && S.equip.chest && S.enchant[S.equip.chest] && S.enchant[S.equip.chest].thorn) {
-    // 触发的反伤交给攻击源处理
-  }
 
   updateHUD();
   if (p.hp <= 0) die();
@@ -1980,12 +2141,15 @@ function endPointer() {
 
 let mineProgress = 0;
 let mineTarget = null;
-
 function tryAction(cx, cy) {
   const p = pointerCell(cx, cy);
   if (!inReach(p.bx, p.by)) {
     toast('太远');
     return;
+  }
+  const sel = S.selected;
+  if (sel === T.BUCKET_EMPTY || sel === T.BUCKET_WATER || sel === T.BUCKET_LAVA) {
+    if (tryBucket(p.bx, p.by)) return;
   }
   if (S.mode === 'mine') tryMine(p.bx, p.by);
   else if (S.mode === 'place') tryPlace(p.bx, p.by, false);
@@ -2006,7 +2170,6 @@ function continueMine(dt) {
   if (!inReach(mineTarget.x, mineTarget.y)) { mineProgress = 0; return; }
   const hard = HARD[mineTarget.type] || 1;
   let toolMul = 1 + (S.soulLv.origin_mine || 0) * 0.15 + (S.plv.keepClick || 0) * 0.1;
-  // 附魔效率
   const wep = S.equip && S.equip.weapon;
   if (wep && S.enchant[wep] && S.enchant[wep].eff) {
     toolMul *= 1 + S.enchant[wep].eff * 0.15;
@@ -2054,16 +2217,13 @@ function doChainBreak(startX, startY) {
 
   let chain = null;
 
-if (startType === T.WOOD || startType === T.HOUSE_BLOCK) {
-  // 木头：只连锁同种木头（不砍树叶）
-  chain = chainMine(startX, startY, [T.WOOD, T.HOUSE_BLOCK], 64);
-} else if (isOreType(startType)) {
-  // 矿石：连锁同种矿石
-  chain = chainMine(startX, startY, [startType], 32);
-} else {
-  // 其他方块：只挖单块
-  chain = [{ x: startX, y: startY, type: startType }];
-}
+  if (startType === T.WOOD || startType === T.HOUSE_BLOCK) {
+    chain = chainMine(startX, startY, [T.WOOD, T.HOUSE_BLOCK], 64);
+  } else if (isOreType(startType)) {
+    chain = chainMine(startX, startY, [startType], 32);
+  } else {
+    chain = [{ x: startX, y: startY, type: startType }];
+  }
 
   if (!chain || chain.length === 0) return;
 
@@ -2083,7 +2243,6 @@ if (startType === T.WOOD || startType === T.HOUSE_BLOCK) {
       if (t === T.CHEST || t === T.DUNGEON_CHEST) {
         const g = Math.floor((200 + Math.random() * 800) * goldMul());
         S.gold += g; S.tg += g;
-        // 宝箱有概率开出装备
         if (Math.random() < 0.15) {
           const equips = [T.EQ_HELM_IRON, T.EQ_CHEST_IRON, T.EQ_LEG_IRON,
                           T.EQ_NECK_HP, T.EQ_RING_ATK, T.EQ_RING_SPD, T.EQ_AMULET_CRIT];
@@ -2121,17 +2280,14 @@ if (startType === T.WOOD || startType === T.HOUSE_BLOCK) {
     trackMine(t);
     setBlock(b.x, b.y, T.AIR);
 
-    // 机器方块记录同步删除
     if (WORK_BLOCK_TYPES.indexOf(t) !== -1 && S.machines) {
-      const kindMap = { 34:'miner', 35:'cultivator', 36:'controller' };
-      const kind = kindMap[t];
+      const kind = WORK_BLOCK_KIND_MAP[t];
       if (kind) {
         S.machines = S.machines.filter(m => !(m.x === b.x && m.y === b.y && m.kind === kind));
       }
     }
   }
 
-  // 连锁掉落：矿石额外掉经验
   for (const b of chain) {
     if (isOreType(b.type)) {
       S.exp = (S.exp || 0) + 1;
@@ -2154,10 +2310,8 @@ function doMineBreak(target) {
     if (drop) addDrop(target.x, target.y, drop, 1);
     if (isOreType(target.type)) S.exp = (S.exp || 0) + 1;
     setBlock(target.x, target.y, T.AIR);
-    // 机器同步删除
     if (WORK_BLOCK_TYPES.indexOf(target.type) !== -1 && S.machines) {
-      const kindMap = { 34:'miner', 35:'cultivator', 36:'controller' };
-      const kind = kindMap[target.type];
+      const kind = WORK_BLOCK_KIND_MAP[target.type];
       if (kind) {
         S.machines = S.machines.filter(m => !(m.x === target.x && m.y === target.y && m.kind === kind));
       }
@@ -2167,6 +2321,53 @@ function doMineBreak(target) {
     return;
   }
   doChainBreak(target.x, target.y);
+}
+
+function tryBucket(bx, by) {
+  if (!S) return;
+  const p = S.player;
+  const pcx = (p.x + p.w / 2) / BS;
+  const pcy = (p.y + p.h / 2) / BS;
+  if (Math.hypot(bx - pcx, by - pcy) > 6) { toast('太远'); return; }
+
+  const t = getBlock(bx, by);
+  const sel = S.selected;
+
+  if (sel === T.BUCKET_EMPTY) {
+    if (t === T.WATER) {
+      S.inventory[T.BUCKET_EMPTY]--;
+      if (S.inventory[T.BUCKET_EMPTY] <= 0) delete S.inventory[T.BUCKET_EMPTY];
+      S.inventory[T.BUCKET_WATER] = (S.inventory[T.BUCKET_WATER] || 0) + 1;
+      setBlock(bx, by, T.AIR);
+      toast('💧 装水');
+      updateInvUI();
+      return true;
+    }
+    if (t === T.LAVA) {
+      S.inventory[T.BUCKET_EMPTY]--;
+      if (S.inventory[T.BUCKET_EMPTY] <= 0) delete S.inventory[T.BUCKET_EMPTY];
+      S.inventory[T.BUCKET_LAVA] = (S.inventory[T.BUCKET_LAVA] || 0) + 1;
+      setBlock(bx, by, T.AIR);
+      toast('🔥 装岩浆');
+      updateInvUI();
+      return true;
+    }
+    toast('这里没有液体');
+    return true;
+  }
+
+  if (sel === T.BUCKET_WATER || sel === T.BUCKET_LAVA) {
+    if (t !== T.AIR) { toast('这里放不下'); return true; }
+    const liquid = sel === T.BUCKET_WATER ? T.WATER : T.LAVA;
+    setBlock(bx, by, liquid);
+    S.inventory[sel]--;
+    if (S.inventory[sel] <= 0) delete S.inventory[sel];
+    S.inventory[T.BUCKET_EMPTY] = (S.inventory[T.BUCKET_EMPTY] || 0) + 1;
+    toast(liquid === T.WATER ? '💧 倒出水' : '🔥 倒出岩浆');
+    updateInvUI();
+    return true;
+  }
+  return false;
 }
 
 function tryPlace(bx, by, ignoreAdj) {
@@ -2193,7 +2394,15 @@ function tryPlace(bx, by, ignoreAdj) {
   S.inventory[sel]--;
   if (S.inventory[sel] <= 0) delete S.inventory[sel];
 
-  // 传送门核心检测
+  const kind = MACHINE_KIND_MAP[sel];
+  if (kind && S.machines && !S.machines.some(m => m.x === bx && m.y === by)) {
+    const init = { kind: kind, x: bx, y: by };
+    if (kind === 'heat_gen')    init.fuel = 0;
+    if (kind === 'elec_miner')  { init.timer = 0; init.output = null; }
+    if (kind === 'elec_furnace'){ init.smelting = null; init.smeltT = 0; }
+    S.machines.push(init);
+  }
+
   if (sel === T.PORTAL_CORE) checkPortalSpawn(bx, by);
 
   updateInvUI();
@@ -2265,7 +2474,6 @@ function updateDrops(dt) {
       d.x += dxp / dist * 500 * dt;
       d.y += dyp / dist * 500 * dt;
       if (dist < BS * 1.3) {
-        // 装备类物品：优先装备到空槽，否则进背包
         const info = INFO[d.type];
         if (info && info.eq) {
           if (!S.equip[info.eq]) {
@@ -2355,6 +2563,7 @@ function updateCorn(dt) {
     }
   }
 }
+
 const PS = {
   global: { n:'🌟 全局', max:500, cost: l => 1 + Math.floor(l * 0.3), eff: l => '全局+' + (l * 10) + '%' },
   startGold: { n:'💰 起始金', max:50, cost: l => 1 + Math.floor(l * 0.8), eff: l => '转生+' + fmt(l * 100) + '金' },
@@ -2788,9 +2997,7 @@ function openAlchemy(bx, by) {
     document.getElementById('pop').classList.remove('on');
   };
 }
-// =====================
-// 附魔台
-// =====================
+
 function openEnchantTable(bx, by) {
   const box = document.getElementById('popBox');
   let html = '<h4>🔮 附魔台</h4>';
@@ -2888,9 +3095,6 @@ function doEnchant(item, ek) {
   openEnchantPicker(item);
 }
 
-// =====================
-// 装备栏 UI
-// =====================
 function openEquipPanel() {
   if (!S) return;
   const box = document.getElementById('popBox');
@@ -2925,14 +3129,13 @@ function openEquipPanel() {
   }
   html += '</div>';
 
-  // 背包里的装备
   html += '<div style="font-size:11px;color:#9988bb;margin:10px 0 6px;text-align:left">背包中的装备（点击穿戴）：</div>';
   let found = false;
   for (const k in S.inventory) {
     const t = parseInt(k);
     const info = INFO[t];
     if (!info || !info.eq || S.inventory[k] <= 0) continue;
-    if (S.equip[info.eq]) continue; // 槽位已占用，不显示
+    if (S.equip[info.eq]) continue;
     found = true;
     html += `<button data-equip="${t}" class="gold" style="width:100%;padding:8px;margin:3px 0;font-size:12px">${info.n}</button>`;
   }
@@ -2974,9 +3177,6 @@ function openEquipPanel() {
   };
 }
 
-// =====================
-// 药水使用
-// =====================
 function usePotion(type) {
   if (invCount(type) <= 0) { toast('没有药水'); return; }
   const info = INFO[type];
@@ -3007,9 +3207,6 @@ function usePotion(type) {
   updateInvUI();
 }
 
-// =====================
-// 丹药使用
-// =====================
 function usePill(type) {
   if (invCount(type) <= 0) { toast('没有丹药'); return; }
   const info = INFO[type];
@@ -3037,9 +3234,7 @@ function usePill(type) {
   updateHUD();
   updateInvUI();
 }
-// =====================
-// NPC 系统
-// =====================
+
 const NPC_TYPES = {
   merchant: { n:'商人',     icon:'💰', color:'#c8a848', desc:'买卖物品' },
   smith:    { n:'铁匠',     icon:'🔨', color:'#909090', desc:'升级装备' },
@@ -3049,7 +3244,7 @@ const NPC_TYPES = {
 function checkHouse() {
   if (!S) return;
   S.houseCheck = (S.houseCheck || 0) + 1;
-  if (S.houseCheck < 600) return; // 每 10 秒检测一次
+  if (S.houseCheck < 600) return;
   S.houseCheck = 0;
   if (S.npcs.length >= 3) return;
 
@@ -3057,13 +3252,11 @@ function checkHouse() {
   const pcx = Math.floor((p.x + p.w / 2) / BS);
   const pcy = Math.floor((p.y + p.h / 2) / BS);
 
-  // 在附近搜索 20x20 范围找房屋
   for (let ox = -10; ox <= 10; ox++) {
     for (let oy = -10; oy <= 10; oy++) {
       const cx = pcx + ox, cy = pcy + oy;
       if (cx < 3 || cx >= W - 3 || cy < 3 || cy >= H - 3) continue;
       if (isValidHouse(cx, cy)) {
-        // 检查是否已经有 NPC 在这里
         let occupied = false;
         for (const n of S.npcs) {
           if (Math.abs(n.x - cx) < 5 && Math.abs(n.y - cy) < 5) { occupied = true; break; }
@@ -3077,7 +3270,6 @@ function checkHouse() {
 }
 
 function isValidHouse(cx, cy) {
-  // 检查 4x3 空间：底部地面 + 左右墙 + 顶 + 内部至少 1 光源
   let hasFloor = true;
   for (let dx = 0; dx < 4; dx++) {
     if (!isSolid(cx + dx, cy + 2)) { hasFloor = false; break; }
@@ -3105,10 +3297,8 @@ function isValidHouse(cx, cy) {
   }
   if (!hasLight) return false;
 
-  // 内部必须空
   for (let dy = 0; dy < 2; dy++) {
     for (let dx = 1; dx < 3; dx++) {
-      const t = getBlock(cx + dx, cy + dy);
       if (isSolid(cx + dx, cy + dy)) return false;
     }
   }
@@ -3172,7 +3362,7 @@ function openNpcDialog(npc) {
 
 function openMerchantBuy(npc) {
   const items = [
-    { t:T.PAPER_SEED, cost:100 },  // 用 paperSeed 代替
+    { t:T.PAPER_SEED, cost:100 },
     { t:T.TORCH,      cost:20 },
     { t:T.PLANK,      cost:30 },
     { t:T.BOTTLE,     cost:50 },
@@ -3304,7 +3494,6 @@ function buyEnchantBook(npc) {
 
 function identifyEquip(npc) {
   if (S.gPaper < 2) { toast('诡纸不足（需要 2）'); return; }
-  // 找到背包里第一件装备
   let found = null;
   for (const k in S.inventory) {
     const t = parseInt(k);
@@ -3313,7 +3502,6 @@ function identifyEquip(npc) {
   }
   if (!found) { toast('没有可鉴定的装备'); return; }
   S.gPaper -= 2;
-  // 随机给装备加一条附魔
   const keys = Object.keys(ENCHANTS);
   const ek = keys[Math.floor(Math.random() * keys.length)];
   if (!S.enchant[found]) S.enchant[found] = {};
@@ -3324,16 +3512,12 @@ function identifyEquip(npc) {
   updateHUD();
 }
 
-// =====================
-// 打开最近的工作方块
-// =====================
 function openNearestStation() {
   if (!S) return;
   const p = S.player;
   const pcx = (p.x + p.w / 2) / BS;
   const pcy = (p.y + p.h / 2) / BS;
 
-  // 优先检查 NPC
   for (const npc of S.npcs) {
     if (Math.abs(npc.x - pcx) < 3 && Math.abs(npc.y - pcy) < 3) {
       openNpcDialog(npc);
@@ -3350,8 +3534,10 @@ function openNearestStation() {
     for (let x = x0; x <= x1; x++) {
       const t = getBlock(x, y);
       if (t === T.CRAFT_TABLE || t === T.FURNACE || t === T.ALCHEMY ||
-          t === T.ENCHANT_TABLE || t === T.CONTROLLER || t === T.VOID_MINER ||
-          t === T.CULTIVATOR) {
+    t === T.ENCHANT_TABLE || t === T.CONTROLLER || t === T.VOID_MINER ||
+    t === T.CULTIVATOR || t === T.HEAT_GEN || t === T.GEO_GEN ||
+    t === T.WIND_GEN || t === T.ELEC_MINER || t === T.ELEC_FURNACE ||
+    t === T.WIRELESS_NODE || t === T.WIRELESS_HUB) {
         const d = Math.hypot(x - pcx, y - pcy);
         if (d < bestD) { bestD = d; best = { x, y, t }; }
       }
@@ -3365,11 +3551,16 @@ function openNearestStation() {
   else if (best.t === T.CONTROLLER) openController(best.x, best.y);
   else if (best.t === T.VOID_MINER) openMinerMenu(best.x, best.y);
   else if (best.t === T.CULTIVATOR) openCultivatorMenu(best.x, best.y);
+  else if (best.t === T.HEAT_GEN) openHeatGen(best.x, best.y);
+  else if (best.t === T.GEO_GEN) openGeoGen(best.x, best.y);
+  else if (best.t === T.WIND_GEN) openWindGen(best.x, best.y);
+  else if (best.t === T.ELEC_MINER) openElecMiner(best.x, best.y);
+  else if (best.t === T.ELEC_FURNACE) openElecFurnace(best.x, best.y);
+  else if (best.t === T.WIRELESS_NODE) openWirelessNode(best.x, best.y, false);
+  else if (best.t === T.WIRELESS_HUB) openWirelessNode(best.x, best.y, true);
 }
 window._interact = openNearestStation;
-// =====================
-// 虚空矿机
-// =====================
+
 const MINER_ORES = [
   { type: T.COAL,      need: 0 },
   { type: T.IRON,      need: 0 },
@@ -3380,6 +3571,168 @@ const MINER_ORES = [
   { type: T.DIAMOND,   need: 2 },
   { type: T.OBSIDIAN,  need: 3 }
 ];
+
+function openHeatGen(bx, by) {
+  const m = S.machines.find(m => m.x === bx && m.y === by && m.kind === 'heat_gen');
+  if (!m) {
+    S.machines.push({ kind:'heat_gen', x:bx, y:by, fuel:0 });
+    toast('🔥 热力发电机已激活');
+    return;
+  }
+  const box = document.getElementById('popBox');
+  const coal = S.inventory[T.COAL] || 0;
+  let html = '<h4>🔥 热力发电机</h4>';
+  html += `<div class="d">燃料剩余：<b style="color:#ffd97a">${Math.ceil(m.fuel||0)}</b> 秒<br>`;
+  html += `输出功率：<b style="color:#ffb060">5 W</b><br>`;
+  html += `背包煤：<b style="color:#ffd97a">${coal}</b></div>`;
+  html += '<button id="hgAdd" class="gold">投煤 x5（+150 秒）</button>';
+  html += '<button id="hgClose" class="red">关 闭</button>';
+  box.innerHTML = html;
+  document.getElementById('pop').classList.add('on');
+
+  document.getElementById('hgAdd').onclick = () => {
+    const have = S.inventory[T.COAL] || 0;
+    const use = Math.min(have, 5);
+    if (use <= 0) { toast('没有煤'); return; }
+    S.inventory[T.COAL] -= use;
+    if (S.inventory[T.COAL] <= 0) delete S.inventory[T.COAL];
+    m.fuel = (m.fuel || 0) + use * 30;
+    toast('🔥 +' + use * 30 + ' 秒燃料');
+    updateInvUI();
+    openHeatGen(bx, by);
+  };
+  document.getElementById('hgClose').onclick = () => {
+    document.getElementById('pop').classList.remove('on');
+  };
+}
+
+function openGeoGen(bx, by) {
+  const m = S.machines.find(m => m.x === bx && m.y === by && m.kind === 'geo_gen');
+  if (!m) {
+    S.machines.push({ kind:'geo_gen', x:bx, y:by });
+  }
+  let found = false;
+  for (let dy = 1; dy <= 3; dy++) {
+    if (getBlock(bx, by + dy) === T.LAVA) { found = true; break; }
+  }
+  const box = document.getElementById('popBox');
+  let html = '<h4>♨️ 地热发电机</h4>';
+  html += '<div class="d">';
+  html += `输出功率：<b style="color:#ffa040">${found ? '10 W' : '0 W'}</b><br>`;
+  if (found) {
+    html += '<span style="color:#90ee90">✔ 下方 3 格内检测到岩浆</span>';
+  } else {
+    html += '<span style="color:#ff8888">✘ 下方 3 格内无岩浆</span><br>';
+    html += '<span style="font-size:11px;color:#888">提示：倒一桶岩浆在下面</span>';
+  }
+  html += '</div>';
+  html += '<button id="ggClose" class="red">关 闭</button>';
+  box.innerHTML = html;
+  document.getElementById('pop').classList.add('on');
+  document.getElementById('ggClose').onclick = () => {
+    document.getElementById('pop').classList.remove('on');
+  };
+}
+
+function openWindGen(bx, by) {
+  const m = S.machines.find(m => m.x === bx && m.y === by && m.kind === 'wind_gen');
+  if (!m) {
+    S.machines.push({ kind:'wind_gen', x:bx, y:by });
+  }
+  const bio = biomeCache[bx] || 'plains';
+  const ok = bio === 'desert';
+  const light = dayLight();
+  const out = ok ? (light > 0.5 ? 6 : 3) : 0;
+  const box = document.getElementById('popBox');
+  let html = '<h4>🌀 风力发电机</h4>';
+  html += '<div class="d">';
+  html += `当前群系：<b>${bio}</b><br>`;
+  html += `输出功率：<b style="color:#c0e8f0">${out} W</b><br>`;
+  if (ok) {
+    html += '<span style="color:#90ee90">✔ 沙漠群系，风力有效</span><br>';
+    if (light > 0.5) html += '<span style="color:#90ee90">✔ 白天，功率 ×2</span>';
+  } else {
+    html += '<span style="color:#ff8888">✘ 非沙漠，无输出</span>';
+  }
+  html += '</div>';
+  html += '<button id="wgClose" class="red">关 闭</button>';
+  box.innerHTML = html;
+  document.getElementById('pop').classList.add('on');
+  document.getElementById('wgClose').onclick = () => {
+    document.getElementById('pop').classList.remove('on');
+  };
+}
+
+function openElecMiner(bx, by) {
+  const m = S.machines.find(m => m.x === bx && m.y === by && m.kind === 'elec_miner');
+  if (!m) {
+    S.machines.push({ kind:'elec_miner', x:bx, y:by, timer:0, output:null });
+  }
+  const powered = isPowered(bx, by);
+  const box = document.getElementById('popBox');
+  let html = '<h4>⛏ 电力矿机</h4>';
+  html += '<div class="d">';
+  html += `耗电：<b>5 W</b><br>`;
+  html += `状态：<b style="color:${powered ? '#90ee90' : '#ff8888'}">${powered ? '通电运行' : '断电停止'}</b><br>`;
+  const belowT = getBlock(bx, by + 1);
+  const i = INFO[belowT];
+  html += `下方：<b>${i ? i.n : '空气'}</b><br>`;
+  html += '<span style="font-size:11px;color:#888">下方放矿石 → 挖矿石；下方放石头 → 产煤</span>';
+  html += '</div>';
+  html += '<button id="emClose" class="red">关 闭</button>';
+  box.innerHTML = html;
+  document.getElementById('pop').classList.add('on');
+  document.getElementById('emClose').onclick = () => {
+    document.getElementById('pop').classList.remove('on');
+  };
+}
+
+function openElecFurnace(bx, by) {
+  const m = S.machines.find(m => m.x === bx && m.y === by && m.kind === 'elec_furnace');
+  if (!m) {
+    S.machines.push({ kind:'elec_furnace', x:bx, y:by, smelting:null, smeltT:0 });
+  }
+  const powered = isPowered(bx, by);
+  const box = document.getElementById('popBox');
+  let html = '<h4>🔥 电炉</h4>';
+  html += '<div class="d">';
+  html += `耗电：<b>3 W</b><br>`;
+  html += `状态：<b style="color:${powered ? '#90ee90' : '#ff8888'}">${powered ? '通电运行' : '断电停止'}</b><br>`;
+  if (m.smelting) {
+    const i = INFO[m.smelting.out];
+    html += `正在烧炼：<b>${i ? i.n : '?'}</b> ${Math.floor((m.smeltT||0)*20)}%`;
+  } else {
+    html += '空闲中（自动抓取背包里的矿石）';
+  }
+  html += '</div>';
+  html += '<button id="efClose" class="red">关 闭</button>';
+  box.innerHTML = html;
+  document.getElementById('pop').classList.add('on');
+  document.getElementById('efClose').onclick = () => {
+    document.getElementById('pop').classList.remove('on');
+  };
+}
+
+function openWirelessNode(bx, by, isHub) {
+  const key = isHub ? 'hub' : 'node';
+  const m = S.machines.find(m => m.x === bx && m.y === by && m.kind === key);
+  if (!m) {
+    S.machines.push({ kind:key, x:bx, y:by });
+  }
+  const box = document.getElementById('popBox');
+  const range = isHub ? '∞' : '16';
+  let html = '<h4>' + (isHub ? '📡 无线中枢' : '📶 无线节点') + '</h4>';
+  html += '<div class="d">';
+  html += `范围：<b>${range} 格</b><br>`;
+  html += `<span style="font-size:11px;color:#888">${isHub ? '全图连接所有电力设备' : '连接范围内电力设备，组成一个电网'}</span>`;
+  html += '</div>';
+  html += '<button id="wnClose" class="red">关 闭</button>';
+  box.innerHTML = html;
+  document.getElementById('pop').classList.add('on');
+  document.getElementById('wnClose').onclick = () => {
+    document.getElementById('pop').classList.remove('on');
+  };
+}
 
 function openMinerMenu(bx, by) {
   const m = S.machines.find(m => m.x === bx && m.y === by && m.kind === 'miner');
@@ -3417,9 +3770,244 @@ function openMinerMenu(bx, by) {
   };
 }
 
+// =====================
+// 电力系统 v1.0
+// =====================
+function generatorOutput(t, bx, by) {
+  if (t === T.HEAT_GEN) {
+    const m = S.machines.find(m => m.x === bx && m.y === by && m.kind === 'heat_gen');
+    if (!m) return 0;
+    return m.fuel > 0 ? 5 : 0;
+  }
+  if (t === T.GEO_GEN) {
+    for (let dy = 1; dy <= 3; dy++) {
+      if (getBlock(bx, by + dy) === T.LAVA) return 10;
+    }
+    return 0;
+  }
+  if (t === T.WIND_GEN) {
+    const bio = biomeCache[bx] || 'plains';
+    if (bio !== 'desert') return 0;
+    const light = dayLight();
+    return light > 0.5 ? 6 : 3;
+  }
+  return 0;
+}
+
+function consumerDemand(t) {
+  if (t === T.ELEC_MINER)   return 5;
+  if (t === T.ELEC_FURNACE) return 3;
+  return 0;
+}
+
+function rebuildPowerGrids() {
+  if (!S.power) S.power = { grids: {}, nextId: 1 };
+  S.power.grids = {};
+  S.power.nextId = 1;
+
+  const visited = {};
+
+  for (const m of S.machines) {
+    const t0 = getBlock(m.x, m.y);
+    if (POWER_BLOCKS.indexOf(t0) === -1) continue;
+    const k0 = m.x + ',' + m.y;
+    if (visited[k0]) continue;
+
+    const grid = [];
+    const queue = [[m.x, m.y]];
+    while (queue.length > 0) {
+      const [x, y] = queue.shift();
+      const k = x + ',' + y;
+      if (visited[k]) continue;
+      visited[k] = true;
+      const bt = getBlock(x, y);
+
+      if (POWER_BLOCKS.indexOf(bt) !== -1) {
+        grid.push({ x, y, t: bt, powered: false });
+
+        if (bt === T.WIRELESS_NODE || bt === T.WIRELESS_HUB) {
+          const range = bt === T.WIRELESS_HUB ? 999 : 16;
+          for (const m2 of S.machines) {
+            const t2 = getBlock(m2.x, m2.y);
+            if (POWER_BLOCKS.indexOf(t2) === -1) continue;
+            if (Math.hypot(m2.x - x, m2.y - y) <= range) {
+              if (!visited[m2.x + ',' + m2.y]) queue.push([m2.x, m2.y]);
+            }
+          }
+        }
+      } else if (bt === T.POWER_PIPE) {
+        // 能量管道：只传导，不入 grid
+      } else {
+        continue;
+      }
+
+      for (const [dx, dy] of POWER_ADJ) {
+        const nx = x + dx, ny = y + dy;
+        const nt = getBlock(nx, ny);
+        if ((POWER_BLOCKS.indexOf(nt) !== -1 || nt === T.POWER_PIPE) && !visited[nx + ',' + ny]) {
+          queue.push([nx, ny]);
+        }
+      }
+    }
+
+    if (grid.length > 0) {
+      const id = S.power.nextId++;
+      S.power.grids[id] = { members: grid, power: 0, capacity: 0 };
+    }
+  }
+}
+
+let _gridTimer = 0;
+function updatePowerGrid(dt) {
+  _gridTimer += dt;
+  if (_gridTimer > 0.5) {
+    _gridTimer = 0;
+    rebuildPowerGrids();
+  }
+
+  for (const id in S.power.grids) {
+    const grid = S.power.grids[id];
+    let totalGen = 0;
+    for (const b of grid.members) {
+      totalGen += generatorOutput(b.t, b.x, b.y);
+    }
+    grid.capacity = totalGen;
+    grid.power = totalGen;
+
+    for (const b of grid.members) {
+      const demand = consumerDemand(b.t);
+      if (demand === 0) continue;
+      if (grid.power >= demand) {
+        grid.power -= demand;
+        b.powered = true;
+      } else {
+        b.powered = false;
+      }
+    }
+  }
+}
+
+function isPowered(bx, by) {
+  if (!S.power) return false;
+  for (const id in S.power.grids) {
+    for (const b of S.power.grids[id].members) {
+      if (b.x === bx && b.y === by) return !!b.powered;
+    }
+  }
+  return false;
+}
+
+// =====================
+// 管道系统
+// =====================
+function updatePipes(dt) {
+  if (!S.pipes) S.pipes = { itemBuffers: {}, fluidBuffers: {} };
+  if (!S.pipes.itemBuffers)  S.pipes.itemBuffers  = {};
+  if (!S.pipes.fluidBuffers) S.pipes.fluidBuffers = {};
+
+  updatePipes._acc = (updatePipes._acc || 0) + dt;
+  if (updatePipes._acc < 0.5) return;
+  updatePipes._acc = 0;
+
+  // === 物品管道 ===
+  for (const m of S.machines) {
+    const t = getBlock(m.x, m.y);
+    if (t !== T.ITEM_PIPE) continue;
+
+    const key = m.x + ',' + m.y;
+    if (!S.pipes.itemBuffers[key]) S.pipes.itemBuffers[key] = { items: [], timer: 0 };
+    const buf = S.pipes.itemBuffers[key];
+
+    for (const [dx, dy] of PIPE_ADJ) {
+      const nx = m.x + dx, ny = m.y + dy;
+      const nt = getBlock(nx, ny);
+      if (nt === T.ELEC_MINER || nt === T.VOID_MINER) {
+        const src = S.machines.find(mm => mm.x === nx && mm.y === ny);
+        if (src && src.output) {
+          buf.items.push(src.output);
+          src.output = null;
+        }
+      }
+    }
+
+    if (buf.items.length > 0) {
+      for (const [dx, dy] of PIPE_ADJ) {
+        const nx = m.x + dx, ny = m.y + dy;
+        const nt = getBlock(nx, ny);
+        if (nt === T.ITEM_PIPE) {
+          const nkey = nx + ',' + ny;
+          if (!S.pipes.itemBuffers[nkey]) S.pipes.itemBuffers[nkey] = { items: [], timer: 0 };
+          if (S.pipes.itemBuffers[nkey].items.length < 10) {
+            S.pipes.itemBuffers[nkey].items.push(buf.items.shift());
+            break;
+          }
+        } else if (nt === T.CHEST || nt === T.DUNGEON_CHEST) {
+          const item = buf.items.shift();
+          S.inventory[item] = (S.inventory[item] || 0) + 1;
+          S.stat.pipeDelivered = (S.stat.pipeDelivered || 0) + 1;
+          if (S.stat.pipeDelivered % 20 === 0) toast('📦 管道送达 x' + S.stat.pipeDelivered);
+          updateInvUI();
+          break;
+        }
+      }
+    }
+
+    while (buf.items.length > 20) {
+      const item = buf.items.shift();
+      S.inventory[item] = (S.inventory[item] || 0) + 1;
+      updateInvUI();
+    }
+  }
+
+  // === 流体管道 ===
+  for (const m of S.machines) {
+    const t = getBlock(m.x, m.y);
+    if (t !== T.FLUID_PIPE) continue;
+    const key = m.x + ',' + m.y;
+    if (!S.pipes.fluidBuffers[key]) S.pipes.fluidBuffers[key] = { type: null, amount: 0 };
+    const buf = S.pipes.fluidBuffers[key];
+
+    for (const [dx, dy] of PIPE_ADJ) {
+      const nx = m.x + dx, ny = m.y + dy;
+      const nt = getBlock(nx, ny);
+      if (nt === T.WATER && (!buf.type || buf.type === T.WATER)) {
+        buf.type = T.WATER;
+        if (buf.amount < 10) { buf.amount++; setBlock(nx, ny, T.AIR); }
+      } else if (nt === T.LAVA && (!buf.type || buf.type === T.LAVA)) {
+        buf.type = T.LAVA;
+        if (buf.amount < 10) { buf.amount++; setBlock(nx, ny, T.AIR); }
+      }
+    }
+
+    if (buf.amount > 0) {
+      for (const [dx, dy] of PIPE_ADJ) {
+        const nx = m.x + dx, ny = m.y + dy;
+        const nt = getBlock(nx, ny);
+        if (nt === T.FLUID_PIPE) {
+          const nkey = nx + ',' + ny;
+          if (!S.pipes.fluidBuffers[nkey]) S.pipes.fluidBuffers[nkey] = { type: null, amount: 0 };
+          const nbuf = S.pipes.fluidBuffers[nkey];
+          if (nbuf.amount < 10 && (!nbuf.type || nbuf.type === buf.type)) {
+            nbuf.type = buf.type;
+            nbuf.amount++;
+            buf.amount--;
+            break;
+          }
+        }
+      }
+    }
+  }
+}
+
+// =====================
+// 机器主循环
+// =====================
 function updateMachines(dt) {
   if (!S.machines) return;
   const speed = 1 + (S.machines.filter(m => m.kind === 'controller').length) * 0.1;
+
+  updatePowerGrid(dt);
+
   for (const m of S.machines) {
     if (m.kind === 'miner') {
       m.timer = (m.timer || 0) + dt * speed;
@@ -3435,7 +4023,8 @@ function updateMachines(dt) {
           S.inventory[t] = (S.inventory[t] || 0) + 1;
         }
       }
-    } else if (m.kind === 'cultivator') {
+    }
+    else if (m.kind === 'cultivator') {
       m.timer = (m.timer || 0) + dt * speed;
       if (m.timer >= 5) {
         m.timer = 0;
@@ -3468,7 +4057,84 @@ function updateMachines(dt) {
         }
       }
     }
+    else if (m.kind === 'heat_gen') {
+      if (m.fuel === undefined) m.fuel = 0;
+      m.fuel -= dt;
+      if (m.fuel <= 0) {
+        if ((S.inventory[T.COAL] || 0) > 0) {
+          S.inventory[T.COAL] -= 1;
+          if (S.inventory[T.COAL] <= 0) delete S.inventory[T.COAL];
+          m.fuel = 30;
+          updateInvUI();
+        } else {
+          m.fuel = 0;
+        }
+      }
+    }
+    else if (m.kind === 'elec_miner') {
+      if (!isPowered(m.x, m.y)) continue;
+      m.timer = (m.timer || 0) + dt;
+      if (m.timer >= 1) {
+        m.timer = 0;
+        const mineY = m.y + 1;
+        const belowT = getBlock(m.x, mineY);
+        let produced = null;
+        if (belowT === T.COAL || belowT === T.IRON || belowT === T.GOLD ||
+            belowT === T.DIAMOND || belowT === T.REDSTONE || belowT === T.PAPER_ORE ||
+            belowT === T.LAPIS_ORE) {
+          produced = DROP[belowT] || belowT;
+          setBlock(m.x, mineY, T.AIR);
+        } else if (belowT === T.STONE) {
+          produced = T.COAL;
+          setBlock(m.x, mineY, T.AIR);
+        }
+        if (produced) {
+          const hasPipe = PIPE_ADJ.some(([dx, dy]) => getBlock(m.x + dx, m.y + dy) === T.ITEM_PIPE);
+          if (hasPipe) {
+            m.output = produced;
+          } else {
+            addDrop(m.x, mineY, produced, 1);
+          }
+        }
+      }
+    }
+    else if (m.kind === 'elec_furnace') {
+      if (!isPowered(m.x, m.y)) continue;
+      if (m.smelting) {
+        m.smeltT = (m.smeltT || 0) + dt;
+        if (m.smeltT >= 5) {
+          m.smeltT = 0;
+          const out = m.smelting.out;
+          S.inventory[out] = (S.inventory[out] || 0) + 1;
+          m.smelting = null;
+          updateInvUI();
+        }
+      } else {
+        const ELEC_SMELT = [
+          { in: T.COAL,      out: T.COAL },
+          { in: T.IRON,      out: T.IRON_INGOT },
+          { in: T.GOLD,      out: T.GOLD_INGOT },
+          { in: T.PAPER_ORE, out: T.PAPER_INGOT },
+          { in: T.SAND,      out: T.GLASS },
+          { in: T.LAPIS_ORE, out: T.LAPIS },
+          { in: T.REDSTONE,  out: T.REDSTONE },
+          { in: T.DIAMOND,   out: T.DIAMOND }
+        ];
+        for (const r of ELEC_SMELT) {
+          if ((S.inventory[r.in] || 0) > 0) {
+            S.inventory[r.in] -= 1;
+            if (S.inventory[r.in] <= 0) delete S.inventory[r.in];
+            m.smelting = { out: r.out };
+            m.smeltT = 0;
+            break;
+          }
+        }
+      }
+    }
   }
+
+  updatePipes(dt);
+
   if (S.machines.length > 0 && Math.random() < 0.05) updateInvUI();
 }
 
@@ -3507,10 +4173,6 @@ function openController(bx, by) {
     document.getElementById('pop').classList.remove('on');
   };
 }
-
-// =====================
-// 召唤 Boss
-// =====================
 function summonBoss(kind) {
   const boss = BOSSES.find(b => b.id === kind);
   if (!boss) { toast('未知 Boss'); return; }
@@ -3538,9 +4200,6 @@ function summonBoss(kind) {
   toast('召唤失败，空间不足');
 }
 
-// =====================
-// 钓鱼
-// =====================
 function startFishing() {
   if (!S) return;
   const rod = S.selected;
@@ -3549,7 +4208,6 @@ function startFishing() {
     toast('需要装备钓竿到手上');
     return;
   }
-  // 检查附近有水
   const p = S.player;
   const pcx = Math.floor((p.x + p.w / 2) / BS);
   const pcy = Math.floor((p.y + p.h / 2) / BS);
@@ -3572,7 +4230,6 @@ function startFishing() {
       toast('还没上钩');
       return;
     }
-    // 收杆
     const rodLv = rodInfo.rod;
     const luck = luckMul();
     const r = Math.random();
@@ -3584,23 +4241,17 @@ function startFishing() {
     else if (r < 0.92 + rodLv * 0.02) { loot = T.BOOK_ENCHANT; name = '附魔书'; }
     else if (r < 0.97) { loot = T.POTION_REGEN; name = '再生药水'; }
     else {
-      // 稀有：装备
       const equips = [T.EQ_AMULET_CRIT, T.EQ_AMULET_LUCK, T.EQ_AMULET_MAGIC,
                       T.EQ_HELM_LEGEND, T.EQ_CHEST_LEGEND, T.EQ_LEG_LEGEND];
       loot = equips[Math.floor(Math.random() * equips.length)];
       name = INFO[loot].n;
     }
-    // 宝箱给额外奖励
     if (loot === T.CHEST) {
       const g = Math.floor((200 + Math.random() * 800) * goldMul());
       S.gold += g; S.tg += g;
       toast('🎣 钓到宝箱 +' + fmt(g) + ' 金币');
     }
-    if (loot === T.CHEST || loot === T.BOOK_ENCHANT || INFO[loot].eq) {
-      addDrop(pcx, pcy, loot, 1);
-    } else {
-      addDrop(pcx, pcy, loot, 1);
-    }
+    addDrop(pcx, pcy, loot, 1);
     S.stat.fishCaught = (S.stat.fishCaught || 0) + 1;
     log('钓鱼：' + name);
     toast('🎣 ' + name);
@@ -3616,12 +4267,7 @@ function updateFishing(dt) {
   }
 }
 
-// =====================
-// 传送门
-// =====================
 function checkPortalSpawn(cx, cy) {
-  // 中心已放置 portal_core，检查周围 4x5 是否是框架
-  // 简化：只检查上下左右 + 角落
   let ok = 0;
   const dirs = [[-1,-1],[0,-1],[1,-1],[-1,0],[1,0],[-1,1],[0,1],[1,1],[-2,0],[2,0]];
   for (const d of dirs) {
@@ -3629,7 +4275,6 @@ function checkPortalSpawn(cx, cy) {
     if (t === T.PORTAL_FRAME) ok++;
   }
   if (ok < 4) { toast('框架不足'); return; }
-  // 激活
   setBlock(cx, cy, T.PORTAL);
   S.portals.push({ x: cx, y: cy });
   toast('🌀 传送门激活！');
@@ -3645,7 +4290,6 @@ function updatePortals(dt) {
   const pcy = Math.floor((p.y + p.h / 2) / BS);
   for (const pt of S.portals) {
     if (Math.abs(pt.x - pcx) < 2 && Math.abs(pt.y - pcy) < 2) {
-      // 传送到下一个传送门
       if (S.portals.length < 2) { toast('只有一个传送门'); S.portalCd = 3; return; }
       const idx = S.portals.indexOf(pt);
       const next = S.portals[(idx + 1) % S.portals.length];
@@ -3659,23 +4303,17 @@ function updatePortals(dt) {
   }
 }
 
-// =====================
-// 地下城
-// =====================
 function generateDungeon() {
-  // 在玩家附近随机找位置生成 3 层地牢
   const cx = Math.floor(Math.random() * (W - 40)) + 20;
   const cy = SEED_R + 50 + Math.floor(Math.random() * (H - SEED_R - 80));
   const w = 16, h = 8;
   for (let layer = 0; layer < 3; layer++) {
     const ly = cy + layer * (h + 2);
-    // 挖空
     for (let dy = 0; dy < h; dy++) {
       for (let dx = 0; dx < w; dx++) {
         setBlock(cx + dx, ly + dy, T.AIR);
       }
     }
-    // 墙
     for (let dx = 0; dx < w; dx++) {
       setBlock(cx + dx, ly - 1, T.DUNGEON_BRICK);
       setBlock(cx + dx, ly + h, T.DUNGEON_BRICK);
@@ -3684,11 +4322,9 @@ function generateDungeon() {
       setBlock(cx - 1, ly + dy, T.DUNGEON_BRICK);
       setBlock(cx + w, ly + dy, T.DUNGEON_BRICK);
     }
-    // 放宝箱
     const chestX = cx + 2 + Math.floor(Math.random() * (w - 4));
     const chestY = ly + h - 2;
     setBlock(chestX, chestY, T.DUNGEON_CHEST);
-    // 放怪
     for (let i = 0; i < 3; i++) {
       const mx = cx + 2 + Math.floor(Math.random() * (w - 4));
       const my = ly + h - 2;
@@ -3706,9 +4342,7 @@ function generateDungeon() {
   log('🏰 发现地下城！');
   toast('🏰 附近有地下城');
 }
-// =====================
-// 成就系统
-// =====================
+
 function checkAchv() {
   if (!S || !S.achv) return;
   if (!S.stat.dragonKill) S.stat.dragonKill = 0;
@@ -3758,9 +4392,6 @@ function openAchvPanel() {
   };
 }
 
-// =====================
-// 宠物
-// =====================
 function openPetPanel() {
   if (!S) return;
   const box = document.getElementById('popBox');
@@ -3808,9 +4439,6 @@ function openPetPanel() {
   };
 }
 
-// =====================
-// 载具
-// =====================
 function openVehiclePanel() {
   if (!S) return;
   const box = document.getElementById('popBox');
@@ -3868,9 +4496,6 @@ function openVehiclePanel() {
   };
 }
 
-// =====================
-// 天气信息
-// =====================
 function openWeatherPanel() {
   if (!S) return;
   const box = document.getElementById('popBox');
@@ -3897,27 +4522,20 @@ function openWeatherPanel() {
   };
 }
 
-// =====================
-// 成就 / 宠物 / 载具 / 天气 自动检测
-// =====================
 function autoUnlockPets() {
   if (!S) return;
-  // 首次死亡 → 幽灵
   if (S.rebirths >= 1 && !S.petsOwned.ghost) {
     S.petsOwned.ghost = true;
     toast('👻 获得宠物：幽灵');
   }
-  // 纸矿挖 100 个 → 纸精灵
   if (S.tp >= 100 * 3 && !S.petsOwned.paper) {
     S.petsOwned.paper = true;
     toast('📄 获得宠物：纸精灵');
   }
-  // 击杀蛟龙 / Boss → 火龙
   if (S.stat.bossKills >= 5 && !S.petsOwned.dragon) {
     S.petsOwned.dragon = true;
     toast('🐉 获得宠物：火龙');
   }
-  // 开局送狗
   if (!S.petsOwned.dog) {
     S.petsOwned.dog = true;
     if (!S.pet) S.pet = 'dog';
@@ -3925,14 +4543,10 @@ function autoUnlockPets() {
 }
 
 function checkBossKill() {
-  // 由 attackBoss 调用，记录蛟龙击杀
   if (!S.stat) S.stat = {};
   if (!S.stat.dragonKill) S.stat.dragonKill = 0;
 }
 
-// =====================
-// 主循环整合
-// =====================
 let _running = false;
 let _lastT = 0;
 let _spawnTimer = 0;
@@ -3962,19 +4576,15 @@ function loop(now) {
     updateFishing(dt);
     updatePortals(dt);
 
-    // NPC 房屋检测（每 10 秒）
     checkHouse();
 
-    // 宠物自动解锁
     if (Math.random() < 0.005) autoUnlockPets();
 
-    // 成就检测（每 2 秒）
     if (!window._achvT || now - window._achvT > 2000) {
       checkAchv();
       window._achvT = now;
     }
 
-    // 地下城生成（每 3 分钟判定一次）
     if (!window._dungT || now - window._dungT > 180000) {
       if (!S.dungeon) generateDungeon();
       window._dungT = now;
@@ -4049,16 +4659,13 @@ function playerAttack() {
       m.vx = Math.sign(mx - px) * 250;
       m.vy = -200;
 
-      // 吸血
       const wep = S.equip && S.equip.weapon;
       if (wep && S.enchant[wep] && S.enchant[wep].vamp) {
         p.hp = Math.min(p.maxHp, p.hp + 1);
       }
-      // 击退
       if (wep && S.enchant[wep] && S.enchant[wep].knock) {
         m.vx *= 2;
       }
-      // 火焰
       if (wep && S.enchant[wep] && S.enchant[wep].fire) {
         m.burnT = 5;
       }
@@ -4079,7 +4686,6 @@ function playerAttack() {
         addDrop(Math.floor(m.x / BS), Math.floor(m.y / BS), T.COAL, 1 + Math.floor(Math.random() * 2));
         if (Math.random() < 0.15 * lucky) addDrop(Math.floor(m.x / BS), Math.floor(m.y / BS), T.IRON, 1);
         if (Math.random() < 0.05 * lucky) addDrop(Math.floor(m.x / BS), Math.floor(m.y / BS), T.DIAMOND, 1);
-        // 小概率掉装备
         if (Math.random() < 0.02 * lucky) {
           const equips = [T.EQ_HELM_IRON, T.EQ_CHEST_IRON, T.EQ_LEG_IRON,
                           T.EQ_NECK_HP, T.EQ_RING_ATK, T.EQ_RING_SPD];
@@ -4105,9 +4711,6 @@ function updateAttack(dt) {
   if (keys.attack) playerAttack();
 }
 
-// =====================
-// Boss
-// =====================
 const BOSSES = [
   { id:'bloodking', n:'🩸 血王',   hp:200,  dmg:6, spd:60,  drop:{ gold:2000, paper:500, soul:5 } },
   { id:'boneking',  n:'💀 骨王',   hp:500,  dmg:10,spd:70,  drop:{ gold:5000, paper:1500, soul:10 } },
@@ -4234,20 +4837,16 @@ function attackBoss() {
     S.kills++;
     S.totalKills++;
     if (S.stat) S.stat.bossKills++;
-    // 火龙宠物掉落
     if (Math.random() < 0.3) {
       S.petsOwned.dragon = true;
       toast('🐉 火龙加入你！');
     }
-    // 装备掉落
     if (Math.random() < 0.4) {
       const equips = [T.EQ_HELM_DIAMOND, T.EQ_CHEST_DIAMOND, T.EQ_LEG_DIAMOND,
                       T.EQ_AMULET_CRIT, T.EQ_AMULET_LUCK, T.EQ_AMULET_MAGIC];
       addDrop(Math.floor(b.x / BS), Math.floor(b.y / BS), equips[Math.floor(Math.random() * equips.length)], 1);
     }
-    // 地牢钥匙
     if (Math.random() < 0.2) addDrop(Math.floor(b.x / BS), Math.floor(b.y / BS), T.DUNGEON_KEY, 1);
-    // 召唤物掉落
     if (Math.random() < 0.3) {
       const baits = [T.BAIT_BLOOD, T.BAIT_BONE, T.BAIT_EYE, T.BAIT_SHADOW];
       addDrop(Math.floor(b.x / BS), Math.floor(b.y / BS), baits[Math.floor(Math.random() * baits.length)], 1);
@@ -4260,9 +4859,6 @@ function attackBoss() {
   return true;
 }
 
-// =====================
-// 修为 / 突破 / 渡劫
-// =====================
 function qiRate() {
   if (!S) return 0;
   const base = 1;
@@ -4366,9 +4962,6 @@ function chooseCard(i) {
   updateHUD();
 }
 
-// =====================
-// 转生
-// =====================
 function canRebirth() { return S.realm >= 8; }
 function rebirthGain() {
   if (!canRebirth()) return 0;
@@ -4453,7 +5046,6 @@ function doDeathRebirth() {
   S.spawnX = S.player.x; S.spawnY = S.player.y;
   S.player.vx = 0; S.player.vy = 0;
 
-  // 首次死亡送幽灵宠物
   if (!S.petsOwned.ghost) {
     S.petsOwned.ghost = true;
     toast('👻 获得宠物：幽灵');
@@ -4463,9 +5055,7 @@ function doDeathRebirth() {
   toast('💀 死亡转生 +' + gain + ' 本源');
   updateHUD(); updateInvUI(); saveGame();
 }
-// =====================
-// 随机事件
-// =====================
+
 function triggerEvent() {
   const ev = EVENTS_POOL[Math.floor(Math.random() * EVENTS_POOL.length)];
   const box = document.getElementById('popBox');
@@ -4500,9 +5090,6 @@ function checkEvent() {
   }
 }
 
-// =====================
-// 超频
-// =====================
 function ocD() { return 15 + (S.plv.ocDur || 0) * 2 + ((S.rs && S.rs.eternalFire) || 0) * 3; }
 function ocC() { return Math.max(30, 120 - (S.plv.ocCd || 0) * 10); }
 function ocM() { return 10 + (S.plv.ocMul || 0) * 5 + ((S.so && S.so.gui) || 0) * 2; }
@@ -4517,9 +5104,6 @@ function activateOC() {
   log('⚡ 超频 ×' + ocM());
 }
 
-// =====================
-// 全局倍率
-// =====================
 function globalMul() {
   if (!S) return 1;
   let m = 1;
@@ -4544,9 +5128,6 @@ function timeMul() {
   return 1;
 }
 
-// =====================
-// 恶心 / 诡异
-// =====================
 const SICK_NAMES = ['健康','着凉','感冒','流感','鼻塞','发烧','肺结核','肺炎','肺癌'];
 const SICK_COSTS = [0,5,10,20,50,100,200,500,1000];
 
@@ -4651,9 +5232,6 @@ function updateGhost(dt) {
   }
 }
 
-// =====================
-// 世界物理
-// =====================
 let _fallAccum = 0;
 function updateFallingBlocks(dt) {
   _fallAccum += dt;
@@ -4765,9 +5343,6 @@ function updateWorld(dt) {
   updateWorldEvolve(dt);
 }
 
-// =====================
-// 怪物刷新
-// =====================
 function pickMonsterType() {
   const lvl = S.realm;
   let pool = MONSTERS.filter(m => m.minLvl <= lvl);
@@ -4847,7 +5422,6 @@ function updateMonsters(dt) {
         m.onGround = false;
       }
     } else if (ddist < BS * 30 && isInvis) {
-      // 隐身时怪物不追
       m.vx = 0;
     } else {
       if (!m.wanderT || m.wanderT <= 0) {
@@ -4895,9 +5469,7 @@ function updateMonsters(dt) {
     if (m.y > H * BS) S.monsters.splice(i, 1);
   }
 }
-// =====================
-// HUD
-// =====================
+
 let _hudT = 0;
 function updateHUD() {
   if (!S) return;
@@ -4919,6 +5491,20 @@ function updateHUD() {
   html += `<div class="hb realm">🧘<b>${realmName(S.realm)}</b></div>`;
   html += `<div class="hb">☯️<b>${fmt(S.qi)}</b></div>`;
   html += `<div class="hb">${wIcon}${dayName}</div>`;
+
+  if (S.power && S.power.grids) {
+    let totalPower = 0, totalCap = 0, gridCount = 0;
+    for (const id in S.power.grids) {
+      const g = S.power.grids[id];
+      totalPower += g.power || 0;
+      totalCap += g.capacity || 0;
+      gridCount++;
+    }
+    if (gridCount > 0) {
+      const color = totalPower > 0 ? '#60ffc0' : '#ff8888';
+      html += `<div class="hb" style="background:rgba(20,40,30,.85)">⚡<b style="color:${color}">${Math.floor(totalPower)}</b>/${Math.floor(totalCap)}</div>`;
+    }
+  }
 
   const era = currentEra();
   const q = currentQuest();
@@ -4985,33 +5571,21 @@ window._showStats = function() {
     document.getElementById('pop').classList.remove('on');
   };
 };
-// =====================
-// 物品图标：用 emoji 代替纯色块
-// =====================
+
 const ITEM_EMOJI = {
-  // 工具 / 武器
   104:'🗡️', 105:'🗡️', 106:'🗡️', 107:'💠',
   108:'⛏️', 109:'⛏️', 110:'⛏️', 111:'💎',
   163:'🎣', 164:'🎣', 165:'🎣',
-  // 材料
   100:'🪵', 101:'🔩', 102:'🟡', 103:'📜',
   130:'💠', 131:'🫙', 132:'💧', 140:'📕', 162:'🦴',
   191:'🟣', 192:'👁️', 193:'💨', 194:'📃', 190:'🗝️',
-  // 丹药
   120:'🔴', 121:'🟠', 122:'🟣', 123:'🟡', 124:'✨',
-  // 药水
   133:'🧪', 134:'🧪', 135:'🧪', 136:'🧪', 137:'🧪', 138:'🧪',
-  // 附魔书
   139:'📖',
-  // 召唤物
   150:'🩸', 151:'🦴', 152:'👁️', 153:'🌑', 154:'📕',
-  // 食物
   160:'🐟', 161:'🍣',
-  // 宠物
   170:'🐕', 171:'🐱', 172:'👻', 173:'🐉', 174:'📄',
-  // 载具
   180:'🛒', 181:'🛶', 182:'🧹',
-  // 装备
   200:'⛑️', 201:'⛑️', 202:'⛑️', 203:'👑',
   210:'👕', 211:'👕', 212:'👕', 213:'🧥',
   220:'👖', 221:'👖', 222:'👖', 223:'👖',
@@ -5048,9 +5622,7 @@ function doDestroyItem(slotType, isSeed) {
     toast('🗑 已销毁');
   }
 }
-// =====================
-// 背包 UI
-// =====================
+
 function updateInvUI() {
   if (!S) return;
   const el = document.getElementById('inv');
@@ -5068,12 +5640,11 @@ function updateInvUI() {
     const info = INFO[t];
     if (!info) continue;
     const sel = t === S.selected ? ' sel' : '';
-    const iconStyle = itemIconStyle(t);
-const emoji = ITEM_EMOJI[t];
-const iconHtml = emoji
-  ? `<div class="ico" style="background:#1a1a1a;display:flex;align-items:center;justify-content:center;font-size:18px">${emoji}</div>`
-  : `<div class="ico" style="background:${info.c}"></div>`;
-html += `<div class="slot${sel}" data-t="${t}">${iconHtml}<div class="cnt">${fmt(S.inventory[k])}</div></div>`;
+    const emoji = ITEM_EMOJI[t];
+    const iconHtml = emoji
+      ? `<div class="ico" style="background:#1a1a1a;display:flex;align-items:center;justify-content:center;font-size:18px">${emoji}</div>`
+      : `<div class="ico" style="background:${info.c}"></div>`;
+    html += `<div class="slot${sel}" data-t="${t}">${iconHtml}<div class="cnt">${fmt(S.inventory[k])}</div></div>`;
   }
 
   if (html === '') {
@@ -5082,99 +5653,101 @@ html += `<div class="slot${sel}" data-t="${t}">${iconHtml}<div class="cnt">${fmt
 
   el.innerHTML = html;
 
-el.querySelectorAll('.slot').forEach(s => {
-  const slotType = parseInt(s.dataset.t);
-  const isSeed = s.dataset.special === 'seed';
+  el.querySelectorAll('.slot').forEach(s => {
+    const slotType = parseInt(s.dataset.t);
+    const isSeed = s.dataset.special === 'seed';
 
-  s.onclick = () => {
-    if (isSeed) {
-      S.mode = 'sow';
-      setupModeButton();
-      toast('🌾 播种模式');
-      return;
-    }
-    const info = INFO[slotType];
-    if (!info) return;
-    if (info.pill) { usePill(slotType); return; }
-    if (info.potion) { usePotion(slotType); return; }
-    if (info.bait) {
-      S.inventory[slotType]--;
-      if (S.inventory[slotType] <= 0) delete S.inventory[slotType];
-      updateInvUI();
-      summonBoss(info.bait);
-      return;
-    }
-    if (info.rod) {
+    s.onclick = () => {
+      if (isSeed) {
+        S.mode = 'sow';
+        setupModeButton();
+        toast('🌾 播种模式');
+        return;
+      }
+      const info = INFO[slotType];
+      if (!info) return;
+      if (info.pill) { usePill(slotType); return; }
+      if (info.potion) { usePotion(slotType); return; }
+      if (info.bait) {
+        S.inventory[slotType]--;
+        if (S.inventory[slotType] <= 0) delete S.inventory[slotType];
+        updateInvUI();
+        summonBoss(info.bait);
+        return;
+      }
+      if (info.rod) {
+        S.selected = slotType;
+        toast('🎣 ' + info.n + ' 已选中，按 L 抛竿');
+        updateInvUI();
+        return;
+      }
+      if (info.eq) {
+        if (S.equip[info.eq]) { toast('槽位已满，去装备栏卸下'); return; }
+        S.inventory[slotType]--;
+        if (S.inventory[slotType] <= 0) delete S.inventory[slotType];
+        S.equip[info.eq] = slotType;
+        toast('🎽 装备 ' + info.n);
+        updateInvUI();
+        return;
+      }
+      if (info.pet) {
+        S.petsOwned[info.pet] = true;
+        S.pet = info.pet;
+        S.inventory[slotType]--;
+        if (S.inventory[slotType] <= 0) delete S.inventory[slotType];
+        toast('🐾 携带 ' + info.n);
+        updateInvUI();
+        return;
+      }
+      if (info.vehicle) {
+        S.vehicle = info.vehicle;
+        S.inventory[slotType]--;
+        if (S.inventory[slotType] <= 0) delete S.inventory[slotType];
+        toast('🚗 使用 ' + info.n);
+        updateInvUI();
+        return;
+      }
+      if (slotType === T.BUCKET_EMPTY || slotType === T.BUCKET_WATER || slotType === T.BUCKET_LAVA) {
+        S.selected = slotType;
+        toast('🪣 已选中 ' + info.n + '，点击液体装/倒');
+        updateInvUI();
+        return;
+      }
+      if (info.food) {
+        S.inventory[slotType]--;
+        if (S.inventory[slotType] <= 0) delete S.inventory[slotType];
+        S.player.hp = Math.min(S.player.maxHp, S.player.hp + info.food);
+        toast('🍖 回血 +' + info.food);
+        updateInvUI();
+        return;
+      }
       S.selected = slotType;
-      toast('🎣 ' + info.n + ' 已选中，按 L 抛竿');
+      if (S.mode === 'mine') {
+        S.mode = 'place';
+        setupModeButton();
+      }
       updateInvUI();
-      return;
-    }
-    if (info.eq) {
-      if (S.equip[info.eq]) { toast('槽位已满，去装备栏卸下'); return; }
-      S.inventory[slotType]--;
-      if (S.inventory[slotType] <= 0) delete S.inventory[slotType];
-      S.equip[info.eq] = slotType;
-      toast('🎽 装备 ' + info.n);
-      updateInvUI();
-      return;
-    }
-    if (info.pet) {
-      S.petsOwned[info.pet] = true;
-      S.pet = info.pet;
-      S.inventory[slotType]--;
-      if (S.inventory[slotType] <= 0) delete S.inventory[slotType];
-      toast('🐾 携带 ' + info.n);
-      updateInvUI();
-      return;
-    }
-    if (info.vehicle) {
-      S.vehicle = info.vehicle;
-      S.inventory[slotType]--;
-      if (S.inventory[slotType] <= 0) delete S.inventory[slotType];
-      toast('🚗 使用 ' + info.n);
-      updateInvUI();
-      return;
-    }
-    if (info.food) {
-      S.inventory[slotType]--;
-      if (S.inventory[slotType] <= 0) delete S.inventory[slotType];
-      S.player.hp = Math.min(S.player.maxHp, S.player.hp + info.food);
-      toast('🍖 回血 +' + info.food);
-      updateInvUI();
-      return;
-    }
-    S.selected = slotType;
-    if (S.mode === 'mine') {
-      S.mode = 'place';
-      setupModeButton();
-    }
-    updateInvUI();
-  };
+    };
 
-  // 双击 = 销毁
-  let lastClick = 0;
-  s.addEventListener('click', (e) => {
-    const now = Date.now();
-    if (now - lastClick < 350) {
-      e.stopPropagation();
+    let lastClick = 0;
+    s.addEventListener('click', (e) => {
+      const now = Date.now();
+      if (now - lastClick < 350) {
+        e.stopPropagation();
+        doDestroyItem(slotType, isSeed);
+        lastClick = 0;
+      } else {
+        lastClick = now;
+      }
+    });
+
+    s.oncontextmenu = (e) => {
+      e.preventDefault();
       doDestroyItem(slotType, isSeed);
-      lastClick = 0;
-    } else {
-      lastClick = now;
-    }
+    };
   });
-
-  // 右键 = 销毁
-  s.oncontextmenu = (e) => {
-    e.preventDefault();
-    doDestroyItem(slotType, isSeed);
-  };
-});
 }
-// =====================
-// 商店 UI
-// =====================
+
 function openShop() { openShopDirect('gold'); }
 
 function openShopDirect(tab) {
@@ -5342,9 +5915,6 @@ function renderShopTab(tab) {
   if (rcBtn) rcBtn.onclick = () => { upRC(); renderShopTab('rs'); };
 }
 
-// =====================
-// 恶心界面 / 转生 / 专精 / 主菜单
-// =====================
 function openSick() {
   const box = document.getElementById('popBox');
   let html = '<h4>🤢 恶心系统</h4>';
@@ -5444,6 +6014,7 @@ function openMainMenu() {
   html += '<button data-mtab="special" style="flex:1;min-width:60px;padding:10px 4px;font-size:12px">特殊</button>';
   html += '<button data-mtab="quest" style="flex:1;min-width:60px;padding:10px 4px;font-size:12px">任务</button>';
   html += '<button data-mtab="machine" style="flex:1;min-width:60px;padding:10px 4px;font-size:12px">机器</button>';
+  html += '<button data-mtab="power" style="flex:1;min-width:60px;padding:10px 4px;font-size:12px">电力</button>';
   html += '</div>';
   html += '<div id="menuContent" style="max-height:60vh;overflow-y:auto"></div>';
   html += '<button class="red" id="menuClose" style="margin-top:10px">关 闭</button>';
@@ -5502,8 +6073,67 @@ function renderMenuTab(tab) {
     const miners = S.machines.filter(m => m.kind === 'miner');
     const cults  = S.machines.filter(m => m.kind === 'cultivator');
     const ctrls  = S.machines.filter(m => m.kind === 'controller');
-    html += `<div class="d">⛏ 虚空矿机：${miners.length} 台<br>🌱 培养皿：${cults.length} 台<br>🎛 中枢：${ctrls.length} 台<br><br>全局速度加成：+${ctrls.length*10}%</div>`;
-    html += '<div style="font-size:11px;color:#9988bb;margin:10px 0;text-align:left">站在机器附近点 🔧 即可打开控制界面</div>';
+    const heatG  = S.machines.filter(m => m.kind === 'heat_gen');
+    const geoG   = S.machines.filter(m => m.kind === 'geo_gen');
+    const windG  = S.machines.filter(m => m.kind === 'wind_gen');
+    const elecM  = S.machines.filter(m => m.kind === 'elec_miner');
+    const elecF  = S.machines.filter(m => m.kind === 'elec_furnace');
+    const nodes  = S.machines.filter(m => m.kind === 'node');
+    const hubs   = S.machines.filter(m => m.kind === 'hub');
+    const ipipe  = S.machines.filter(m => m.kind === 'item_pipe');
+    const ppipe  = S.machines.filter(m => m.kind === 'power_pipe');
+    const fpipe  = S.machines.filter(m => m.kind === 'fluid_pipe');
+
+    html += '<div class="d">';
+    html += '<b style="color:#ffd97a">原版</b><br>';
+    html += `⛏ 虚空矿机：${miners.length}<br>`;
+    html += `🌱 培养皿：${cults.length}<br>`;
+    html += `🎛 中枢：${ctrls.length}（+${ctrls.length*10}% 速度）<br><br>`;
+    html += '<b style="color:#ffd97a">电力系统</b><br>';
+    html += `🔥 热力发电：${heatG.length}<br>`;
+    html += `♨️ 地热发电：${geoG.length}<br>`;
+    html += `🌀 风力发电：${windG.length}<br>`;
+    html += `⛏ 电力矿机：${elecM.length}<br>`;
+    html += `🔥 电炉：${elecF.length}<br>`;
+    html += `📶 无线节点：${nodes.length}<br>`;
+    html += `📡 无线中枢：${hubs.length}<br><br>`;
+    html += '<b style="color:#ffd97a">管道</b><br>';
+    html += `📦 物品管道：${ipipe.length}<br>`;
+    html += `⚡ 能量管道：${ppipe.length}<br>`;
+    html += `💧 流体管道：${fpipe.length}<br>`;
+    html += '</div>';
+
+    if (S.power && S.power.grids) {
+      let totalPower = 0, totalCap = 0;
+      for (const id in S.power.grids) {
+        totalPower += S.power.grids[id].power || 0;
+        totalCap += S.power.grids[id].capacity || 0;
+      }
+      html += `<div style="background:rgba(30,60,40,.5);border-radius:8px;padding:8px;margin:8px 0;text-align:left;font-size:13px">
+        <b style="color:#60ffc0">⚡ 总电力：${Math.floor(totalPower)} / ${Math.floor(totalCap)} W</b>
+      </div>`;
+    }
+
+    html += '<div style="font-size:11px;color:#9988bb;margin:10px 0;text-align:left">站在机器附近点 🔧 打开控制界面</div>';
+  } else if (tab === 'power') {
+    if (!S.power || !S.power.grids) {
+      html += '<div class="d">还没有电网</div>';
+    } else {
+      let count = 0;
+      for (const id in S.power.grids) {
+        const g = S.power.grids[id];
+        count++;
+        html += `<div style="background:rgba(30,60,40,.5);border-radius:8px;padding:8px;margin:5px 0;text-align:left;font-size:12px">
+          <b style="color:#60ffc0">电网 #${id}</b>
+          <div style="color:#c9a0ff;font-size:11px;margin-top:3px">
+            设备：${g.members.length} 台<br>
+            供电：${Math.floor(g.power || 0)} / ${Math.floor(g.capacity || 0)} W
+          </div>
+        </div>`;
+      }
+      if (count === 0) html += '<div class="d">还没有电网</div>';
+    }
+    html += '<div style="font-size:11px;color:#9988bb;margin:10px 0;text-align:left">电力设备靠相邻或无线节点自动组网</div>';
   }
 
   content.innerHTML = html;
@@ -5535,9 +6165,6 @@ function renderMenuTab(tab) {
   if (m9) m9.onclick = openQuestPanel;
 }
 
-// =====================
-// 卖东西 / 特殊操作
-// =====================
 function calcPaperGold() {
   let total = 0;
   for (const k in S.paper) {
@@ -5689,9 +6316,6 @@ function buildPaperHouse() {
   setBlock(pcx, pcy - 2, T.DOOR);
 }
 
-// =====================
-// 启动
-// =====================
 function startGame(useSave) {
   initCanvas();
   setupModeButton();
@@ -5750,6 +6374,8 @@ function startGame(useSave) {
       if (!S.enchant) S.enchant = {};
       if (!S.fishing) S.fishing = { state:'idle', timer:0, wait:0 };
       if (!S.stat) S.stat = base.stat;
+      if (!S.power) S.power = { grids: {}, nextId: 1 };
+      if (!S.pipes) S.pipes = { itemBuffers: {}, fluidBuffers: {} };
       toast('📂 读档成功');
 
       (function applyOffline(){
