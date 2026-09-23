@@ -80,15 +80,12 @@ canvas{display:block;position:absolute;inset:0;image-rendering:pixelated}
   <div id="start">
     <h1>世 界</h1>
     <div class="sub">ONE WORLD · SEVEN ERAS</div>
-    <p>白天挖矿、种纸田<br>晚上打怪、修境界<br>渡劫时选择你的命运<br><br>◀ ▶ 移动 · ▲ 跳 · ⚔ 攻击<br>按住方块挖掘 · 切换模式放置</p>
+    <p>白天挖矿、种纸田<br>晚上打怪、修境界<br>渡劫时选择你的命运<br><br>◀ ▶ 移动 · ▲ 跳 · ⚔ 攻击<br>按 C 打开合成台 · 按 H 回家</p>
     <button id="startBtn">新 世 界</button>
     <button id="loadBtn" class="alt">继 续</button>
   </div>
 </div>
 <script>
-// =====================
-// 方块类型
-// =====================
 const T = {
   AIR:0, GRASS:1, DIRT:2, STONE:3, WOOD:4, LEAF:5, SAND:6,
   COAL:7, IRON:8, GOLD:9, DIAMOND:10, BEDROCK:11, SNOW:12,
@@ -239,9 +236,6 @@ const CORN = {
   auto:  { n:'🤖 自动',   base:5, grow:1.5,  max:10, e:l=>'自动 '+l+'/s' }
 };
 
-// =====================
-// 合成配方
-// =====================
 const RECIPES = [
   { out:T.STICK,          cnt:4, need:{ [T.PLANK]:2 } },
   { out:T.PLANK,          cnt:4, need:{ [T.WOOD]:1 } },
@@ -278,9 +272,6 @@ const ALCHEMY = [
   { out:T.PILL_GOLD,  cnt:1, need:{ [T.DIAMOND]:3, [T.GOLD_INGOT]:5, [T.REDSTONE]:10 } }
 ];
 
-// =====================
-// 任务链（7 个时代）
-// =====================
 const QUESTS = [
   { era:0, id:'q0_1', n:'挖 50 个方块',       done:()=>S.stat.blocks>=50,     rw:{gold:200, pts:1} },
   { era:0, id:'q0_2', n:'合成合成台',         done:()=>S.stat.craftTable>=1,  rw:{gold:300, pts:1} },
@@ -316,9 +307,6 @@ const EVENTS_POOL = [
   { ic:'⛲', t:'生命泉',   d:'清澈的泉水',   a:['喝', s=>{ s.hp=s.maxHp; s.pts+=200; return '回满+200升华'}], b:['不喝', s=>'离开'] }
 ];
 
-// =====================
-// 全局状态
-// =====================
 const CAP = 1e30;
 let S = null;
 
@@ -335,67 +323,32 @@ function newState(seed) {
       hp: 20, maxHp: 20,
       invuln: 0, hurtFlash: 0
     },
-    gold: 0,
-    paper: {},
-    inventory: {},
-    selected: 2,
-    mode: 'mine',
-    fields: [],
-    realm: 0,
-    qi: 0,
-    totalQi: 0,
-    breaks: 0,
-    corruption: 0,
-    valor: 0,
-    greed: 0,
-    knowledge: 0,
-    rebirths: 0,
-    soul: 0,
-    soulLv: {},
-    corn: 0,
-    cornLv: { field:0, store:0, luck:0, auto:0 },
-    cornSeed: 0,
-    snot: 0,
-    sick: 0,
+    gold: 0, paper: {}, inventory: {},
+    selected: 2, mode: 'mine', fields: [],
+    realm: 0, qi: 0, totalQi: 0, breaks: 0,
+    corruption: 0, valor: 0, greed: 0, knowledge: 0,
+    rebirths: 0, soul: 0, soulLv: {},
+    corn: 0, cornLv: { field:0, store:0, luck:0, auto:0 }, cornSeed: 0,
+    snot: 0, sick: 0,
     buffs: { bloodmoon:false, timewarp:false, bloodmoonUntil:0, timewarpUntil:0 },
-    buffAtkUntil: 0,
-    buffSpdUntil: 0,
-    nextEvent: Date.now() + 60000,
-    evtCount: 0,
-    fallSpeed: 1,
-    grassSpread: 1,
-    autoEvolve: false,
-    tp: 0, tg: 0, tm: 0,
-    kills: 0,
-    totalKills: 0,
-    startTime: Date.now(),
-    lastSave: Date.now(),
-    monsters: [],
-    drops: [],
-    trib: null,
-    maxHp: 20,
-    pts: 0,
-    st: 0,
-    plv: {},
-    stLv: {},
-    reinc: 0,
-    rl: 0,
-    rs: {},
-    gPaper: 0,
-    gh: { yao:0, paper:0, wuchang:0, gui:0, luohou:0 },
-    so: {},
-    boss: null,
-    paperSeed: 0,
-    ocU: 0,
-    ocCd: 0,
-    ocU2: 0,
-    feedUntil: 0,
+    buffAtkUntil: 0, buffSpdUntil: 0, buffPillAtkUntil: 0,
+    nextEvent: Date.now() + 60000, evtCount: 0,
+    fallSpeed: 1, grassSpread: 1, autoEvolve: false,
+    tp: 0, tg: 0, tm: 0, kills: 0, totalKills: 0,
+    startTime: Date.now(), lastSave: Date.now(),
+    monsters: [], drops: [], trib: null,
+    maxHp: 20, pts: 0, st: 0, plv: {}, stLv: {},
+    reinc: 0, rl: 0, rs: {},
+    gPaper: 0, gh: { yao:0, paper:0, wuchang:0, gui:0, luohou:0 }, so: {},
+    boss: null, paperSeed: 0,
+    ocU: 0, ocCd: 0, ocU2: 0, feedUntil: 0,
     era: 0,
     stat: { blocks:0, ironOre:0, diamond:0, craftTable:0, furnace:0,
             stonePick:0, ironSword:0, diamondSword:0, ironIngot:0, bossKills:0,
             rtable:0, vminer:0, cultivator:0, controller:0, alchemy:0, goldPill:0 },
     questDone: {},
-    machines: []
+    machines: [],
+    spawnX: 0, spawnY: 0
   };
 }
 
@@ -444,17 +397,12 @@ function loadGame() {
     if (!data.stat) data.stat = base.stat;
     if (!data.questDone) data.questDone = {};
     return data;
-  } catch (e) {
-    return null;
-  }
+  } catch (e) { return null; }
 }
 
 setInterval(() => { if (S) saveGame(); }, 10000);
 window.addEventListener('beforeunload', () => { if (S) saveGame(); });
 
-// =====================
-// 工具函数
-// =====================
 function fmt(n) {
   if (n === null || n === undefined || isNaN(n)) return '0';
   if (!isFinite(n)) return '∞';
@@ -536,14 +484,7 @@ function capAll() {
   S.knowledge = clamp(S.knowledge, 0, 999);
 }
 
-// =====================
-// 世界
-// =====================
-const W = 320;
-const H = 128;
-const BS = 26;
-const SEED_R = 30;
-
+const W = 320, H = 128, BS = 26, SEED_R = 30;
 let world = [];
 let biomeCache = [];
 
@@ -583,7 +524,9 @@ function carveCaves(surface, count) {
             const px = Math.floor(cx + dx);
             const py = Math.floor(cy + dy);
             if (px > 0 && px < W - 1 && py > SEED_R + 4 && py < H - 3) {
-              world[py][px] = T.AIR;
+              if (py > (surface[px] || SEED_R) + 3) {
+                world[py][px] = T.AIR;
+              }
             }
           }
         }
@@ -621,10 +564,10 @@ function generateWorld(seed) {
     if (bio === 'desert') base -= 2;
     else if (bio === 'snow') base += 3;
     const h = Math.floor(base
-      + Math.sin(x * 0.03 + seed * 0.0001) * 5
-      + Math.sin(x * 0.11 + seed * 0.0002) * 2.5
-      + Math.sin(x * 0.37 + seed * 0.0003) * 1.2
-      + (h1(x + seed) - 0.5) * 2);
+      + Math.sin(x * 0.03 + seed * 0.0001) * 3.2
+      + Math.sin(x * 0.11 + seed * 0.0002) * 1.5
+      + Math.sin(x * 0.37 + seed * 0.0003) * 0.8
+      + (h1(x + seed) - 0.5) * 1.5);
     surface[x] = h;
   }
 
@@ -649,6 +592,18 @@ function generateWorld(seed) {
     world[H - 3][x] = T.BEDROCK;
   }
 
+  const surfaceTop = surface.slice();
+  for (let x = 2; x < W - 2; x++) {
+    const hl = surfaceTop[x - 1];
+    const hr = surfaceTop[x + 1];
+    if (surfaceTop[x] - Math.min(hl, hr) > 2) {
+      surfaceTop[x] = Math.min(hl, hr) + 2;
+    }
+    if (Math.min(hl, hr) - surfaceTop[x] > 2) {
+      surfaceTop[x] = Math.min(hl, hr) - 2;
+    }
+  }
+
   carveCaves(surface, 55);
 
   addOre(T.COAL, 180, SEED_R + 6,  H - 6, 5);
@@ -659,10 +614,12 @@ function generateWorld(seed) {
   addOre(T.PAPER_ORE, 60, SEED_R + 10, H - 6, 4);
 
   let lastX = -10;
+  const spawnCenterX = Math.floor(W / 2);
   for (let i = 0; i < 90; i++) {
     const x = Math.floor(Math.random() * W);
     if (Math.abs(x - lastX) < 3) continue;
     if (x < 4 || x > W - 5) continue;
+    if (Math.abs(x - spawnCenterX) < 8) continue;
     const h = surface[x];
     const bio = biomeCache[x];
     const top = world[h][x];
@@ -740,7 +697,28 @@ function generateWorld(seed) {
     world[y][x + 1] = T.BRICK;
   }
 
-  return { x: Math.floor(W / 2), y: surface[Math.floor(W / 2)] - 3, surface };
+  const spawnX = Math.floor(W / 2);
+  const spawnY = surface[spawnX] - 3;
+  for (let dy = -12; dy <= 2; dy++) {
+    for (let dx = -4; dx <= 4; dx++) {
+      const tx = spawnX + dx;
+      const ty = spawnY + dy;
+      if (tx < 1 || tx >= W - 1 || ty < 1 || ty >= H - 1) continue;
+      if (dy <= -1) {
+        world[ty][tx] = T.AIR;
+      }
+    }
+  }
+  for (let dx = -2; dx <= 2; dx++) {
+    const tx = spawnX + dx;
+    const ty = spawnY + 2;
+    if (tx < 0 || tx >= W) continue;
+    if (world[ty][tx] === T.AIR) {
+      world[ty][tx] = (biomeCache[tx] === 'desert') ? T.SAND : T.GRASS;
+    }
+  }
+
+  return { x: spawnX, y: spawnY, surface };
 }
 
 function getBlock(x, y) {
@@ -762,9 +740,6 @@ function isSolid(x, y) {
       && t !== T.PAPER_PLANT && t !== T.CROP && t !== T.DOOR;
 }
 
-// =====================
-// 相机
-// =====================
 let camera = { x: 0, y: 0 };
 
 function updateCamera(dt) {
@@ -780,9 +755,6 @@ function dayLight() {
   return 0.5 + 0.5 * Math.sin(S.dayT * Math.PI * 2);
 }
 
-// =====================
-// 画布
-// =====================
 let cv, ctx;
 function initCanvas() {
   cv = document.getElementById('cv');
@@ -800,9 +772,6 @@ function resize() {
   }
 }
 
-// =====================
-// 主渲染
-// =====================
 function render() {
   if (!S || !ctx) return;
   const light = dayLight();
@@ -959,9 +928,6 @@ function render() {
   }
 }
 
-// =====================
-// 方块绘制
-// =====================
 const BLOCK_CACHE = {};
 const CACHE_SIZE = 26;
 
@@ -1229,9 +1195,6 @@ function drawBlock(x, y, t) {
   }
 }
 
-// =====================
-// 玩家 / 怪物绘制
-// =====================
 function drawPlayer() {
   const p = S.player;
   const px = p.x - camera.x;
@@ -1293,9 +1256,6 @@ function drawBoss(px, py, w, h, b) {
   }
 }
 
-// =====================
-// 物理
-// =====================
 const GRAVITY = 2000;
 const MOVE_SPEED = 170;
 const JUMP_VEL = -620;
@@ -1412,9 +1372,6 @@ function die() {
   setTimeout(() => { doDeathRebirth(); }, 1200);
 }
 
-// =====================
-// 输入
-// =====================
 const keys = { left: false, right: false, jump: false, attack: false };
 
 function bindButton(id, key) {
@@ -1446,9 +1403,6 @@ document.addEventListener('keyup', (e) => {
   if (e.key === 'j' || e.key === 'k') keys.attack = false;
 });
 
-// =====================
-// 模式切换
-// =====================
 const MODES = ['mine', 'place', 'build', 'sow'];
 const MODE_LABEL = { mine:'⛏ 挖掘', place:'🧱 放置', build:'🏗 建造', sow:'🌾 播种' };
 const MODE_CLS = { mine:'', place:'place', build:'build', sow:'sow' };
@@ -1470,9 +1424,6 @@ function setupModeButton() {
   update();
 }
 
-// =====================
-// 指针
-// =====================
 let pointerDown = false;
 let pointerX = 0, pointerY = 0;
 
@@ -1523,9 +1474,6 @@ function endPointer() {
   mineTarget = null;
 }
 
-// =====================
-// 挖掘 / 放置 / 交互
-// =====================
 let mineProgress = 0;
 let mineTarget = null;
 
@@ -1673,18 +1621,15 @@ function trySow(bx, by) {
   toast('🌾 种下纸种子');
 }
 
-// =====================
-// 掉落物
-// =====================
 function addDrop(wx, wy, type, count) {
   S.drops.push({
-    x: wx * BS + BS * 0.25,
-    y: wy * BS + BS * 0.25,
+    x: wx * BS + BS * 0.15,
+    y: wy * BS + BS * 0.15,
     vx: (Math.random() - 0.5) * 80,
     vy: -150,
     type: type,
     count: count || 1,
-    life: 20
+    life: 60
   });
 }
 
@@ -1700,21 +1645,27 @@ function updateDrops(dt) {
     d.x += d.vx * dt;
     d.y += d.vy * dt;
 
-    const bx = Math.floor(d.x / BS);
-    const by = Math.floor(d.y / BS);
-    if (isSolid(bx, by)) {
-      d.y = (by - 1) * BS + BS * 0.25;
+    const dropSize = BS * 0.65;
+    const bx = Math.floor((d.x + dropSize / 2) / BS);
+    const byBottom = Math.floor((d.y + dropSize) / BS);
+    if (isSolid(bx, byBottom)) {
+      d.y = byBottom * BS - dropSize;
       d.vy = 0;
       d.vx *= 0.7;
+      let safety = 0;
+      while (isSolid(bx, Math.floor(d.y / BS)) && safety < 6) {
+        d.y -= BS;
+        safety++;
+      }
     }
 
     const dxp = p.x + p.w / 2 - d.x;
     const dyp = p.y + p.h / 2 - d.y;
     const dist = Math.hypot(dxp, dyp);
-    if (dist < BS * 2 && d.life < 15) {
-      d.x += dxp / dist * 280 * dt;
-      d.y += dyp / dist * 280 * dt;
-      if (dist < BS * 0.7) {
+    if (dist < BS * 4) {
+      d.x += dxp / dist * 500 * dt;
+      d.y += dyp / dist * 500 * dt;
+      if (dist < BS * 1.3) {
         S.inventory[d.type] = (S.inventory[d.type] || 0) + d.count;
         S.drops.splice(i, 1);
         updateInvUI();
@@ -1722,9 +1673,7 @@ function updateDrops(dt) {
     }
   }
 }
-// =====================
-// 纸田生长
-// =====================
+
 function updateFields(dt) {
   const light = dayLight();
   if (light < 0.15) return;
@@ -1783,10 +1732,6 @@ function updateCorn(dt) {
     }
   }
 }
-
-// =====================
-// 商店定义
-// =====================
 const PS = {
   global: { n:'🌟 全局', max:500, cost: l => 1 + Math.floor(l * 0.3), eff: l => '全局+' + (l * 10) + '%' },
   startGold: { n:'💰 起始金', max:50, cost: l => 1 + Math.floor(l * 0.8), eff: l => '转生+' + fmt(l * 100) + '金' },
@@ -1933,9 +1878,6 @@ function buySpec(key) {
   toast(def.n + ' Lv.' + (lv + 1));
 }
 
-// =====================
-// 时代 / 任务
-// =====================
 const ERAS = [
   { n:'原始时代', ic:'🪨', desc:'从泥土和木头开始' },
   { n:'石器时代', ic:'⛏️', desc:'石头工具，挖矿起步' },
@@ -2042,9 +1984,6 @@ function openQuestPanel() {
   };
 }
 
-// =====================
-// 合成台
-// =====================
 function invCount(type) {
   return S.inventory[type] || 0;
 }
@@ -2128,9 +2067,6 @@ function openCraftingTable(bx, by) {
   };
 }
 
-// =====================
-// 熔炉
-// =====================
 function canSmelt(recipe) {
   return invCount(recipe.in) >= 1 && invCount(T.COAL) >= 1;
 }
@@ -2193,9 +2129,6 @@ function openFurnace(bx, by) {
   };
 }
 
-// =====================
-// 炼丹炉
-// =====================
 function canAlchemy(recipe) {
   for (const k in recipe.need) {
     if (invCount(parseInt(k)) < recipe.need[k]) return false;
@@ -2262,9 +2195,6 @@ function openAlchemy(bx, by) {
   };
 }
 
-// =====================
-// 丹药使用
-// =====================
 function usePill(type) {
   if (invCount(type) <= 0) { toast('没有丹药'); return; }
   const info = INFO[type];
@@ -2293,9 +2223,6 @@ function usePill(type) {
   updateInvUI();
 }
 
-// =====================
-// 虚空矿机
-// =====================
 const MINER_ORES = [
   { type: T.COAL,      rate: 3,  need: 0 },
   { type: T.IRON,      rate: 8,  need: 0 },
@@ -2361,7 +2288,6 @@ function updateMachines(dt) {
       m.timer = (m.timer || 0) + dt * speed;
       if (m.timer >= 5) {
         m.timer = 0;
-        // 自动种田：找附近空的草/泥土
         const cx = m.x, cy = m.y;
         for (let dx = -4; dx <= 4; dx++) {
           for (let dy = 0; dy <= 4; dy++) {
@@ -2377,7 +2303,6 @@ function updateMachines(dt) {
               return;
             }
             if (t === T.PAPER_SOIL) {
-              // 附近有成熟纸田就收
               for (const f of S.fields) {
                 if (f.x === tx && f.y === ty - 1 && f.grow >= 1) {
                   f.grow = 0;
@@ -2431,9 +2356,7 @@ function openController(bx, by) {
     document.getElementById('pop').classList.remove('on');
   };
 }
-// =====================
-// 怪物生成
-// =====================
+
 function pickMonsterType() {
   const lvl = S.realm;
   let pool = MONSTERS.filter(m => m.minLvl <= lvl);
@@ -2550,9 +2473,6 @@ function updateMonsters(dt) {
   }
 }
 
-// =====================
-// 玩家攻击
-// =====================
 let attackCd = 0;
 
 function playerAttack() {
@@ -2616,10 +2536,6 @@ function updateAttack(dt) {
   if (attackCd > 0) attackCd -= dt;
   if (keys.attack) playerAttack();
 }
-
-// =====================
-// Boss
-// =====================
 const BOSSES = [
   { id:'bloodking', n:'🩸 血王',   hp:200,  dmg:6, spd:60,  drop:{ gold:2000, paper:500, soul:5 } },
   { id:'boneking',  n:'💀 骨王',   hp:500,  dmg:10,spd:70,  drop:{ gold:5000, paper:1500, soul:10 } },
@@ -2751,9 +2667,6 @@ function attackBoss() {
   return true;
 }
 
-// =====================
-// 修为 / 突破
-// =====================
 function qiRate() {
   if (!S) return 0;
   const base = 1;
@@ -2857,9 +2770,6 @@ function chooseCard(i) {
   updateHUD();
 }
 
-// =====================
-// 转生
-// =====================
 function canRebirth() { return S.realm >= 8; }
 function rebirthGain() {
   if (!canRebirth()) return 0;
@@ -2898,6 +2808,7 @@ function doRebirth() {
   const spawn = generateWorld(Date.now());
   S.seed = Date.now(); S.changes = {};
   S.player.x = spawn.x * BS; S.player.y = spawn.y * BS;
+  S.spawnX = S.player.x; S.spawnY = S.player.y;
   S.player.vx = 0; S.player.vy = 0;
 
   log('✨ 转生 · +' + gain + ' 本源');
@@ -2934,15 +2845,13 @@ function doDeathRebirth() {
   const spawn = generateWorld(Date.now());
   S.seed = Date.now(); S.changes = {};
   S.player.x = spawn.x * BS; S.player.y = spawn.y * BS;
+  S.spawnX = S.player.x; S.spawnY = S.player.y;
   S.player.vx = 0; S.player.vy = 0;
 
   log('💀 死亡转生 +' + gain + ' 本源');
   updateHUD(); renderInvUI(); saveGame();
 }
 
-// =====================
-// 事件
-// =====================
 function triggerEvent() {
   const ev = EVENTS_POOL[Math.floor(Math.random() * EVENTS_POOL.length)];
   const box = document.getElementById('popBox');
@@ -2977,9 +2886,6 @@ function checkEvent() {
   }
 }
 
-// =====================
-// 超频
-// =====================
 function ocD() { return 15 + (S.plv.ocDur || 0) * 2 + ((S.rs && S.rs.eternalFire) || 0) * 3; }
 function ocC() { return Math.max(30, 120 - (S.plv.ocCd || 0) * 10); }
 function ocM() { return 10 + (S.plv.ocMul || 0) * 5 + ((S.so && S.so.gui) || 0) * 2; }
@@ -2994,9 +2900,6 @@ function activateOC() {
   log('⚡ 超频 ×' + ocM());
 }
 
-// =====================
-// 全局倍率
-// =====================
 function globalMul() {
   if (!S) return 1;
   let m = 1;
@@ -3021,9 +2924,6 @@ function timeMul() {
   return 1;
 }
 
-// =====================
-// 恶心 / 诡异
-// =====================
 const SICK_NAMES = ['健康','着凉','感冒','流感','鼻塞','发烧','肺结核','肺炎','肺癌'];
 const SICK_COSTS = [0,5,10,20,50,100,200,500,1000];
 
@@ -3128,9 +3028,6 @@ function updateGhost(dt) {
   }
 }
 
-// =====================
-// 世界物理
-// =====================
 let _fallAccum = 0;
 function updateFallingBlocks(dt) {
   _fallAccum += dt;
@@ -3241,9 +3138,7 @@ function updateWorld(dt) {
   updateWater(dt);
   updateWorldEvolve(dt);
 }
-// =====================
-// HUD
-// =====================
+
 let _hudT = 0;
 function updateHUD() {
   if (!S) return;
@@ -3272,6 +3167,7 @@ function updateHUD() {
     html += `<div class="hb" style="pointer-events:auto;cursor:pointer" onclick="window._openQuests()">📜 <b style="color:#ffd97a;font-weight:700">${q.n}</b></div>`;
   }
 
+  html += `<div class="hb" style="pointer-events:auto;cursor:pointer" onclick="window._goHome()">🏠</div>`;
   html += `<div class="hb" style="pointer-events:auto;cursor:pointer" onclick="window._showStats()">📊</div>`;
   if (realmFull()) {
     html += `<div class="hb" style="background:linear-gradient(180deg,#ffb830,#cc7700);animation:pulse 1.2s infinite;cursor:pointer;pointer-events:auto;color:#2a1a00;font-weight:900" onclick="window._break()">⚡突破</div>`;
@@ -3283,6 +3179,18 @@ function updateHUD() {
 }
 
 window._openQuests = function() { openQuestPanel(); };
+
+window._goHome = function() {
+  if (!S) return;
+  S.player.x = S.spawnX;
+  S.player.y = S.spawnY;
+  S.player.vx = 0;
+  S.player.vy = 0;
+  S.player.hp = Math.min(S.player.maxHp, S.player.hp + 3);
+  camera.x = S.player.x - cv.width / 2;
+  camera.y = S.player.y - cv.height / 2;
+  toast('🏠 返回出生点');
+};
 
 window._showStats = function() {
   if (!S) return;
@@ -3312,9 +3220,6 @@ window._showStats = function() {
   };
 };
 
-// =====================
-// 背包
-// =====================
 function updateInvUI() {
   if (!S) return;
   const el = document.getElementById('inv');
@@ -3351,7 +3256,6 @@ function updateInvUI() {
       }
       const t = parseInt(s.dataset.t);
       const info = INFO[t];
-      // 丹药直接吃
       if (info && info.pill) {
         usePill(t);
         return;
@@ -3366,9 +3270,6 @@ function updateInvUI() {
   });
 }
 
-// =====================
-// 商店 UI
-// =====================
 function openShop() { openShopDirect('gold'); }
 
 function openShopDirect(tab) {
@@ -3536,9 +3437,6 @@ function renderShopTab(tab) {
   if (rcBtn) rcBtn.onclick = () => { upRC(); renderShopTab('rs'); };
 }
 
-// =====================
-// 恶心界面
-// =====================
 function openSick() {
   const box = document.getElementById('popBox');
   let html = '<h4>🤢 恶心系统</h4>';
@@ -3572,9 +3470,6 @@ function openSick() {
   };
 }
 
-// =====================
-// 转生界面
-// =====================
 function openRebirth() {
   const box = document.getElementById('popBox');
   const gain = rebirthGain();
@@ -3603,9 +3498,6 @@ function openRebirth() {
   };
 }
 
-// =====================
-// 专精界面
-// =====================
 function openSpecMenu() {
   const box = document.getElementById('popBox');
   let html = '<h4>👻 专精</h4>';
@@ -3633,9 +3525,6 @@ function openSpecMenu() {
   box.querySelector('#specClose').onclick = openMainMenu;
 }
 
-// =====================
-// 主菜单
-// =====================
 function openMainMenu() {
   if (!S) { toast('先开始游戏'); return; }
   const box = document.getElementById('popBox');
@@ -3738,9 +3627,6 @@ function renderMenuTab(tab) {
   if (m9) m9.onclick = openQuestPanel;
 }
 
-// =====================
-// 卖东西
-// =====================
 function calcPaperGold() {
   let total = 0;
   for (const k in S.paper) {
@@ -3832,9 +3718,6 @@ function openSellMenu() {
   };
 }
 
-// =====================
-// 特殊操作
-// =====================
 function openSpecialMenu() {
   if (!S) return;
   const box = document.getElementById('popBox');
@@ -3894,9 +3777,6 @@ function buildPaperHouse() {
   setBlock(pcx, pcy - 1, T.DOOR);
   setBlock(pcx, pcy - 2, T.DOOR);
 }
-// =====================
-// 主循环
-// =====================
 let _running = false;
 let _lastT = 0;
 let _spawnTimer = 0;
@@ -3962,9 +3842,6 @@ function loop(now) {
   requestAnimationFrame(loop);
 }
 
-// =====================
-// 启动
-// =====================
 function startGame(useSave) {
   initCanvas();
   setupModeButton();
@@ -4061,6 +3938,9 @@ function startGame(useSave) {
   if (!S.player.maxHp) S.player.maxHp = 20;
   if (!S.player.hp || S.player.hp > S.player.maxHp) S.player.hp = S.player.maxHp;
 
+  S.spawnX = S.player.x;
+  S.spawnY = S.player.y;
+
   camera.x = S.player.x - cv.width / 2;
   camera.y = S.player.y - cv.height / 2;
 
@@ -4093,14 +3973,16 @@ document.addEventListener('keydown', (e) => {
   if (e.key === '3') { S.mode = 'build'; setupModeButton(); }
   if (e.key === '4') { S.mode = 'sow'; setupModeButton(); }
   if (e.key === 'f' || e.key === 'F') activateOC();
-if (e.key === 'c' || e.key === 'C') openCraftingTable();
+  if (e.key === 'c' || e.key === 'C') openCraftingTable();
+  if (e.key === 'h' || e.key === 'H') window._goHome();
 });
 
 function buildQuickPanel() {
   const panel = document.createElement('div');
   panel.id = 'quickPanel';
   panel.style.cssText = 'position:absolute;top:52px;left:8px;z-index:6';
-  panel.innerHTML = '<button id="qMenu" style="width:58px;height:58px;border-radius:50%;font-size:24px;background:radial-gradient(circle at 40% 30%,rgba(130,100,210,.95),rgba(60,30,120,.9));border:2px solid rgba(180,150,255,.8);color:#fff;box-shadow:0 4px 16px rgba(0,0,0,.6),inset 0 2px 4px rgba(255,255,255,.25);cursor:pointer;font-family:inherit">📋</button><button id="qCraft" style="width:58px;height:58px;border-radius:50%;font-size:24px;margin-left:6px;background:radial-gradient(circle at 40% 30%,rgba(200,140,60,.95),rgba(120,60,20,.9));border:2px solid rgba(255,200,120,.8);color:#fff;box-shadow:0 4px 16px rgba(0,0,0,.6);cursor:pointer;font-family:inherit">🔨</button>';
+  panel.innerHTML = '<button id="qMenu" style="width:58px;height:58px;border-radius:50%;font-size:24px;background:radial-gradient(circle at 40% 30%,rgba(130,100,210,.95),rgba(60,30,120,.9));border:2px solid rgba(180,150,255,.8);color:#fff;box-shadow:0 4px 16px rgba(0,0,0,.6),inset 0 2px 4px rgba(255,255,255,.25);cursor:pointer;font-family:inherit">📋</button>' +
+    '<button id="qCraft" style="width:58px;height:58px;border-radius:50%;font-size:24px;margin-left:6px;background:radial-gradient(circle at 40% 30%,rgba(200,140,60,.95),rgba(120,60,20,.9));border:2px solid rgba(255,200,120,.8);color:#fff;box-shadow:0 4px 16px rgba(0,0,0,.6);cursor:pointer;font-family:inherit">🔨</button>';
   document.getElementById('game').appendChild(panel);
   document.getElementById('qMenu').onclick = openMainMenu;
   document.getElementById('qCraft').onclick = openCraftingTable;
